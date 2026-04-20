@@ -1,10 +1,13 @@
 using Mirror;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace ProjectRuntime.Actor
 {
     public class Player : NetworkBehaviour
     {
+        public static Player Instance { get; private set; }
+
         [field: SerializeField, Header("Scene References")]
         private Rigidbody PlayerRigidbody { get; set; }
 
@@ -47,9 +50,54 @@ namespace ProjectRuntime.Actor
         // Internal Variables
         private Vector3 _groundNormal;
         private bool _isGrounded;
+        private float _aimYaw;
+        private float _aimPitch;
+        private Vector3 _cameraControllerLocalOffset;
+        private Vector3 _aimRigLocalOffset;
+        private Vector3 _groundCheckLocalOffset;
+
+        // Networking
+        private string _playerName;
+        private ulong _playerSteamId;
+        private int _playerIndex;
+        private bool _isCursorLocked = true;
+
+        private void Awake()
+        {
+            this._aimYaw = this.PlayerRigidbody.rotation.eulerAngles.y;
+            this._aimRigLocalOffset = this._cameraControllerLocalOffset;
+            this._groundCheckLocalOffset = this.GroundCheckTransform.localPosition;
+            this.PlayerRigidbody.interpolation = RigidbodyInterpolation.Interpolate;
+            this.PlayerRigidbody.constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        }
+
+        public override void OnStartLocalPlayer()
+        {
+            base.OnStartLocalPlayer();
+            if (Instance == null && this.isLocalPlayer)
+            {
+                Instance = this;
+            }
+
+            this.SetCursorState(this._isCursorLocked);
+        }
+
+        public void Init(string playerName,  ulong playerSteamId, int playerIndex)
+        {
+            this._playerName = playerName;
+            this._playerSteamId = playerSteamId;
+            this._playerIndex = playerIndex;
+        }
 
         private void Update()
         {
+            if (!this.isLocalPlayer)
+            {
+                return;
+            }
+
+            this.HandleCursorToggle();
+            this.HandleRotateAim();
             this.IsGroundedCheck();
             if (this.PlayerInput.JumpPress && this._isGrounded)
             {
@@ -59,25 +107,51 @@ namespace ProjectRuntime.Actor
 
         private void FixedUpdate()
         {
+            if (!this.isLocalPlayer)
+            {
+                return;
+            }
+
             this.HandleMovement();
         }
 
         private void LateUpdate()
         {
-            this.HandleRotateAim();
+            if (!this.isLocalPlayer)
+            {
+                return;
+            }
         }
 
         private void HandleMovement()
         {
-            var moveDirection = this.GetMoveDir(Vector3.zero);
-            var moveDelta = this.PlayerMovementSpeed * Time.fixedDeltaTime * moveDirection;
-            this.PlayerRigidbody.MovePosition(this.transform.position + moveDelta);
+            var moveDirection = this.GetMoveDir(this.PlayerInput.MoveVector);
+            var desiredVelocity = moveDirection * this.PlayerMovementSpeed;
+            var currentVelocity = this.PlayerRigidbody.linearVelocity;
+
+            if (this._isGrounded && currentVelocity.y < 0f)
+            {
+                currentVelocity.y = 0f;
+            }
+
+            currentVelocity.x = desiredVelocity.x;
+            currentVelocity.z = desiredVelocity.z;
+            this.PlayerRigidbody.linearVelocity = currentVelocity;
         }
 
         private void HandleRotateAim()
         {
-            this.transform.localEulerAngles = new Vector3(0f, this.PlayerCameraController.transform.localEulerAngles.y, 0f);
-            this.AimRig.localEulerAngles = new Vector3(this.PlayerCameraController.transform.localEulerAngles.x, 0, 0);
+            //transform.localEulerAngles = new Vector3(0, this.PlayerCameraController.transform.localEulerAngles.y, 0);
+            //this.AimRig.localEulerAngles = new Vector3(this.PlayerCameraController.transform.localEulerAngles.x, 0, 0);
+
+            this._aimYaw += this.PlayerInput.AimVector.x * Time.deltaTime * this.PlayerSensitivity;
+            this._aimPitch = Mathf.Clamp(
+                this._aimPitch - this.PlayerInput.AimVector.y * Time.deltaTime * this.PlayerSensitivity,
+                this.PlayerCameraController.PitchMinLimit,
+                this.PlayerCameraController.PitchMaxLimit);
+            var rot = Quaternion.Euler(this._aimPitch, this._aimYaw, 0f);
+
+            this.PlayerCameraController.transform.SetPositionAndRotation(this.PlayerCameraController.transform.position, rot);
         }
 
         private void HandleJump()
@@ -98,19 +172,19 @@ namespace ProjectRuntime.Actor
 
         private Vector3 GetMoveDir(Vector3 inputVector)
         {
-            var aim = this.PlayerCameraController.transform;
             var up = this._groundNormal;
-            var aimForwardFlat = Quaternion.Euler(0f, aim.eulerAngles.y, 0) * Vector3.forward;
+            var aimForwardFlat = Quaternion.Euler(0f, this._aimYaw, 0f) * Vector3.forward;
 
             var forward = Vector3.ProjectOnPlane(aimForwardFlat, up).normalized;
             var right = Vector3.Cross(up, forward).normalized;
 
-            return right * inputVector.x + forward * inputVector.z;
+            return Vector3.ClampMagnitude(right * inputVector.x + forward * inputVector.z, 1f);
         }
 
         private void IsGroundedCheck()
         {
-            var groundHit = Physics.SphereCast(this.GroundCheckTransform.position,
+            var groundCheckOrigin = this.PlayerRigidbody.position + this.PlayerRigidbody.rotation * this._groundCheckLocalOffset;
+            var groundHit = Physics.SphereCast(groundCheckOrigin,
                 this.GroundRadiusCheck, Vector3.down, out var hit, this.GroundCastDistance, this.GroundLayerMask);
 
             if (groundHit)
@@ -121,8 +195,26 @@ namespace ProjectRuntime.Actor
             }
             else
             {
+                this._isGrounded = false;
                 this._groundNormal = Vector3.up;
             }
+        }
+
+        private void HandleCursorToggle()
+        {
+            if (Mouse.current == null || !Mouse.current.middleButton.wasPressedThisFrame)
+            {
+                return;
+            }
+
+            this._isCursorLocked = !this._isCursorLocked;
+            this.SetCursorState(this._isCursorLocked);
+        }
+
+        private void SetCursorState(bool isLocked)
+        {
+            Cursor.visible = !isLocked;
+            Cursor.lockState = isLocked ? CursorLockMode.Locked : CursorLockMode.None;
         }
     }
 }

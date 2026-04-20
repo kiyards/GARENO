@@ -27,15 +27,18 @@ namespace ProjectRuntime.Network
 
         public override void OnStartClient()
         {
-            GameManager.Instance.LobbyPlayers.Add(this);
+            GameNetworkManager.Instance.LobbyPlayers.Add(this);
             PnlLobby.Instance.UpdateLobbyName();
             PnlLobby.Instance.UpdatePlayerList();
         }
 
         public override void OnStopClient()
         {
-            GameManager.Instance.LobbyPlayers.Remove(this);
-            PnlLobby.Instance.UpdatePlayerList();
+            GameNetworkManager.Instance.LobbyPlayers.Remove(this);
+            if (PnlLobby.Instance != null)
+            {
+                PnlLobby.Instance.UpdatePlayerList();
+            }
         }
 
         [Command]
@@ -93,7 +96,7 @@ namespace ProjectRuntime.Network
         [Command]
         private void CmdCanStartGame(string sceneName)
         {
-            GameManager.Instance.StartGame(sceneName);
+            GameNetworkManager.Instance.StartGame(sceneName);
         }
     }
 }

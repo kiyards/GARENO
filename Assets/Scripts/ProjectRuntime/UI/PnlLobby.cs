@@ -75,17 +75,17 @@ namespace ProjectRuntime.UI
                 this.CreateHostPlayerItem();
             }
 
-            if (this.UIPlayerRows.Count < GameManager.Instance.LobbyPlayers.Count)
+            if (this.UIPlayerRows.Count < GameNetworkManager.Instance.LobbyPlayers.Count)
             {
                 this.CreateClientPlayerItem();
             }
 
-            if (this.UIPlayerRows.Count > GameManager.Instance.LobbyPlayers.Count)
+            if (this.UIPlayerRows.Count > GameNetworkManager.Instance.LobbyPlayers.Count)
             {
                 this.RemovePlayerItem();
             }
 
-            if (this.UIPlayerRows.Count == GameManager.Instance.LobbyPlayers.Count)
+            if (this.UIPlayerRows.Count == GameNetworkManager.Instance.LobbyPlayers.Count)
             {
                 this.UpdatePlayerItem();
             }
@@ -93,7 +93,7 @@ namespace ProjectRuntime.UI
 
         public void CreateHostPlayerItem()
         {
-            foreach (var lobbyPlayer in GameManager.Instance.LobbyPlayers)
+            foreach (var lobbyPlayer in GameNetworkManager.Instance.LobbyPlayers)
             {
                 var uiPlayerRow = Instantiate(this.UIPlayerLobbyPrefab);
 
@@ -114,7 +114,7 @@ namespace ProjectRuntime.UI
 
         public void CreateClientPlayerItem()
         {
-            foreach (var lobbyPlayer in GameManager.Instance.LobbyPlayers)
+            foreach (var lobbyPlayer in GameNetworkManager.Instance.LobbyPlayers)
             {
                 if (!this.UIPlayerRows.Any(b => b.ConnectionId == lobbyPlayer.ConnectionID))
                 {
@@ -135,7 +135,7 @@ namespace ProjectRuntime.UI
 
         public void UpdatePlayerItem()
         {
-            foreach (var lobbyPlayer in GameManager.Instance.LobbyPlayers)
+            foreach (var lobbyPlayer in GameNetworkManager.Instance.LobbyPlayers)
             {
                 foreach (var uiPlayerRow in this.UIPlayerRows)
                 {
@@ -152,7 +152,7 @@ namespace ProjectRuntime.UI
                 }
             }
 
-            this.LobbyCountTMP.text = $"{this.UIPlayerRows.Count}/{GameManager.Instance.maxConnections}";
+            this.LobbyCountTMP.text = $"{this.UIPlayerRows.Count}/{GameNetworkManager.Instance.maxConnections}";
             this.CheckIfAllReady();
         }
 
@@ -162,7 +162,7 @@ namespace ProjectRuntime.UI
 
             foreach (var uiPlayerRow in this.UIPlayerRows)
             {
-                if (!GameManager.Instance.LobbyPlayers.Any(b => b.ConnectionID == uiPlayerRow.ConnectionId))
+                if (!GameNetworkManager.Instance.LobbyPlayers.Any(b => b.ConnectionID == uiPlayerRow.ConnectionId))
                 {
                     playerLobbiesToRemove.Add(uiPlayerRow);
                 }
@@ -191,7 +191,7 @@ namespace ProjectRuntime.UI
         public void CheckIfAllReady()
         {
             var allReady = true;
-            foreach (var player in GameManager.Instance.LobbyPlayers)
+            foreach (var player in GameNetworkManager.Instance.LobbyPlayers)
             {
                 if (!player.IsReady)
                 {
@@ -226,11 +226,11 @@ namespace ProjectRuntime.UI
 
             if (this.LocalPlayerController.ConnectionID == 0)
             {
-                GameManager.Instance.StopHost();
+                GameNetworkManager.Instance.StopHost();
             }
             else
             {
-                GameManager.Instance.StopClient();
+                GameNetworkManager.Instance.StopClient();
             }
         }
 
@@ -241,7 +241,7 @@ namespace ProjectRuntime.UI
 
         private void OnStartButtonClick()
         {
-            GameManager.Instance.StartGame("ScGame");
+            GameNetworkManager.Instance.StartGame("ScGame");
         }
         #endregion
     }

@@ -50,7 +50,8 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            this.MoveVector = this.MoveInput.ReadValue<Vector2>();
+            var moveInput = this.MoveInput.ReadValue<Vector2>();
+            this.MoveVector = new Vector3(moveInput.x, 0f, moveInput.y);
             this.AimVector = this.AimInput.ReadValue<Vector2>() * this.Player.PlayerSensitivity;
 
             this.JumpPress = this.JumpInput.WasPressedThisFrame();

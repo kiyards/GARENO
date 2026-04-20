@@ -54,7 +54,7 @@ namespace ProjectRuntime.Network.Steam
 
         public void HostLobby()
         {
-            SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypePublic, GameManager.Instance.maxConnections);
+            SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypePublic, GameNetworkManager.Instance.maxConnections);
         }
 
         private void OnLobbyCreated(LobbyCreated_t callback)
@@ -64,10 +64,12 @@ namespace ProjectRuntime.Network.Steam
                 return;
             }
 
-            GameManager.Instance.StartHost();
+            GameNetworkManager.Instance.StartHost();
             SteamMatchmaking.SetLobbyData(new CSteamID(callback.m_ulSteamIDLobby), HostAddressKey, SteamUser.GetSteamID().ToString());
             SteamMatchmaking.SetLobbyData(new CSteamID(callback.m_ulSteamIDLobby), "name",
                 SteamFriends.GetPersonaName().ToString() + "'s Lobby");
+
+            GameNetworkManager.Instance.HostedLobbyId = new CSteamID(callback.m_ulSteamIDLobby);
         }
 
         private void OnJoinRequested(GameLobbyJoinRequested_t callback)
@@ -86,8 +88,8 @@ namespace ProjectRuntime.Network.Steam
                 return;
             }
 
-            GameManager.Instance.networkAddress = SteamMatchmaking.GetLobbyData(new CSteamID(callback.m_ulSteamIDLobby), HostAddressKey);
-            GameManager.Instance.StartClient();
+            GameNetworkManager.Instance.networkAddress = SteamMatchmaking.GetLobbyData(new CSteamID(callback.m_ulSteamIDLobby), HostAddressKey);
+            GameNetworkManager.Instance.StartClient();
         }
 
         public void JoinLobby(CSteamID lobbyId)
