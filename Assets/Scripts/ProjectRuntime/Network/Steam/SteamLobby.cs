@@ -114,7 +114,10 @@ namespace ProjectRuntime.Network.Steam
 
         private void OnLobbyDataUpdated(LobbyDataUpdate_t callback)
         {
-            PnlBrowseLobbies.Instance.DisplayLobbies(this.LobbyIds, callback);
+            if (PnlBrowseLobbies.Instance != null)
+            {
+                PnlBrowseLobbies.Instance.DisplayLobbies(this.LobbyIds, callback);
+            }
         }
 
         public void GetLobbiesList()
