@@ -1,6 +1,5 @@
 using Mirror;
 using Unity.Cinemachine;
-using Unity.Cinemachine.TargetTracking;
 using UnityEngine;
 
 namespace ProjectRuntime.Actor
@@ -9,6 +8,9 @@ namespace ProjectRuntime.Actor
     {
         [field: SerializeField, Header("Scene References")]
         private CinemachineCamera AimCamera { get; set; }
+
+        [field: SerializeField]
+        private PlayerInput PlayerInput { get; set; }
 
         [field: SerializeField, Header("Player Settings")]
         private float PitchMin { get; set; } = -80f;
@@ -19,33 +21,28 @@ namespace ProjectRuntime.Actor
         public float PitchMinLimit => this.PitchMin;
         public float PitchMaxLimit => this.PitchMax;
 
-        private CinemachineFollow _cinemachineFollow;
+        public float Yaw { get; private set; }
+        public float Pitch { get; private set; }
 
-        private void Awake()
+        private void Update()
         {
-            this._cinemachineFollow = this.AimCamera.GetComponent<CinemachineFollow>();
-        }
-
-        public override void OnStartLocalPlayer()
-        {
-            base.OnStartLocalPlayer();
-            this.ConfigureFirstPersonCamera();
-        }
-
-        private void ConfigureFirstPersonCamera()
-        {
-            if (this._cinemachineFollow == null)
+            if (!this.isLocalPlayer)
             {
                 return;
             }
 
-            var trackerSettings = this._cinemachineFollow.TrackerSettings;
-            trackerSettings.BindingMode = BindingMode.LockToTarget;
-            trackerSettings.PositionDamping = Vector3.zero;
-            trackerSettings.RotationDamping = Vector3.zero;
-            trackerSettings.QuaternionDamping = 0f;
-            this._cinemachineFollow.TrackerSettings = trackerSettings;
-            this._cinemachineFollow.FollowOffset = Vector3.zero;
+            this.HandleCameraAim(this.PlayerInput.AimVector);
+        }
+
+        public void HandleCameraAim(Vector2 aimVec)
+        {
+            this.Yaw += aimVec.x * Time.deltaTime;
+            this.Pitch -= aimVec.y * Time.deltaTime;
+            this.Pitch = Mathf.Clamp(this.Pitch, this.PitchMin, this.PitchMax);
+
+            var cameraRotation = Quaternion.Euler(this.Pitch, this.Yaw, 0f);
+
+            transform.SetPositionAndRotation(this.transform.position, cameraRotation);
         }
     }
 }

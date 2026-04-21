@@ -50,10 +50,6 @@ namespace ProjectRuntime.Actor
         // Internal Variables
         private Vector3 _groundNormal;
         private bool _isGrounded;
-        private float _aimYaw;
-        private float _aimPitch;
-        private Vector3 _cameraControllerLocalOffset;
-        private Vector3 _aimRigLocalOffset;
         private Vector3 _groundCheckLocalOffset;
 
         // Networking
@@ -64,8 +60,6 @@ namespace ProjectRuntime.Actor
 
         private void Awake()
         {
-            this._aimYaw = this.PlayerRigidbody.rotation.eulerAngles.y;
-            this._aimRigLocalOffset = this._cameraControllerLocalOffset;
             this._groundCheckLocalOffset = this.GroundCheckTransform.localPosition;
             this.PlayerRigidbody.interpolation = RigidbodyInterpolation.Interpolate;
             this.PlayerRigidbody.constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
@@ -97,7 +91,6 @@ namespace ProjectRuntime.Actor
             }
 
             this.HandleCursorToggle();
-            this.HandleRotateAim();
             this.IsGroundedCheck();
             if (this.PlayerInput.JumpPress && this._isGrounded)
             {
@@ -126,32 +119,8 @@ namespace ProjectRuntime.Actor
         private void HandleMovement()
         {
             var moveDirection = this.GetMoveDir(this.PlayerInput.MoveVector);
-            var desiredVelocity = moveDirection * this.PlayerMovementSpeed;
-            var currentVelocity = this.PlayerRigidbody.linearVelocity;
-
-            if (this._isGrounded && currentVelocity.y < 0f)
-            {
-                currentVelocity.y = 0f;
-            }
-
-            currentVelocity.x = desiredVelocity.x;
-            currentVelocity.z = desiredVelocity.z;
-            this.PlayerRigidbody.linearVelocity = currentVelocity;
-        }
-
-        private void HandleRotateAim()
-        {
-            //transform.localEulerAngles = new Vector3(0, this.PlayerCameraController.transform.localEulerAngles.y, 0);
-            //this.AimRig.localEulerAngles = new Vector3(this.PlayerCameraController.transform.localEulerAngles.x, 0, 0);
-
-            this._aimYaw += this.PlayerInput.AimVector.x * Time.deltaTime * this.PlayerSensitivity;
-            this._aimPitch = Mathf.Clamp(
-                this._aimPitch - this.PlayerInput.AimVector.y * Time.deltaTime * this.PlayerSensitivity,
-                this.PlayerCameraController.PitchMinLimit,
-                this.PlayerCameraController.PitchMaxLimit);
-            var rot = Quaternion.Euler(this._aimPitch, this._aimYaw, 0f);
-
-            this.PlayerCameraController.transform.SetPositionAndRotation(this.PlayerCameraController.transform.position, rot);
+            var moveDelta = this.PlayerMovementSpeed * Time.fixedDeltaTime * moveDirection;
+            this.PlayerRigidbody.MovePosition(this.transform.position + moveDelta);
         }
 
         private void HandleJump()
@@ -173,12 +142,12 @@ namespace ProjectRuntime.Actor
         private Vector3 GetMoveDir(Vector3 inputVector)
         {
             var up = this._groundNormal;
-            var aimForwardFlat = Quaternion.Euler(0f, this._aimYaw, 0f) * Vector3.forward;
+            var aimForwardFlat = Quaternion.Euler(0f, this.PlayerCameraController.transform.eulerAngles.y, 0f) * Vector3.forward;
 
             var forward = Vector3.ProjectOnPlane(aimForwardFlat, up).normalized;
             var right = Vector3.Cross(up, forward).normalized;
 
-            return Vector3.ClampMagnitude(right * inputVector.x + forward * inputVector.z, 1f);
+            return right * inputVector.x + forward * inputVector.z;
         }
 
         private void IsGroundedCheck()
