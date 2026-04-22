@@ -11,6 +11,9 @@ namespace ProjectRuntime.UI
         public static PnlBrowseLobbies Instance { get; private set; }
 
         [field: SerializeField, Header("Scene References")]
+        public GameObject UIParent { get; private set; }
+
+        [field: SerializeField]
         private RectTransform UILobbyRowRT { get; set; }
 
         [field: SerializeField]
@@ -63,22 +66,24 @@ namespace ProjectRuntime.UI
 
         public void DisplayLobbies(List<CSteamID> lobbyIds, LobbyDataUpdate_t callback)
         {
-            this.ClearAllLobbies();
             for (var i = 0; i < lobbyIds.Count; i++)
             {
                 if (lobbyIds[i].m_SteamID == callback.m_ulSteamIDLobby)
                 {
-                    var uiLobbyRow = Instantiate(this.UILobbyRowPrefab);
-                    uiLobbyRow.LobbyId = lobbyIds[i];
+                    var uiLobbyRow = this.UILobbyRowList.Find(row => row.LobbyId.m_SteamID == lobbyIds[i].m_SteamID);
+                    if (uiLobbyRow == null)
+                    {
+                        uiLobbyRow = Instantiate(this.UILobbyRowPrefab, this.UILobbyRowRT);
+                        uiLobbyRow.transform.localScale = Vector3.one;
+                        uiLobbyRow.LobbyId = lobbyIds[i];
+                        this.UILobbyRowList.Add(uiLobbyRow);
+                    }
+
                     uiLobbyRow.LobbyName = SteamMatchmaking.GetLobbyData(lobbyIds[i], "name");
                     uiLobbyRow.LobbyCount = SteamMatchmaking.GetNumLobbyMembers(lobbyIds[i]);
                     uiLobbyRow.LobbySize = SteamMatchmaking.GetLobbyMemberLimit(lobbyIds[i]);
                     uiLobbyRow.SetLobbyData();
-
-                    uiLobbyRow.transform.SetParent(this.UILobbyRowRT);
-                    uiLobbyRow.transform.localScale = Vector3.one;
-
-                    this.UILobbyRowList.Add(uiLobbyRow);
+                    break;
                 }
             }
         }

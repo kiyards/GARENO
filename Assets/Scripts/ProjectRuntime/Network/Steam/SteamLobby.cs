@@ -13,7 +13,8 @@ namespace ProjectRuntime.Network.Steam
 
         public ulong CurrentLobbyId;
         private const string HostAddressKey = "HostAddress";
-        private string LobbyFilterKey => Application.productName;
+        private const string LobbyFilterKey = "Game";
+        private string LobbyFilterValue => Application.productName;
 
         // Lobby Hosting Callbacks
         protected Callback<LobbyCreated_t> LobbyCreated;
@@ -66,6 +67,7 @@ namespace ProjectRuntime.Network.Steam
 
             GameNetworkManager.Instance.StartHost();
             SteamMatchmaking.SetLobbyData(new CSteamID(callback.m_ulSteamIDLobby), HostAddressKey, SteamUser.GetSteamID().ToString());
+            SteamMatchmaking.SetLobbyData(new CSteamID(callback.m_ulSteamIDLobby), LobbyFilterKey, this.LobbyFilterValue);
             SteamMatchmaking.SetLobbyData(new CSteamID(callback.m_ulSteamIDLobby), "name",
                 SteamFriends.GetPersonaName().ToString() + "'s Lobby");
 
@@ -107,6 +109,11 @@ namespace ProjectRuntime.Network.Steam
             for (int i = 0; i < callback.m_nLobbiesMatching; i++)
             {
                 CSteamID lobbyId = SteamMatchmaking.GetLobbyByIndex(i);
+                if (this.LobbyIds.Exists(existingLobbyId => existingLobbyId.m_SteamID == lobbyId.m_SteamID))
+                {
+                    continue;
+                }
+
                 this.LobbyIds.Add(lobbyId);
                 SteamMatchmaking.RequestLobbyData(lobbyId);
             }
@@ -126,7 +133,8 @@ namespace ProjectRuntime.Network.Steam
             {
                 this.LobbyIds.Clear();
             }
-            SteamMatchmaking.AddRequestLobbyListStringFilter("lobbyFilter", this.LobbyFilterKey, ELobbyComparison.k_ELobbyComparisonEqual); // Filter out lobbies not for this game
+
+            SteamMatchmaking.AddRequestLobbyListStringFilter(LobbyFilterKey, this.LobbyFilterValue, ELobbyComparison.k_ELobbyComparisonEqual); // Filter out lobbies not for this game
             SteamMatchmaking.AddRequestLobbyListStringFilter(HostAddressKey, SteamUser.GetSteamID().ToString(), ELobbyComparison.k_ELobbyComparisonNotEqual); // Filter out own lobbies created
             SteamMatchmaking.RequestLobbyList();
         }

@@ -30,13 +30,7 @@ namespace ProjectRuntime.Actor
         private LayerMask GroundLayerMask { get; set; }
 
         [field: SerializeField]
-        private float GroundRadiusCheck { get; set; }
-
-        [field: SerializeField]
         private float GroundCastDistance { get; set; }
-
-        [field: SerializeField]
-        private float GroundMaxSlopeAngle { get; set; }
 
         [field: SerializeField, Header("Player Settings")]
         private float PlayerMovementSpeed { get; set; }
@@ -51,6 +45,7 @@ namespace ProjectRuntime.Actor
         private Vector3 _groundNormal;
         private bool _isGrounded;
         private Vector3 _groundCheckLocalOffset;
+        private const float GroundProbePadding = 0.05f;
 
         // Networking
         private string _playerName;
@@ -105,31 +100,18 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            this.HandleMovement();
+            this.HandleMovement(this.PlayerInput.MoveVector);
         }
 
-        private void LateUpdate()
+        private void HandleMovement(Vector3 inputVector)
         {
-            if (!this.isLocalPlayer)
-            {
-                return;
-            }
-        }
-
-        private void HandleMovement()
-        {
-            var moveDirection = this.GetMoveDir(this.PlayerInput.MoveVector);
+            var moveDirection = this.GetMoveDir(inputVector);
             var moveDelta = this.PlayerMovementSpeed * Time.fixedDeltaTime * moveDirection;
-            this.PlayerRigidbody.MovePosition(this.transform.position + moveDelta);
+            this.PlayerRigidbody.MovePosition(this.PlayerRigidbody.position + moveDelta);
         }
 
         private void HandleJump()
         {
-            if (!this.isLocalPlayer)
-            {
-                return;
-            }
-
             if (this.PlayerRigidbody.linearVelocity.y < 0f)
             {
                 var vel = this.PlayerRigidbody.linearVelocity;
@@ -152,14 +134,25 @@ namespace ProjectRuntime.Actor
 
         private void IsGroundedCheck()
         {
-            var groundCheckOrigin = this.PlayerRigidbody.position + this.PlayerRigidbody.rotation * this._groundCheckLocalOffset;
-            var groundHit = Physics.SphereCast(groundCheckOrigin,
-                this.GroundRadiusCheck, Vector3.down, out var hit, this.GroundCastDistance, this.GroundLayerMask);
+            var colliderBounds = this.PlayerCollider.bounds;
+            var castRadius = Mathf.Max(0.05f, Mathf.Min(colliderBounds.extents.x, colliderBounds.extents.z) * 0.9f);
+            var castDistance = Mathf.Max(this.GroundCastDistance, GroundProbePadding * 2f);
+            var groundCheckOrigin = new Vector3(
+                colliderBounds.center.x,
+                colliderBounds.min.y + castRadius + GroundProbePadding,
+                colliderBounds.center.z);
+            var groundHit = Physics.SphereCast(
+                groundCheckOrigin,
+                castRadius,
+                Vector3.down,
+                out var hit,
+                castDistance,
+                this.GroundLayerMask,
+                QueryTriggerInteraction.Ignore);
 
             if (groundHit)
             {
-                var angle = Vector3.Angle(hit.normal, Vector3.up);
-                this._isGrounded = angle <= this.GroundMaxSlopeAngle;
+                this._isGrounded = true;
                 this._groundNormal = hit.normal;
             }
             else

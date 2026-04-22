@@ -91,7 +91,7 @@ namespace ProjectRuntime.UI
         public void ToggleMainUI(bool toggle)
         {
             this.LobbySelectionObject.SetActive(toggle);
-            this.PnlBrowseLobbies.gameObject.SetActive(!toggle);
+            this.PnlBrowseLobbies.UIParent.gameObject.SetActive(!toggle);
         }
     }
 }
