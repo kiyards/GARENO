@@ -1,10 +1,9 @@
-using Mirror;
 using Unity.Cinemachine;
 using UnityEngine;
 
 namespace ProjectRuntime.Actor
 {
-    public class CameraController : NetworkBehaviour
+    public class CameraController : MonoBehaviour
     {
         [field: SerializeField, Header("Scene References")]
         private CinemachineCamera AimCamera { get; set; }
@@ -26,7 +25,7 @@ namespace ProjectRuntime.Actor
 
         private void Update()
         {
-            if (!this.isLocalPlayer)
+            if (!this.enabled)
             {
                 return;
             }
@@ -42,7 +41,14 @@ namespace ProjectRuntime.Actor
 
             var cameraRotation = Quaternion.Euler(this.Pitch, this.Yaw, 0f);
 
-            transform.SetPositionAndRotation(this.transform.position, cameraRotation);
+            this.transform.SetPositionAndRotation(this.transform.position, cameraRotation);
+        }
+
+        public void SetLocalCameraActive(bool isActive)
+        {
+            this.enabled = isActive;
+            this.AimCamera.enabled = isActive;
+            this.AimCamera.gameObject.SetActive(isActive);
         }
     }
 }

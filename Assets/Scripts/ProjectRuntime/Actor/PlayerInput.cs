@@ -36,16 +36,17 @@ namespace ProjectRuntime.Actor
         public override void OnStartLocalPlayer()
         {
             base.OnStartLocalPlayer();
-            this.MoveInput.Enable();
-            this.AimInput.Enable();
-            this.JumpInput.Enable();
-            this.ClickInput.Enable();
-            this.InteractInput.Enable();
+            this.SetInputEnabled(true);
+        }
+
+        private void OnDisable()
+        {
+            this.SetInputEnabled(false);
         }
 
         private void Update()
         {
-            if (!this.isLocalPlayer)
+            if (!this.isOwned)
             {
                 return;
             }
@@ -63,6 +64,34 @@ namespace ProjectRuntime.Actor
             this.InteractPress = this.InteractInput.WasPressedThisFrame();
             this.InteractHold = this.InteractInput.IsPressed();
             this.InteractRelease = this.InteractInput.WasReleasedThisFrame();
+        }
+
+        private void SetInputEnabled(bool isEnabled)
+        {
+            if (isEnabled)
+            {
+                this.MoveInput.Enable();
+                this.AimInput.Enable();
+                this.JumpInput.Enable();
+                this.ClickInput.Enable();
+                this.InteractInput.Enable();
+                return;
+            }
+
+            this.MoveInput.Disable();
+            this.AimInput.Disable();
+            this.JumpInput.Disable();
+            this.ClickInput.Disable();
+            this.InteractInput.Disable();
+            this.MoveVector = Vector3.zero;
+            this.AimVector = Vector2.zero;
+            this.JumpPress = false;
+            this.ClickPress = false;
+            this.ClickHold = false;
+            this.ClickRelease = false;
+            this.InteractPress = false;
+            this.InteractHold = false;
+            this.InteractRelease = false;
         }
     }
 }

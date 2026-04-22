@@ -16,20 +16,22 @@ namespace ProjectRuntime.Network
         public override void OnStartLocalPlayer()
         {
             this.CmdSetPlayerName(SteamFriends.GetPersonaName());
-            PnlLobby.Instance.LocalPlayerController = this;
+            if (PnlLobby.Instance != null)
+            {
+                PnlLobby.Instance.LocalPlayerController = this;
+            }
         }
 
         public override void OnStartAuthority()
         {
             this.CmdSetPlayerName(SteamFriends.GetPersonaName().ToString());
-            PnlLobby.Instance.UpdateLobbyName();
+            this.TryRefreshLobbyUi(assignLocalController: true);
         }
 
         public override void OnStartClient()
         {
             GameNetworkManager.Instance.LobbyPlayers.Add(this);
-            PnlLobby.Instance.UpdateLobbyName();
-            PnlLobby.Instance.UpdatePlayerList();
+            this.TryRefreshLobbyUi();
         }
 
         public override void OnStopClient()
@@ -56,7 +58,7 @@ namespace ProjectRuntime.Network
 
             if (this.isClient)
             {
-                PnlLobby.Instance.UpdatePlayerList();
+                this.TryRefreshLobbyUi();
             }
         }
 
@@ -82,8 +84,24 @@ namespace ProjectRuntime.Network
             }
             if (isClient)
             {
-                PnlLobby.Instance.UpdatePlayerList();
+                this.TryRefreshLobbyUi();
             }
+        }
+
+        private void TryRefreshLobbyUi(bool assignLocalController = false)
+        {
+            if (PnlLobby.Instance == null)
+            {
+                return;
+            }
+
+            if (assignLocalController && this.isOwned)
+            {
+                PnlLobby.Instance.LocalPlayerController = this;
+            }
+
+            PnlLobby.Instance.UpdateLobbyName();
+            PnlLobby.Instance.UpdatePlayerList();
         }
 
         public void CanStartGame(string sceneName)
@@ -93,6 +111,7 @@ namespace ProjectRuntime.Network
                 this.CmdCanStartGame(sceneName);
             }
         }
+
         [Command]
         private void CmdCanStartGame(string sceneName)
         {

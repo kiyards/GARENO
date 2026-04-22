@@ -24,9 +24,6 @@ namespace ProjectRuntime.Actor
         private Transform AimRig { get; set; }
 
         [field: SerializeField, Header("Ground Check Logic")]
-        private Transform GroundCheckTransform { get; set; }
-
-        [field: SerializeField]
         private LayerMask GroundLayerMask { get; set; }
 
         [field: SerializeField]
@@ -44,7 +41,6 @@ namespace ProjectRuntime.Actor
         // Internal Variables
         private Vector3 _groundNormal;
         private bool _isGrounded;
-        private Vector3 _groundCheckLocalOffset;
         private const float GroundProbePadding = 0.05f;
 
         // Networking
@@ -55,9 +51,14 @@ namespace ProjectRuntime.Actor
 
         private void Awake()
         {
-            this._groundCheckLocalOffset = this.GroundCheckTransform.localPosition;
             this.PlayerRigidbody.interpolation = RigidbodyInterpolation.Interpolate;
             this.PlayerRigidbody.constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        }
+
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            this.ApplyLocalControlState(this.isOwned);
         }
 
         public override void OnStartLocalPlayer()
@@ -71,6 +72,20 @@ namespace ProjectRuntime.Actor
             this.SetCursorState(this._isCursorLocked);
         }
 
+        public override void OnStartAuthority()
+        {
+            base.OnStartAuthority();
+            this.ApplyLocalControlState(true);
+            this.SetCursorState(this._isCursorLocked);
+        }
+
+        public override void OnStopAuthority()
+        {
+            base.OnStopAuthority();
+            this.ApplyLocalControlState(false);
+            this.SetCursorState(false);
+        }
+
         public void Init(string playerName,  ulong playerSteamId, int playerIndex)
         {
             this._playerName = playerName;
@@ -80,7 +95,7 @@ namespace ProjectRuntime.Actor
 
         private void Update()
         {
-            if (!this.isLocalPlayer)
+            if (!this.isOwned)
             {
                 return;
             }
@@ -95,7 +110,7 @@ namespace ProjectRuntime.Actor
 
         private void FixedUpdate()
         {
-            if (!this.isLocalPlayer)
+            if (!this.isOwned)
             {
                 return;
             }
@@ -177,6 +192,17 @@ namespace ProjectRuntime.Actor
         {
             Cursor.visible = !isLocked;
             Cursor.lockState = isLocked ? CursorLockMode.Locked : CursorLockMode.None;
+        }
+
+        private void ApplyLocalControlState(bool isOwnedByLocalClient)
+        {
+            this.PlayerInput.enabled = isOwnedByLocalClient;
+            this.PlayerCameraController.SetLocalCameraActive(isOwnedByLocalClient);
+
+            if (!isOwnedByLocalClient)
+            {
+                this.SetCursorState(false);
+            }
         }
     }
 }
