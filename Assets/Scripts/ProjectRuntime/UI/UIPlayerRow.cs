@@ -51,7 +51,7 @@ namespace ProjectRuntime.UI
                 isValid = SteamUtils.GetImageRGBA(iImage, image, (int)(width * height * 4));
                 if (isValid)
                 {
-                    texture = new Texture2D((int)width, (int)height, TextureFormat.ARGB32, false, true);
+                    texture = new Texture2D((int)width, (int)height, TextureFormat.RGBA32, false, false);
                     texture.LoadRawTextureData(image);
                     texture.Apply();
                 }
