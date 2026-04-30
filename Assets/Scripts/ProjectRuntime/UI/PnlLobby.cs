@@ -34,6 +34,9 @@ namespace ProjectRuntime.UI
         [field: SerializeField]
         private TextMeshProUGUI ReadyTMP { get; set; }
 
+        [field: SerializeField]
+        private TextMeshProUGUI WaitForHostTMP { get; set; }
+
         [field: SerializeField, Header("Prefabs")]
         private UIPlayerRow UIPlayerLobbyPrefab { get; set; }
 
@@ -52,6 +55,10 @@ namespace ProjectRuntime.UI
             this.LeaveButton.onClick.AddListener(this.OnLeaveButtonClick);
             this.ReadyButton.onClick.AddListener(this.OnReadyButtonClick);
             this.StartButton.onClick.AddListener(this.OnStartButtonClick);
+
+            var isHost = GameNetworkManager.singleton.mode == Mirror.NetworkManagerMode.Host;
+            this.StartButton.gameObject.SetActive(isHost);
+            this.WaitForHostTMP.gameObject.SetActive(!isHost);
         }
 
         private void OnDestroy()
