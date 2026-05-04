@@ -185,11 +185,21 @@ namespace ProjectRuntime.UI
         #region Ready logic
         public void ReadyPlayer()
         {
+            if (this.LocalPlayerController == null)
+            {
+                return;
+            }
+
             this.LocalPlayerController.ChangeReady();
         }
 
         public void UpdateReadyButtonText()
         {
+            if (this.LocalPlayerController == null)
+            {
+                return;
+            }
+
             this.ReadyTMP.text = this.LocalPlayerController.IsReady
                 ? "Unready"
                 : "Ready";
@@ -197,10 +207,16 @@ namespace ProjectRuntime.UI
 
         public void CheckIfAllReady()
         {
+            if (this.LocalPlayerController == null || GameNetworkManager.Instance.LobbyPlayers.Count == 0)
+            {
+                this.StartButton.interactable = false;
+                return;
+            }
+
             var allReady = true;
             foreach (var player in GameNetworkManager.Instance.LobbyPlayers)
             {
-                if (!player.IsReady)
+                if (player == null || !player.IsReady)
                 {
                     allReady = false;
                     break;
@@ -231,6 +247,12 @@ namespace ProjectRuntime.UI
         {
             SteamMatchmaking.LeaveLobby(SteamUser.GetSteamID());
 
+            if (this.LocalPlayerController == null)
+            {
+                GameNetworkManager.Instance.StopClient();
+                return;
+            }
+
             if (this.LocalPlayerController.ConnectionID == 0)
             {
                 GameNetworkManager.Instance.StopHost();
@@ -243,12 +265,20 @@ namespace ProjectRuntime.UI
 
         private void OnReadyButtonClick()
         {
+            if (this.LocalPlayerController == null)
+            {
+                return;
+            }
+
             this.LocalPlayerController.ChangeReady();
         }
 
         private void OnStartButtonClick()
         {
-            GameNetworkManager.Instance.StartGame("ScGame");
+            if (this.LocalPlayerController != null)
+            {
+                this.LocalPlayerController.CanStartGame("ScGame");
+            }
         }
         #endregion
     }

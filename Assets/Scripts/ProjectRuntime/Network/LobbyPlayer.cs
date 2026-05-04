@@ -16,15 +16,11 @@ namespace ProjectRuntime.Network
         public override void OnStartLocalPlayer()
         {
             this.CmdSetPlayerName(SteamFriends.GetPersonaName());
-            if (PnlLobby.Instance != null)
-            {
-                PnlLobby.Instance.LocalPlayerController = this;
-            }
+            this.TryRefreshLobbyUi(assignLocalController: true);
         }
 
         public override void OnStartAuthority()
         {
-            this.CmdSetPlayerName(SteamFriends.GetPersonaName().ToString());
             this.TryRefreshLobbyUi(assignLocalController: true);
         }
 
@@ -46,16 +42,11 @@ namespace ProjectRuntime.Network
         [Command]
         private void CmdSetPlayerName(string playername)
         {
-            this.PlayerNameUpdate(this.PlayerName, playername);
+            this.PlayerName = playername;
         }
 
         private void PlayerNameUpdate(string oldValue, string newValue)
         {
-            if (this.isServer)
-            {
-                this.PlayerName = newValue;
-            }
-
             if (this.isClient)
             {
                 this.TryRefreshLobbyUi();
@@ -73,16 +64,12 @@ namespace ProjectRuntime.Network
         [Command]
         private void CmdSetPlayerReady()
         {
-            PlayerReadyUpdate(this.IsReady, !this.IsReady);
+            this.IsReady = !this.IsReady;
         }
 
         private void PlayerReadyUpdate(bool _, bool newValue)
         {
-            if (isServer)
-            {
-                this.IsReady = newValue;
-            }
-            if (isClient)
+            if (this.isClient)
             {
                 this.TryRefreshLobbyUi();
             }
@@ -90,14 +77,19 @@ namespace ProjectRuntime.Network
 
         private void TryRefreshLobbyUi(bool assignLocalController = false)
         {
-            if (PnlLobby.Instance == null)
+            if (PnlLobby.Instance == null || GameNetworkManager.Instance == null)
             {
                 return;
             }
 
-            if (assignLocalController && this.isOwned)
+            if ((assignLocalController || PnlLobby.Instance.LocalPlayerController == null) && this.isOwned)
             {
                 PnlLobby.Instance.LocalPlayerController = this;
+            }
+
+            if (!GameNetworkManager.Instance.LobbyPlayers.Contains(this))
+            {
+                return;
             }
 
             PnlLobby.Instance.UpdateLobbyName();
@@ -106,7 +98,7 @@ namespace ProjectRuntime.Network
 
         public void CanStartGame(string sceneName)
         {
-            if (this.authority)
+            if (this.isOwned)
             {
                 this.CmdCanStartGame(sceneName);
             }
@@ -115,6 +107,11 @@ namespace ProjectRuntime.Network
         [Command]
         private void CmdCanStartGame(string sceneName)
         {
+            if (this.PlayerIdNumber != 0)
+            {
+                return;
+            }
+
             GameNetworkManager.Instance.StartGame(sceneName);
         }
     }
