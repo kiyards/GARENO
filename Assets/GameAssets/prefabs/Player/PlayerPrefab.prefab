@@ -155,7 +155,7 @@ MonoBehaviour:
   <GroundCastDistance>k__BackingField: 0.1
   <PlayerMovementSpeed>k__BackingField: 3
   <PlayerJumpForce>k__BackingField: 5
-  <PlayerSensitivity>k__BackingField: 250
+  <PlayerSensitivity>k__BackingField: 2.5
 --- !u!114 &6495563617837147907
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -220,7 +220,7 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 1
 --- !u!114 &4695178894727554439
@@ -278,9 +278,9 @@ MonoBehaviour:
   syncScale: 0
   onlySyncOnChange: 1
   compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
+  interpolatePosition: 0
+  interpolateRotation: 0
+  interpolateScale: 0
   coordinateSpace: 0
   timelineOffset: 1
   showGizmos: 0
@@ -288,8 +288,8 @@ MonoBehaviour:
   overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
   bufferResetMultiplier: 3
   useFixedUpdate: 0
-  positionSensitivity: 0.01
-  rotationSensitivity: 0.01
+  positionSensitivity: 0
+  rotationSensitivity: 0
   scaleSensitivity: 0.01
 --- !u!1 &629880496932638394
 GameObject:
@@ -415,7 +415,7 @@ MonoBehaviour:
     BindingMode: 4
     PositionDamping: {x: 0, y: 0, z: 0}
     AngularDampingMode: 0
-    RotationDamping: {x: 1, y: 1, z: 1}
+    RotationDamping: {x: 0, y: 0, z: 0}
     QuaternionDamping: 1
   FollowOffset: {x: 0, y: 0.1, z: 0}
 --- !u!114 &5620791204912389779
@@ -479,6 +479,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   <Player>k__BackingField: {fileID: 2627208331890381537}
+  <MouseLookDegreesPerSensitivityUnit>k__BackingField: 0.04
   MoveVector: {x: 0, y: 0, z: 0}
   AimVector: {x: 0, y: 0}
   JumpPress: 0
@@ -539,52 +540,20 @@ MonoBehaviour:
     m_Flags: 0
   AimInput:
     m_Name: Aim Input
-    m_Type: 0
-    m_ExpectedControlType: 
+    m_Type: 2
+    m_ExpectedControlType: Vector2
     m_Id: c43fc0d2-b168-4aa0-a5c9-9c7ed4cb9a8e
     m_Processors: 
     m_Interactions: 
     m_SingletonActionBindings:
-    - m_Name: 2D Vector
+    - m_Name: 
       m_Id: 277e4bbf-4f7a-493f-b354-fca277220067
-      m_Path: 2DVector
+      m_Path: <Pointer>/delta
       m_Interactions: 
       m_Processors: 
       m_Groups: 
       m_Action: Aim Input
-      m_Flags: 4
-    - m_Name: up
-      m_Id: 2f56ddd0-a170-44f2-9d76-1b4afc1c9ffb
-      m_Path: <Mouse>/delta/up
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Aim Input
-      m_Flags: 8
-    - m_Name: down
-      m_Id: 85664aa4-b477-4c21-b17b-6c0d4318d9b5
-      m_Path: <Mouse>/delta/down
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Aim Input
-      m_Flags: 8
-    - m_Name: left
-      m_Id: 63918cac-c955-40f1-95c6-7df291df2c5c
-      m_Path: <Mouse>/delta/left
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Aim Input
-      m_Flags: 8
-    - m_Name: right
-      m_Id: f505ec56-4048-4f6c-a34d-8c37b49a65f1
-      m_Path: <Mouse>/delta/right
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Aim Input
-      m_Flags: 8
+      m_Flags: 0
     m_Flags: 0
   JumpInput:
     m_Name: Jump Input
@@ -681,6 +650,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e97a0d4b4b2af704d95a6770d4a5d070, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   <AimCamera>k__BackingField: {fileID: 3755640324832242681}
   <PlayerInput>k__BackingField: {fileID: 3611815320372169542}
   <PitchMin>k__BackingField: -90

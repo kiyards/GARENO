@@ -4,9 +4,9 @@ using UnityEngine.InputSystem;
 
 namespace ProjectRuntime.Actor
 {
-    public class Player : NetworkBehaviour
+    public class GameplayPlayer : NetworkBehaviour
     {
-        public static Player Instance { get; private set; }
+        public static GameplayPlayer Instance { get; private set; }
 
         [field: SerializeField, Header("Scene References")]
         private Rigidbody PlayerRigidbody { get; set; }
@@ -48,12 +48,6 @@ namespace ProjectRuntime.Actor
         private ulong _playerSteamId;
         private int _playerIndex;
         private bool _isCursorLocked = true;
-
-        private void Awake()
-        {
-            this.PlayerRigidbody.interpolation = RigidbodyInterpolation.Interpolate;
-            this.PlayerRigidbody.constraints |= RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
-        }
 
         public override void OnStartClient()
         {

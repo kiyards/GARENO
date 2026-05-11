@@ -1,9 +1,10 @@
+using Mirror;
 using Unity.Cinemachine;
 using UnityEngine;
 
 namespace ProjectRuntime.Actor
 {
-    public class CameraController : MonoBehaviour
+    public class CameraController : NetworkBehaviour
     {
         [field: SerializeField, Header("Scene References")]
         private CinemachineCamera AimCamera { get; set; }
@@ -23,9 +24,9 @@ namespace ProjectRuntime.Actor
         public float Yaw { get; private set; }
         public float Pitch { get; private set; }
 
-        private void Update()
+        private void LateUpdate()
         {
-            if (!this.enabled)
+            if (!this.isLocalPlayer)
             {
                 return;
             }
@@ -35,13 +36,11 @@ namespace ProjectRuntime.Actor
 
         public void HandleCameraAim(Vector2 aimVec)
         {
-            this.Yaw += aimVec.x * Time.deltaTime;
-            this.Pitch -= aimVec.y * Time.deltaTime;
+            this.Yaw += aimVec.x;
+            this.Pitch -= aimVec.y;
             this.Pitch = Mathf.Clamp(this.Pitch, this.PitchMin, this.PitchMax);
 
-            var cameraRotation = Quaternion.Euler(this.Pitch, this.Yaw, 0f);
-
-            this.transform.SetPositionAndRotation(this.transform.position, cameraRotation);
+            this.transform.rotation = Quaternion.Euler(this.Pitch, this.Yaw, 0f);
         }
 
         public void SetLocalCameraActive(bool isActive)

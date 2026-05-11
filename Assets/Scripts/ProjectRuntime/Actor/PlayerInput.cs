@@ -7,7 +7,10 @@ namespace ProjectRuntime.Actor
     public class PlayerInput : NetworkBehaviour
     {
         [field: SerializeField]
-        private Player Player { get; set; }
+        private GameplayPlayer Player { get; set; }
+
+        [field: SerializeField]
+        private float MouseLookDegreesPerSensitivityUnit { get; set; } = 0.04f;
 
         // Exposed Vectors
         public Vector3 MoveVector;
@@ -53,7 +56,7 @@ namespace ProjectRuntime.Actor
 
             var moveInput = this.MoveInput.ReadValue<Vector2>();
             this.MoveVector = new Vector3(moveInput.x, 0f, moveInput.y);
-            this.AimVector = this.AimInput.ReadValue<Vector2>() * this.Player.PlayerSensitivity;
+            this.AimVector = this.AimInput.ReadValue<Vector2>() * (this.Player.PlayerSensitivity * this.MouseLookDegreesPerSensitivityUnit);
 
             this.JumpPress = this.JumpInput.WasPressedThisFrame();
 

@@ -17,8 +17,8 @@ namespace ProjectRuntime.Network
         private LobbyPlayer LobbyPlayerPrefab { get; set; }
 
         public List<LobbyPlayer> LobbyPlayers { get; } = new List<LobbyPlayer>();
-        public Dictionary<NetworkConnectionToClient, Player> CurrentConnectedPlayers = new();
-        public Dictionary<NetworkConnectionToClient, Player> LifetimeConnectedPlayers = new();
+        public Dictionary<NetworkConnectionToClient, GameplayPlayer> CurrentConnectedPlayers = new();
+        public Dictionary<NetworkConnectionToClient, GameplayPlayer> LifetimeConnectedPlayers = new();
         public CSteamID HostedLobbyId;
 
         public override void Awake()
@@ -68,7 +68,7 @@ namespace ProjectRuntime.Network
 
         private void SpawnGamePlayer(NetworkConnectionToClient conn)
         {
-            if (conn.identity != null && conn.identity.TryGetComponent<Player>(out _))
+            if (conn.identity != null && conn.identity.TryGetComponent<GameplayPlayer>(out _))
             {
                 return;
             }
@@ -82,7 +82,7 @@ namespace ProjectRuntime.Network
 
             player.name = $"{this.playerPrefab.name} [connId={conn.connectionId}]";
 
-            if (startPos == null && player.TryGetComponent<Player>(out var spawnedPlayer))
+            if (startPos == null && player.TryGetComponent<GameplayPlayer>(out var spawnedPlayer))
             {
                 // Keep the player capsule above the floor when the scene has no explicit start point.
                 var fallbackHeight = 1.1f;
@@ -97,7 +97,7 @@ namespace ProjectRuntime.Network
 
             NetworkServer.AddPlayerForConnection(conn, player);
 
-            var pm = player.GetComponent<Player>();
+            var pm = player.GetComponent<GameplayPlayer>();
 
             if (SteamAuth != null && SteamAuth.TryGetIdentity(conn, out PlayerIdentityData identity))
             {
@@ -179,9 +179,9 @@ namespace ProjectRuntime.Network
 
         public void QuitGame()
         {
-            if (Player.Instance != null)
+            if (GameplayPlayer.Instance != null)
             {
-                Destroy(Player.Instance.gameObject);
+                Destroy(GameplayPlayer.Instance.gameObject);
             }
 
             this.StopClient();
