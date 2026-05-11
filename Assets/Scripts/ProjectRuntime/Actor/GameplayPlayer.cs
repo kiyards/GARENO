@@ -89,7 +89,7 @@ namespace ProjectRuntime.Actor
 
         private void Update()
         {
-            if (!this.isOwned)
+            if (!this.isLocalPlayer)
             {
                 return;
             }
@@ -104,7 +104,7 @@ namespace ProjectRuntime.Actor
 
         private void FixedUpdate()
         {
-            if (!this.isOwned)
+            if (!this.isLocalPlayer)
             {
                 return;
             }
