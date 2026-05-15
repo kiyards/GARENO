@@ -6,14 +6,19 @@
   <Project Path="Mirror.Editor.csproj" />
   <Project Path="Mirror.Examples.csproj" />
   <Project Path="kcp2k.csproj" />
+  <Project Path="Assembly-CSharp.csproj" />
   <Project Path="Mirror.csproj" />
   <Project Path="SimpleWebTransport.csproj" />
   <Project Path="Mirror.Authenticators.csproj" />
   <Project Path="Mirror.Transports.csproj" />
+  <Project Path="FMODUnityResonanceEditor.csproj" />
   <Project Path="EncryptionTransportEditor.csproj" />
+  <Project Path="FMODUnityEditor.csproj" />
+  <Project Path="FMODUnity.csproj" />
   <Project Path="com.rlabrecque.steamworks.net.editor.csproj" />
+  <Project Path="FMODUnityHaptics.csproj" />
   <Project Path="Telepathy.csproj" />
-  <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="FMODUnityResonance.csproj" />
   <Project Path="Mirror.CompilerSymbols.csproj" />
   <Project Path="Assembly-CSharp-Editor.csproj" />
 </Solution>
