@@ -1,8 +1,8 @@
-using UnityEngine;
+using Core;
 
 namespace ProjectRuntime.Managers
 {
-    public class BattleManager : MonoBehaviour
+    public class BattleManager : NetworkSingleton<BattleManager>
     {
         
     }

@@ -538,7 +538,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.00033479484}
+  m_AnchoredPosition: {x: 0, y: 0.00030769626}
   m_SizeDelta: {x: 0, y: 600}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &285431315
@@ -2206,7 +2206,7 @@ MonoBehaviour:
   offlineSceneLoadDelay: 0
   transport: {fileID: 1272274657}
   networkAddress: localhost
-  maxConnections: 12
+  maxConnections: 4
   disconnectInactiveConnections: 0
   disconnectInactiveTimeout: 60
   authenticator: {fileID: 1272274658}
@@ -2546,7 +2546,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1426937565}
   m_Direction: 2
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.99993414
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
