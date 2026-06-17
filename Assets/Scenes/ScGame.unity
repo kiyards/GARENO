@@ -164,6 +164,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2898880e6ca4e343b73d1f5c5b40875, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
 --- !u!114 &68137830
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1111,6 +1114,7 @@ GameObject:
   - component: {fileID: 1272274654}
   - component: {fileID: 1272274656}
   - component: {fileID: 1272274655}
+  - component: {fileID: 1272274657}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1167,7 +1171,7 @@ MonoBehaviour:
   offlineScene: Assets/Scenes/ScMain.unity
   onlineScene: 
   offlineSceneLoadDelay: 0
-  transport: {fileID: 0}
+  transport: {fileID: 1272274657}
   networkAddress: localhost
   maxConnections: 100
   disconnectInactiveConnections: 0
@@ -1195,6 +1199,30 @@ MonoBehaviour:
   <LobbyPlayerPrefab>k__BackingField: {fileID: 0}
   HostedLobbyId:
     m_SteamID: 0
+--- !u!114 &1272274657
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1272274653}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7424c1070fad4ba2a7a96b02fbeb4bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  port: 7777
+  NoDelay: 1
+  SendTimeout: 5000
+  ReceiveTimeout: 30000
+  serverMaxMessageSize: 16384
+  serverMaxReceivesPerTick: 10000
+  serverSendQueueLimitPerConnection: 10000
+  serverReceiveQueueLimitPerConnection: 10000
+  clientMaxMessageSize: 16384
+  clientMaxReceivesPerTick: 1000
+  clientSendQueueLimit: 10000
+  clientReceiveQueueLimit: 10000
 --- !u!1 &1409006504
 GameObject:
   m_ObjectHideFlags: 0
