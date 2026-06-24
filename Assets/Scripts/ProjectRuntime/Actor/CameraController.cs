@@ -1,4 +1,8 @@
 using Mirror;
+using ProjectRuntime.Actor;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using Unity.Cinemachine;
 using UnityEngine;
 
@@ -6,48 +10,109 @@ namespace ProjectRuntime.Actor
 {
     public class CameraController : NetworkBehaviour
     {
-        [field: SerializeField, Header("Scene References")]
-        private CinemachineCamera AimCamera { get; set; }
+        public CinemachineThirdPersonAim thirdPersonAim;
+        public CinemachineCamera thirdPersonCam;
+        public CinemachineCamera firstPersonCam;
 
-        [field: SerializeField]
-        private PlayerInput PlayerInput { get; set; }
+        public LayerMask aimOcclusionMask;
+        public LayerMask aimTargetMask;
 
-        [field: SerializeField, Header("Player Settings")]
-        private float PitchMin { get; set; } = -80f;
+        public GameplayPlayer player;
+        public PlayerInput input;
+        public float sens;
 
-        [field: SerializeField]
-        private float PitchMax { get; set; } = 80f;
+        [HideInInspector] public Transform spectateTarget;
 
-        public float PitchMinLimit => this.PitchMin;
-        public float PitchMaxLimit => this.PitchMax;
+        [SyncVar] float _pitch;
+        [SyncVar] float _yaw;
+        [SyncVar] CharacterMode characterMode;
 
-        public float Yaw { get; private set; }
-        public float Pitch { get; private set; }
+        [SerializeField] float pitchMin = -80f;
+        [SerializeField] float pitchMax = 80f;
+        [SerializeField] float aimFirepointOffset = 0.1f;
 
-        private void LateUpdate()
+        public Vector3 GetAimOrigin() => firstPersonCam.transform.position + firstPersonCam.transform.forward * aimFirepointOffset;
+
+        public override void OnStartClient()
         {
-            if (!this.isLocalPlayer)
+            base.OnStartClient();
+            thirdPersonCam.Priority.Enabled = isLocalPlayer;
+            firstPersonCam.Priority.Enabled = isLocalPlayer;
+        }
+        private void Update()
+        {
+            if (!isLocalPlayer) return;
+            ControlCam(input.aimVec);
+        }
+        public void ControlCam(Vector2 aimVec)
+        {
+            _yaw += aimVec.x * Time.deltaTime;
+            _pitch -= aimVec.y * Time.deltaTime;
+            _pitch = Mathf.Clamp(_pitch, pitchMin, pitchMax);
+
+            var pos = spectateTarget != null ? spectateTarget.position : player.transform.position;
+            var rot = Quaternion.Euler(_pitch, _yaw, 0f);
+
+            transform.SetPositionAndRotation(pos, rot);
+        }
+        public void SetSpectateTarget(Transform target) => spectateTarget = target;
+        public void ClearSpectateTarget() => spectateTarget = null;
+        public void SetCam(CharacterMode mode)
+        {
+            if (!isLocalPlayer) return;
+            switch (mode)
             {
-                return;
+                case CharacterMode.SHOULDER:
+                case CharacterMode.SPECTATE:
+                    thirdPersonCam.Priority = 1;
+                    firstPersonCam.Priority = 0;
+                    break;
+                case CharacterMode.AIM:
+                    thirdPersonCam.Priority = 0;
+                    firstPersonCam.Priority = 1;
+                    break;
             }
-
-            this.HandleCameraAim(this.PlayerInput.AimVector);
+            characterMode = mode;
         }
-
-        public void HandleCameraAim(Vector2 aimVec)
+        public List<RaycastData> GetRaycastData(float maxRange)
         {
-            this.Yaw += aimVec.x;
-            this.Pitch -= aimVec.y;
-            this.Pitch = Mathf.Clamp(this.Pitch, this.PitchMin, this.PitchMax);
+            bool blocked = GetAimData(maxRange, out Vector3 source, out Vector3 dir, out RaycastHit occlusionHit);
 
-            this.transform.rotation = Quaternion.Euler(this.Pitch, this.Yaw, 0f);
+            var hits = Physics.RaycastAll(source, dir, maxRange, aimTargetMask);
+            Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+            var results = new List<RaycastData>();
+            foreach (var hit in hits)
+            {
+                if (hit.collider == player.col) continue;
+                if (blocked && hit.distance > occlusionHit.distance) break;
+                results.Add(new RaycastData
+                {
+                    origin = source,
+                    direction = dir,
+                    hitPoint = hit.point,
+                    hit = hit,
+                    layerMask = aimTargetMask
+                });
+            }
+            return results;
         }
-
-        public void SetLocalCameraActive(bool isActive)
+        public bool GetAimData(float maxRange, out Vector3 origin, out Vector3 dir, out RaycastHit occlusionHit) // returns whether occluded
         {
-            this.enabled = isActive;
-            this.AimCamera.enabled = isActive;
-            this.AimCamera.gameObject.SetActive(isActive);
+            origin = firstPersonCam.transform.position;
+            dir = characterMode == CharacterMode.AIM
+                ? firstPersonCam.transform.forward
+                : (thirdPersonAim.AimTarget - origin).normalized;
+            return Physics.Raycast(origin, dir, out occlusionHit, maxRange, aimOcclusionMask);
         }
+    }
+    public struct RaycastData
+    {
+        public Vector3 origin;
+        public Vector3 direction;
+        public Vector3 hitPoint;
+        public RaycastHit hit; // Not serializable, this should only be used on clients
+        public LayerMask layerMask;
+        public uint sourceNetId;
     }
 }
