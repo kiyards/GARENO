@@ -28,6 +28,9 @@ namespace ProjectRuntime.Network
 
         public CSteamID HostedLobbyId;
 
+        private int _expectedGamePlayerCount;
+        private bool _rolesAssignedForCurrentGame;
+
         public override void Awake()
         {
             if (Instance != null)
@@ -90,6 +93,7 @@ namespace ProjectRuntime.Network
             base.OnStartServer();
             ConnectedPlayersCurrent.Clear();
             NetId2SM.Clear();
+            ResetRoleAssignment();
             SteamAuth?.ClearAll();
         }
 
@@ -98,6 +102,7 @@ namespace ProjectRuntime.Network
             base.OnStopServer();
             ConnectedPlayersCurrent.Clear();
             NetId2SM.Clear();
+            ResetRoleAssignment();
             SteamAuth?.ClearAll();
         }
 
@@ -134,14 +139,30 @@ namespace ProjectRuntime.Network
                 this.ConnectedPlayersCurrent.Clear();
                 this.SetLobbyJoinable(false);
             }
+            else
+            {
+                ResetRoleAssignment();
+            }
         }
 
         public override void OnServerDisconnect(NetworkConnectionToClient conn)
         {
             if (conn.identity != null && conn.identity.TryGetComponent(out PlayerManager pm))
-                BattleManager.Instance.ServerRemovePlayer(pm);
+            {
+                if (BattleManager.Instance != null)
+                    BattleManager.Instance.ServerRemovePlayer(pm);
+            }
 
             ConnectedPlayersCurrent.Remove(conn);
+
+            if (!this._rolesAssignedForCurrentGame && this._expectedGamePlayerCount > 0)
+            {
+                this._expectedGamePlayerCount = Mathf.Max(
+                    this.ConnectedPlayersCurrent.Count,
+                    this._expectedGamePlayerCount - 1);
+                this.TryAssignRolesForCurrentGame();
+            }
+
             SteamAuth?.RemoveConnection(conn);
 
             base.OnServerDisconnect(conn);
@@ -155,7 +176,90 @@ namespace ProjectRuntime.Network
 
         public void StartGame(string sceneName)
         {
+            if (sceneName == "ScGame")
+            {
+                this._expectedGamePlayerCount = Mathf.Max(1, this.GetConnectedPartyCount());
+                this._rolesAssignedForCurrentGame = false;
+            }
+            else
+            {
+                ResetRoleAssignment();
+            }
+
             this.ServerChangeScene(sceneName);
+        }
+
+        private int GetConnectedPartyCount()
+        {
+            return NetworkServer.connections.Values.Count(conn =>
+                conn != null &&
+                conn.identity != null &&
+                conn.identity.TryGetComponent<LobbyPlayer>(out _));
+        }
+
+        private void ResetRoleAssignment()
+        {
+            this._expectedGamePlayerCount = 0;
+            this._rolesAssignedForCurrentGame = false;
+        }
+
+        [Server]
+        private void TryAssignRolesForCurrentGame()
+        {
+            if (SceneManager.GetActiveScene().name != "ScGame" || this._rolesAssignedForCurrentGame)
+            {
+                return;
+            }
+
+            var players = this.ConnectedPlayersCurrent.Values
+                .Where(playerManager => playerManager != null)
+                .Distinct()
+                .ToList();
+
+            if (players.Count == 0)
+            {
+                return;
+            }
+
+            var requiredPlayerCount = this.GetRequiredPlayerCountForRoleAssignment(players.Count);
+            if (players.Count < requiredPlayerCount)
+            {
+                return;
+            }
+
+            this.AssignRolesForCurrentGame(players);
+        }
+
+        private int GetRequiredPlayerCountForRoleAssignment(int currentPlayerCount)
+        {
+            if (this._expectedGamePlayerCount > 0)
+            {
+                return this._expectedGamePlayerCount;
+            }
+
+            if (BattleManager.Instance != null)
+            {
+                return Mathf.Max(1, BattleManager.Instance.playersToStart);
+            }
+
+            return currentPlayerCount;
+        }
+
+        [Server]
+        private void AssignRolesForCurrentGame(List<PlayerManager> players)
+        {
+            foreach (var player in players)
+            {
+                player.ServerSetRole(PlayerRole.Survivor);
+            }
+
+            var mastermind = players[UnityEngine.Random.Range(0, players.Count)];
+            mastermind.ServerSetRole(PlayerRole.Mastermind);
+
+            this._rolesAssignedForCurrentGame = true;
+
+            Debug.Log(
+                $"Assigned {mastermind.playerName} (index {mastermind.playerIndex}, netId {mastermind.netId}) as Mastermind.");
         }
 
         void SpawnGamePlayer(NetworkConnectionToClient conn)
@@ -182,6 +286,10 @@ namespace ProjectRuntime.Network
                 pm.playerSteamId = 0;
             }
 
+            pm.ServerSetRole(this._rolesAssignedForCurrentGame
+                ? PlayerRole.Survivor
+                : PlayerRole.Unassigned);
+
             NetworkServer.AddPlayerForConnection(conn, player); // triggers OnStartLocalPlayer
 
             if (!ConnectedPlayersCurrent.ContainsKey(conn))
@@ -191,6 +299,8 @@ namespace ProjectRuntime.Network
 
             if (BattleManager.Instance != null)
                 BattleManager.Instance.ServerAddPlayer(pm);
+
+            this.TryAssignRolesForCurrentGame();
 
         }
 

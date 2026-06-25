@@ -1,5 +1,6 @@
 using Mirror;
 using ProjectRuntime.Actor;
+using ProjectRuntime.Managers;
 using ProjectRuntime.Network.Steam;
 using Steamworks;
 using System;
@@ -10,6 +11,13 @@ using UnityEngine;
 
 namespace ProjectRuntime.Network
 {
+    public enum PlayerRole
+    {
+        Unassigned,
+        Survivor,
+        Mastermind,
+    }
+
     /// <summary>
     /// This is a server to client class, server authoritative variables should be stored here instead of on player
     /// </summary>
@@ -24,6 +32,7 @@ namespace ProjectRuntime.Network
         [SyncVar(hook = nameof(OnPlayerNameSynced))] public string playerName;
         [SyncVar] public ulong playerSteamId;
         [SyncVar] public int playerIndex;
+        [SyncVar(hook = nameof(OnPlayerRoleSynced))] public PlayerRole playerRole = PlayerRole.Unassigned;
         public Action<string> OnPlayerNameChanged;
 
         [Header("Variables")]
@@ -37,6 +46,7 @@ namespace ProjectRuntime.Network
                 CmdSendSteamIdentity(SteamUser.GetSteamID().m_SteamID, SteamFriends.GetPersonaName());
 
             StartupSpawned(this);
+            PlayerHudManager.EnsureInstance().SetLocalPlayer(this);
         }
 
         public override void OnStartClient()
@@ -68,6 +78,17 @@ namespace ProjectRuntime.Network
                 auth.UpdateIdentity(steamId, name);
         }
 
+        [Server]
+        public void ServerSetRole(PlayerRole role)
+        {
+            playerRole = role;
+
+            if (isLocalPlayer)
+            {
+                PlayerHudManager.EnsureInstance().SetRole(role);
+            }
+        }
+
         void OnPlayerNameSynced(string oldValue, string newValue)
         {
             playerName = newValue;
@@ -75,6 +96,16 @@ namespace ProjectRuntime.Network
                 playerNameText.text = playerName;
 
             OnPlayerNameChanged?.Invoke(newValue);
+        }
+
+        void OnPlayerRoleSynced(PlayerRole oldValue, PlayerRole newValue)
+        {
+            playerRole = newValue;
+
+            if (isLocalPlayer)
+            {
+                PlayerHudManager.EnsureInstance().SetRole(newValue);
+            }
         }
 
         void OnCharacterDataSynced(CharacterData _, CharacterData newData)
