@@ -35,8 +35,12 @@ namespace ProjectRuntime.Managers
         [field: SerializeField]
         private TextMeshProUGUI PlayerAmmoTMP { get; set; }
 
+        [field: SerializeField]
+        private TextMeshProUGUI ObjectiveTMP { get; set; }
+
         private Health BoundHealth { get; set; }
         private PistolWeapon BoundWeapon { get; set; }
+        private BattleManager BoundBattleManager { get; set; }
 
         private PlayerManager LocalPlayer { get; set; }
         private PlayerRole CurrentRole { get; set; } = PlayerRole.Unassigned;
@@ -86,9 +90,18 @@ namespace ProjectRuntime.Managers
         private void OnDestroy()
         {
             this.UnbindCombat();
+            this.UnbindBattleManager();
             if (Instance == this)
             {
                 Instance = null;
+            }
+        }
+
+        private void Update()
+        {
+            if (this.BoundBattleManager == null && BattleManager.Instance != null)
+            {
+                this.BindBattleManager(BattleManager.Instance);
             }
         }
 
@@ -173,6 +186,8 @@ namespace ProjectRuntime.Managers
             }
 
             this.ApplyHudVisibility();
+            this.BindBattleManager(BattleManager.Instance);
+            this.RefreshObjectiveText();
         }
 
         public void TogglePlayerUI(bool toggle)
@@ -216,6 +231,11 @@ namespace ProjectRuntime.Managers
                 this.PlayerAmmoTMP = this.CreateCornerText(
                     this.SurvivorOnlyUIParent.transform, "PlayerAmmo",
                     new Vector2(1f, 0f), new Vector2(-32f, 32f), TextAlignmentOptions.BottomRight, "6/∞");
+            }
+
+            if (this.ObjectiveTMP == null)
+            {
+                this.ObjectiveTMP = this.CreateObjectiveText(this.SurvivorOnlyUIParent.transform);
             }
         }
 
@@ -314,6 +334,90 @@ namespace ProjectRuntime.Managers
             text.raycastTarget = false;
             text.text = initialText;
             return text;
+        }
+
+        private TextMeshProUGUI CreateObjectiveText(Transform parent)
+        {
+            var textObject = new GameObject("ObjectiveText", typeof(RectTransform));
+            var rectTransform = textObject.GetComponent<RectTransform>();
+            rectTransform.SetParent(parent, false);
+            rectTransform.anchorMin = new Vector2(0.5f, 1f);
+            rectTransform.anchorMax = new Vector2(0.5f, 1f);
+            rectTransform.pivot = new Vector2(0.5f, 1f);
+            rectTransform.anchoredPosition = new Vector2(0f, -128f);
+            rectTransform.sizeDelta = new Vector2(640f, 72f);
+
+            var text = textObject.AddComponent<TextMeshProUGUI>();
+            text.alignment = TextAlignmentOptions.Center;
+            text.color = Color.white;
+            text.fontSize = 32f;
+            text.raycastTarget = false;
+            text.text = "Crystals: 0/3";
+            return text;
+        }
+
+        private void BindBattleManager(BattleManager battleManager)
+        {
+            if (this.BoundBattleManager == battleManager)
+            {
+                return;
+            }
+
+            this.UnbindBattleManager();
+
+            if (battleManager == null)
+            {
+                this.RefreshObjectiveText();
+                return;
+            }
+
+            this.BoundBattleManager = battleManager;
+            this.BoundBattleManager.OnCrystalObjectiveChanged += this.OnCrystalObjectiveChanged;
+            this.RefreshObjectiveText();
+        }
+
+        private void UnbindBattleManager()
+        {
+            if (this.BoundBattleManager == null)
+            {
+                return;
+            }
+
+            this.BoundBattleManager.OnCrystalObjectiveChanged -= this.OnCrystalObjectiveChanged;
+            this.BoundBattleManager = null;
+        }
+
+        private void OnCrystalObjectiveChanged(int destroyed, int required, RoundPhase phase)
+        {
+            this.RefreshObjectiveText();
+        }
+
+        private void RefreshObjectiveText()
+        {
+            if (this.ObjectiveTMP == null)
+            {
+                return;
+            }
+
+            if (this.CurrentRole != PlayerRole.Survivor)
+            {
+                this.ObjectiveTMP.text = string.Empty;
+                return;
+            }
+
+            var battleManager = this.BoundBattleManager != null
+                ? this.BoundBattleManager
+                : BattleManager.Instance;
+
+            if (battleManager == null)
+            {
+                this.ObjectiveTMP.text = "Crystals: 0/3";
+                return;
+            }
+
+            this.ObjectiveTMP.text = battleManager.CurrentRoundPhase == RoundPhase.CrystalsComplete
+                ? "Extract Yourselves"
+                : $"Crystals: {battleManager.DestroyedCrystals}/{battleManager.RequiredCrystals}";
         }
 
         private static string GetRoleDisplayName(PlayerRole role)

@@ -57,7 +57,7 @@ namespace ProjectRuntime.Combat
             if (!isLocalPlayer) return;
             if (player == null || player.IsInactive || input == null) return;
 
-            if (input.ClickPress)
+            if (input.ClickHold)
                 TryFire();
             else if (input.ReloadPress)
                 TryReload();
