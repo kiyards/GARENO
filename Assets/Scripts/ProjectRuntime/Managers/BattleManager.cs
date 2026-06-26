@@ -24,7 +24,7 @@ namespace ProjectRuntime.Managers
         private int requiredCrystals = 3;
 
         [SerializeField, SyncVar(hook = nameof(OnObjectiveStateSynced))]
-        private int totalCrystals = 5;
+        private int totalCrystals = 4;
 
         [SyncVar(hook = nameof(OnObjectiveStateSynced))]
         private int destroyedCrystals;

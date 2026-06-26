@@ -38,8 +38,12 @@ namespace ProjectRuntime.Managers
         [field: SerializeField]
         private TextMeshProUGUI ObjectiveTMP { get; set; }
 
+        [field: SerializeField, Header("Dungeon Master")]
+        private Image ManaBarFill { get; set; }
+
         private Health BoundHealth { get; set; }
         private PistolWeapon BoundWeapon { get; set; }
+        private DungeonMasterCardManager BoundCardManager { get; set; }
         private BattleManager BoundBattleManager { get; set; }
 
         private PlayerManager LocalPlayer { get; set; }
@@ -135,6 +139,13 @@ namespace ProjectRuntime.Managers
                 this.BoundWeapon.OnAmmoChangedEvent += this.OnAmmoChanged;
                 this.OnAmmoChanged(this.BoundWeapon.CurrentAmmo, this.BoundWeapon.MagazineSize);
             }
+
+            this.BoundCardManager = gameplayPlayer.CardManager;
+            if (this.BoundCardManager != null)
+            {
+                this.BoundCardManager.OnManaChangedEvent += this.OnManaChanged;
+                this.OnManaChanged(this.BoundCardManager.Mana, this.BoundCardManager.MaxMana);
+            }
         }
 
         private void UnbindCombat()
@@ -149,6 +160,12 @@ namespace ProjectRuntime.Managers
             {
                 this.BoundWeapon.OnAmmoChangedEvent -= this.OnAmmoChanged;
                 this.BoundWeapon = null;
+            }
+
+            if (this.BoundCardManager != null)
+            {
+                this.BoundCardManager.OnManaChangedEvent -= this.OnManaChanged;
+                this.BoundCardManager = null;
             }
         }
 
@@ -170,6 +187,14 @@ namespace ProjectRuntime.Managers
             if (this.PlayerAmmoTMP != null)
             {
                 this.PlayerAmmoTMP.text = $"{current}/∞";
+            }
+        }
+
+        private void OnManaChanged(float current, int max)
+        {
+            if (this.ManaBarFill != null && max > 0)
+            {
+                this.ManaBarFill.fillAmount = current / max;
             }
         }
 
@@ -236,6 +261,11 @@ namespace ProjectRuntime.Managers
             if (this.ObjectiveTMP == null)
             {
                 this.ObjectiveTMP = this.CreateObjectiveText(this.SurvivorOnlyUIParent.transform);
+            }
+
+            if (this.ManaBarFill == null)
+            {
+                this.ManaBarFill = this.CreateManaBar(this.DungeonMasterOnlyUIParent.transform);
             }
         }
 
@@ -354,6 +384,57 @@ namespace ProjectRuntime.Managers
             text.raycastTarget = false;
             text.text = "Crystals: 0/3";
             return text;
+        }
+
+        private Image CreateManaBar(Transform parent)
+        {
+            // Background
+            var bgObject = new GameObject("ManaBarBG", typeof(RectTransform));
+            var bgRect = bgObject.GetComponent<RectTransform>();
+            bgRect.SetParent(parent, false);
+            bgRect.anchorMin = new Vector2(0.5f, 0f);
+            bgRect.anchorMax = new Vector2(0.5f, 0f);
+            bgRect.pivot = new Vector2(0.5f, 0f);
+            bgRect.anchoredPosition = new Vector2(0f, 24f);
+            bgRect.sizeDelta = new Vector2(600f, 30f);
+            var bgImage = bgObject.AddComponent<Image>();
+            bgImage.color = new Color(0.1f, 0.1f, 0.3f, 0.8f);
+            bgImage.raycastTarget = false;
+
+            // Fill
+            var fillObject = new GameObject("ManaBarFill", typeof(RectTransform));
+            var fillRect = fillObject.GetComponent<RectTransform>();
+            fillRect.SetParent(bgRect, false);
+            fillRect.anchorMin = Vector2.zero;
+            fillRect.anchorMax = Vector2.one;
+            fillRect.offsetMin = Vector2.zero;
+            fillRect.offsetMax = Vector2.zero;
+            var fillImage = fillObject.AddComponent<Image>();
+            fillImage.sprite = CreateSolidSprite();
+            fillImage.color = new Color(0.2f, 0.4f, 1f, 1f);
+            fillImage.raycastTarget = false;
+            fillImage.type = Image.Type.Filled;
+            fillImage.fillMethod = Image.FillMethod.Horizontal;
+            fillImage.fillAmount = 0f;
+
+            return fillImage;
+        }
+
+        private static Sprite _solidSprite;
+
+        private static Sprite CreateSolidSprite()
+        {
+            if (_solidSprite != null)
+            {
+                return _solidSprite;
+            }
+
+            var tex = Texture2D.whiteTexture;
+            _solidSprite = Sprite.Create(
+                tex,
+                new Rect(0f, 0f, tex.width, tex.height),
+                new Vector2(0.5f, 0.5f));
+            return _solidSprite;
         }
 
         private void BindBattleManager(BattleManager battleManager)

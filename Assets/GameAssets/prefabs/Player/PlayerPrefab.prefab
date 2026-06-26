@@ -1024,6 +1024,7 @@ GameObject:
   - component: {fileID: 1830082917928493684}
   - component: {fileID: 2200131109173453123}
   - component: {fileID: 3086273937048574866}
+  - component: {fileID: 6988870576730226306}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -1239,6 +1240,24 @@ MonoBehaviour:
   reloadDuration: 1.5
   fireCooldown: 0.25
   damagePopupPrefab: {fileID: 8824996141537536103, guid: 8f299d7398d8b7c48917932052b6b2f6, type: 3}
+--- !u!114 &6988870576730226306
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6497081027001187553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d0af57cba7cbb748966dada0d5ec802, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  manaRegenRate: 1
+  maxMana: 10
+  Mana: 0
 --- !u!1 &7463206360524112506
 GameObject:
   m_ObjectHideFlags: 0

@@ -46,7 +46,7 @@ namespace ProjectRuntime.Network
                 CmdSendSteamIdentity(SteamUser.GetSteamID().m_SteamID, SteamFriends.GetPersonaName());
 
             StartupSpawned(this);
-            PlayerHudManager.EnsureInstance().SetLocalPlayer(this);
+            PlayerHudManager.EnsureInstance()?.SetLocalPlayer(this);
             ApplyRole(this.playerRole);
         }
 
@@ -117,7 +117,7 @@ namespace ProjectRuntime.Network
 
             if (isLocalPlayer)
             {
-                PlayerHudManager.EnsureInstance().SetRole(role);
+                PlayerHudManager.EnsureInstance()?.SetRole(role);
             }
         }
 

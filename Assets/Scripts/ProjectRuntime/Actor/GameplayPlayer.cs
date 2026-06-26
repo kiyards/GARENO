@@ -44,6 +44,9 @@ namespace ProjectRuntime.Actor
         [SerializeField] private float dungeonMasterMaxY = 40f;
 
         private PlayerRole _currentRole = PlayerRole.Unassigned;
+        private DungeonMasterCardManager _cardManager;
+        public DungeonMasterCardManager CardManager
+            => this._cardManager ??= this.GetComponent<DungeonMasterCardManager>();
         private Renderer[] _roleRenderers;
         private bool[] _roleRendererInitialEnabled;
         private bool _initialColliderEnabled;
