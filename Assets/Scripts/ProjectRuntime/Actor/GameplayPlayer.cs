@@ -1,5 +1,6 @@
 using Mirror;
 using ProjectRuntime.Actor.PlayerStates;
+using ProjectRuntime.Combat;
 using ProjectRuntime.Network;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -23,6 +24,7 @@ namespace ProjectRuntime.Actor
         [field: SerializeField] public SphereGroundCheck groundCheck { get; private set; }
         [field: SerializeField] public Rigidbody rb { get; private set; }
         [field: SerializeField] public Collider col { get; private set; }
+        [field: SerializeField] public Health health { get; private set; }
 
         [Header("Anchors")]
         [field: SerializeField] public Transform aimRig { get; private set; }
@@ -69,6 +71,26 @@ namespace ProjectRuntime.Actor
         public override void NetworkStart()
         {
             base.NetworkStart();
+        }
+
+        public override void OnStartServer()
+        {
+            base.OnStartServer();
+            if (health != null)
+                health.OnDeathEvent += OnHealthDepleted;
+        }
+
+        public override void OnStopServer()
+        {
+            base.OnStopServer();
+            if (health != null)
+                health.OnDeathEvent -= OnHealthDepleted;
+        }
+
+        [Server]
+        private void OnHealthDepleted(uint killerNetId)
+        {
+            ServerApplyDeath();
         }
 
         protected override void FixedUpdate()
@@ -128,6 +150,9 @@ namespace ProjectRuntime.Actor
             {
                 return;
             }
+
+            if (health != null)
+                health.ServerResetHealth();
 
             Vector3 respawnPos = GameNetworkManager.Instance.GetStartPosition().position;
             RpcEnterRespawnState(respawnPos);

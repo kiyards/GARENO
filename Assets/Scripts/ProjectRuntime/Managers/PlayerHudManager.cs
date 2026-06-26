@@ -1,3 +1,5 @@
+using ProjectRuntime.Actor;
+using ProjectRuntime.Combat;
 using ProjectRuntime.UI;
 using ProjectRuntime.Network;
 using TMPro;
@@ -29,6 +31,12 @@ namespace ProjectRuntime.Managers
 
         [field: SerializeField]
         private TextMeshProUGUI PlayerHealthTMP { get; set; }
+
+        [field: SerializeField]
+        private TextMeshProUGUI PlayerAmmoTMP { get; set; }
+
+        private Health BoundHealth { get; set; }
+        private PistolWeapon BoundWeapon { get; set; }
 
         private PlayerManager LocalPlayer { get; set; }
         private PlayerRole CurrentRole { get; set; } = PlayerRole.Unassigned;
@@ -77,6 +85,7 @@ namespace ProjectRuntime.Managers
 
         private void OnDestroy()
         {
+            this.UnbindCombat();
             if (Instance == this)
             {
                 Instance = null;
@@ -87,6 +96,68 @@ namespace ProjectRuntime.Managers
         {
             this.LocalPlayer = player;
             this.SetRole(player != null ? player.playerRole : PlayerRole.Unassigned);
+            this.BindCombat(player != null ? player.player : null);
+        }
+
+        private void BindCombat(GameplayPlayer gameplayPlayer)
+        {
+            this.UnbindCombat();
+            if (gameplayPlayer == null)
+            {
+                return;
+            }
+
+            this.EnsureHudReferences();
+
+            this.BoundHealth = gameplayPlayer.health;
+            if (this.BoundHealth != null)
+            {
+                this.BoundHealth.OnHealthChangedEvent += this.OnHealthChanged;
+                this.OnHealthChanged(this.BoundHealth.CurrentHealth, this.BoundHealth.MaxHealth);
+            }
+
+            this.BoundWeapon = gameplayPlayer.GetComponent<PistolWeapon>();
+            if (this.BoundWeapon != null)
+            {
+                this.BoundWeapon.OnAmmoChangedEvent += this.OnAmmoChanged;
+                this.OnAmmoChanged(this.BoundWeapon.CurrentAmmo, this.BoundWeapon.MagazineSize);
+            }
+        }
+
+        private void UnbindCombat()
+        {
+            if (this.BoundHealth != null)
+            {
+                this.BoundHealth.OnHealthChangedEvent -= this.OnHealthChanged;
+                this.BoundHealth = null;
+            }
+
+            if (this.BoundWeapon != null)
+            {
+                this.BoundWeapon.OnAmmoChangedEvent -= this.OnAmmoChanged;
+                this.BoundWeapon = null;
+            }
+        }
+
+        private void OnHealthChanged(float current, float max)
+        {
+            if (this.PlayerHealthBar != null && max > 0f)
+            {
+                this.PlayerHealthBar.FillAmount = current / max;
+            }
+
+            if (this.PlayerHealthTMP != null)
+            {
+                this.PlayerHealthTMP.text = Mathf.CeilToInt(Mathf.Max(0f, current)).ToString();
+            }
+        }
+
+        private void OnAmmoChanged(int current, int magazineSize)
+        {
+            if (this.PlayerAmmoTMP != null)
+            {
+                this.PlayerAmmoTMP.text = $"{current}/∞";
+            }
         }
 
         public void SetRole(PlayerRole role)
@@ -131,6 +202,20 @@ namespace ProjectRuntime.Managers
             if (this.RoleMessageTMP == null)
             {
                 this.RoleMessageTMP = this.CreateRoleMessage(this.SharedUIParent.transform);
+            }
+
+            if (this.PlayerHealthTMP == null)
+            {
+                this.PlayerHealthTMP = this.CreateCornerText(
+                    this.SurvivorOnlyUIParent.transform, "PlayerHealth",
+                    new Vector2(0f, 0f), new Vector2(32f, 32f), TextAlignmentOptions.BottomLeft, "100");
+            }
+
+            if (this.PlayerAmmoTMP == null)
+            {
+                this.PlayerAmmoTMP = this.CreateCornerText(
+                    this.SurvivorOnlyUIParent.transform, "PlayerAmmo",
+                    new Vector2(1f, 0f), new Vector2(-32f, 32f), TextAlignmentOptions.BottomRight, "6/∞");
             }
         }
 
@@ -208,6 +293,27 @@ namespace ProjectRuntime.Managers
             roleMessage.raycastTarget = false;
             roleMessage.text = "Assigning role...";
             return roleMessage;
+        }
+
+        private TextMeshProUGUI CreateCornerText(Transform parent, string objectName, Vector2 anchor,
+            Vector2 anchoredPosition, TextAlignmentOptions alignment, string initialText)
+        {
+            var textObject = new GameObject(objectName, typeof(RectTransform));
+            var rectTransform = textObject.GetComponent<RectTransform>();
+            rectTransform.SetParent(parent, false);
+            rectTransform.anchorMin = anchor;
+            rectTransform.anchorMax = anchor;
+            rectTransform.pivot = anchor;
+            rectTransform.anchoredPosition = anchoredPosition;
+            rectTransform.sizeDelta = new Vector2(360f, 80f);
+
+            var text = textObject.AddComponent<TextMeshProUGUI>();
+            text.alignment = alignment;
+            text.color = Color.white;
+            text.fontSize = 36f;
+            text.raycastTarget = false;
+            text.text = initialText;
+            return text;
         }
 
         private static string GetRoleDisplayName(PlayerRole role)

@@ -24,6 +24,8 @@ namespace ProjectRuntime.Actor
         [SyncVar] public bool interactHold;
         [SyncVar] public bool interactRelease;
 
+        [SyncVar] public bool reloadPress;
+
         public Vector3 MoveVector => moveVec;
         public Vector2 AimVector => aimVec;
         public bool JumpPress => jump;
@@ -35,12 +37,14 @@ namespace ProjectRuntime.Actor
         public bool InteractPress => interactPress;
         public bool InteractHold => interactHold;
         public bool InteractRelease => interactRelease;
+        public bool ReloadPress => reloadPress;
 
         public InputAction moveInput;
         public InputAction aimInput;
         public InputAction jumpInput;
         public InputAction clickInput;
         public InputAction interactInput;
+        public InputAction reloadInput;
 
         public override void OnStartLocalPlayer()
         {
@@ -75,6 +79,8 @@ namespace ProjectRuntime.Actor
             interactPress = interactInput != null && interactInput.WasPressedThisFrame();
             interactHold = interactInput != null && interactInput.IsPressed();
             interactRelease = interactInput != null && interactInput.WasReleasedThisFrame();
+
+            reloadPress = reloadInput != null && reloadInput.WasPressedThisFrame();
         }
 
         private void SetInputEnabled(bool isEnabled)
@@ -86,6 +92,7 @@ namespace ProjectRuntime.Actor
                 jumpInput?.Enable();
                 clickInput?.Enable();
                 interactInput?.Enable();
+                reloadInput?.Enable();
                 return;
             }
 
@@ -94,6 +101,7 @@ namespace ProjectRuntime.Actor
             jumpInput?.Disable();
             clickInput?.Disable();
             interactInput?.Disable();
+            reloadInput?.Disable();
 
             moveVec = Vector3.zero;
             aimVec = Vector2.zero;
@@ -106,6 +114,7 @@ namespace ProjectRuntime.Actor
             interactPress = false;
             interactHold = false;
             interactRelease = false;
+            reloadPress = false;
         }
 
         private void CacheComponents()

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6240586649149598673}
   - component: {fileID: 8258380815827404543}
   - component: {fileID: 7889556804679466369}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -145,6 +145,7 @@ MonoBehaviour:
   playerName: 
   playerSteamId: 0
   playerIndex: 0
+  playerRole: 0
   characterData:
     colid: 0
 --- !u!114 &6495563617837147907
@@ -175,7 +176,7 @@ GameObject:
   - component: {fileID: 9046731254113563548}
   - component: {fileID: 7508752111987869477}
   - component: {fileID: 6594115256102901788}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -368,7 +369,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2490783541060357679}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: AimRig
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -402,7 +403,7 @@ GameObject:
   - component: {fileID: 3373680502583921736}
   - component: {fileID: 6735982392377984524}
   - component: {fileID: 3264892787347041308}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: NameText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -580,12 +581,15 @@ MonoBehaviour:
   moveVec: {x: 0, y: 0, z: 0}
   aimVec: {x: 0, y: 0}
   jump: 0
+  jumpHold: 0
+  flyDownHold: 0
   clickPress: 0
   clickHold: 0
   clickRelease: 0
   interactPress: 0
   interactHold: 0
   interactRelease: 0
+  reloadPress: 0
   moveInput:
     m_Name: Move Input
     m_Type: 0
@@ -735,6 +739,23 @@ MonoBehaviour:
       m_Action: Interact Input
       m_Flags: 0
     m_Flags: 0
+  reloadInput:
+    m_Name: Reload Input
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 08db2947-7690-4332-a4c5-df187505d489
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 4bd55333-4727-4e7c-b23a-19021b84f3a6
+      m_Path: <Keyboard>/r
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Reload Input
+      m_Flags: 0
+    m_Flags: 0
 --- !u!1 &4525828254064152942
 GameObject:
   m_ObjectHideFlags: 0
@@ -745,7 +766,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6858470976675487877}
   - component: {fileID: 5551630792213025358}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: GroundCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -843,7 +864,7 @@ MonoBehaviour:
     m_Bits: 8
   aimTargetMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   player: {fileID: 7578397109688941967}
   input: {fileID: 3611815320372169542}
   sens: 50
@@ -851,6 +872,11 @@ MonoBehaviour:
   pitchMin: -90
   pitchMax: 90
   aimFirepointOffset: 0.1
+  topDownHeight: 24
+  topDownPitch: 90
+  topDownYaw: 0
+  dungeonMasterBoundingVolume: {fileID: 0}
+  dungeonMasterConfinerSlowingDistance: 0
 --- !u!114 &7805670267703114024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -897,7 +923,7 @@ GameObject:
   - component: {fileID: 4153696930341277465}
   - component: {fileID: 2609033042455968224}
   - component: {fileID: 6885505529193906755}
-  m_Layer: 5
+  m_Layer: 6
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -996,7 +1022,9 @@ GameObject:
   - component: {fileID: 9142501008178027207}
   - component: {fileID: 960272673929262687}
   - component: {fileID: 1830082917928493684}
-  m_Layer: 0
+  - component: {fileID: 2200131109173453123}
+  - component: {fileID: 3086273937048574866}
+  m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1045,9 +1073,14 @@ MonoBehaviour:
   <groundCheck>k__BackingField: {fileID: 5551630792213025358}
   <rb>k__BackingField: {fileID: 1249909608370010987}
   <col>k__BackingField: {fileID: 9142501008178027207}
+  <health>k__BackingField: {fileID: 2200131109173453123}
   <aimRig>k__BackingField: {fileID: 2490783541060357679}
   jumpForce: 10
   moveSpeed: 10
+  dungeonMasterHorizontalSpeed: 18
+  dungeonMasterVerticalSpeed: 12
+  dungeonMasterMinY: 0
+  dungeonMasterMaxY: 40
 --- !u!54 &1249909608370010987
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1166,6 +1199,46 @@ MonoBehaviour:
   positionSensitivity: 0
   rotationSensitivity: 0
   scaleSensitivity: 0.01
+--- !u!114 &2200131109173453123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6497081027001187553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19cb540e8604a3e41b7b0fe52ce03df4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  maxHealth: 100
+--- !u!114 &3086273937048574866
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6497081027001187553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 481648c8893d78d4db5230f4350d20fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  player: {fileID: 7578397109688941967}
+  cam: {fileID: 5845632010730616114}
+  input: {fileID: 3611815320372169542}
+  damage: 100
+  magazineSize: 6
+  maxRange: 100
+  reloadDuration: 1.5
+  fireCooldown: 0.25
+  damagePopupPrefab: {fileID: 8824996141537536103, guid: 8f299d7398d8b7c48917932052b6b2f6, type: 3}
 --- !u!1 &7463206360524112506
 GameObject:
   m_ObjectHideFlags: 0
