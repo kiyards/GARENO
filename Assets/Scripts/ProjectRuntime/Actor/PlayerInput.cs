@@ -13,6 +13,8 @@ namespace ProjectRuntime.Actor
         [SyncVar] public Vector2 aimVec;
 
         [SyncVar] public bool jump;
+        [SyncVar] public bool jumpHold;
+        [SyncVar] public bool flyDownHold;
 
         [SyncVar] public bool clickPress;
         [SyncVar] public bool clickHold;
@@ -25,6 +27,8 @@ namespace ProjectRuntime.Actor
         public Vector3 MoveVector => moveVec;
         public Vector2 AimVector => aimVec;
         public bool JumpPress => jump;
+        public bool JumpHold => jumpHold;
+        public bool FlyDownHold => flyDownHold;
         public bool ClickPress => clickPress;
         public bool ClickHold => clickHold;
         public bool ClickRelease => clickRelease;
@@ -60,6 +64,9 @@ namespace ProjectRuntime.Actor
             aimVec = aimInput != null ? aimInput.ReadValue<Vector2>() * sensitivity : Vector2.zero;
 
             jump = jumpInput != null && jumpInput.WasPerformedThisFrame();
+            jumpHold = jumpInput != null && jumpInput.IsPressed();
+            flyDownHold = Keyboard.current != null &&
+                (Keyboard.current.leftShiftKey.isPressed || Keyboard.current.rightShiftKey.isPressed);
 
             clickPress = clickInput != null && clickInput.WasPressedThisFrame();
             clickHold = clickInput != null && clickInput.IsPressed();
@@ -91,6 +98,8 @@ namespace ProjectRuntime.Actor
             moveVec = Vector3.zero;
             aimVec = Vector2.zero;
             jump = false;
+            jumpHold = false;
+            flyDownHold = false;
             clickPress = false;
             clickHold = false;
             clickRelease = false;

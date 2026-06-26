@@ -15,7 +15,7 @@ namespace ProjectRuntime.Network
     {
         Unassigned,
         Survivor,
-        Mastermind,
+        DungeonMaster,
     }
 
     /// <summary>
@@ -47,13 +47,13 @@ namespace ProjectRuntime.Network
 
             StartupSpawned(this);
             PlayerHudManager.EnsureInstance().SetLocalPlayer(this);
+            ApplyRole(this.playerRole);
         }
 
         public override void OnStartClient()
         {
             base.OnStartClient();
-            // Hide own canvas, only show if other player
-            playerCanvas.gameObject.SetActive(!isLocalPlayer);
+            ApplyRole(this.playerRole);
         }
 
         [TargetRpc]
@@ -82,11 +82,7 @@ namespace ProjectRuntime.Network
         public void ServerSetRole(PlayerRole role)
         {
             playerRole = role;
-
-            if (isLocalPlayer)
-            {
-                PlayerHudManager.EnsureInstance().SetRole(role);
-            }
+            ApplyRole(role);
         }
 
         void OnPlayerNameSynced(string oldValue, string newValue)
@@ -100,17 +96,39 @@ namespace ProjectRuntime.Network
 
         void OnPlayerRoleSynced(PlayerRole oldValue, PlayerRole newValue)
         {
-            playerRole = newValue;
-
-            if (isLocalPlayer)
-            {
-                PlayerHudManager.EnsureInstance().SetRole(newValue);
-            }
+            ApplyRole(newValue);
         }
 
         void OnCharacterDataSynced(CharacterData _, CharacterData newData)
         {
             characterData = newData;
+        }
+
+        private void ApplyRole(PlayerRole role)
+        {
+            playerRole = role;
+
+            if (player != null)
+            {
+                player.ApplyRole(role);
+            }
+
+            RefreshPlayerCanvasVisibility();
+
+            if (isLocalPlayer)
+            {
+                PlayerHudManager.EnsureInstance().SetRole(role);
+            }
+        }
+
+        private void RefreshPlayerCanvasVisibility()
+        {
+            if (playerCanvas == null)
+            {
+                return;
+            }
+
+            playerCanvas.gameObject.SetActive(!isLocalPlayer && playerRole != PlayerRole.DungeonMaster);
         }
     }
 

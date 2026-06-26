@@ -24,12 +24,22 @@ namespace ProjectRuntime.Actor.PlayerStates
         public override void OnEnter()
         {
             base.OnEnter();
+            if (player.IsDungeonMaster)
+            {
+                player.cam.SetCam(CharacterMode.TOP_DOWN);
+                return;
+            }
+
             player.cam.SetCam(CharacterMode.AIM);
         }
 
         public override void Update()
         {
             base.Update();
+            if (player.IsDungeonMaster)
+            {
+                return;
+            }
 
             if (!_requestedJump)
                 _requestedJump = player.input.jump;
@@ -38,12 +48,22 @@ namespace ProjectRuntime.Actor.PlayerStates
         public override void LateUpdate()
         {
             base.LateUpdate();
+            if (player.IsDungeonMaster)
+            {
+                return;
+            }
+
             RotateAim();
         }
 
         public override void FixedUpdate()
         {
             base.FixedUpdate();
+            if (player.IsDungeonMaster)
+            {
+                return;
+            }
+
             Vector3 moveDir = GetMoveDir(player.input.moveVec);
             Vector3 moveDelta = player.moveSpeed * Time.fixedDeltaTime * moveDir;
             player.rb.MovePosition(player.rb.position + moveDelta);
@@ -52,6 +72,11 @@ namespace ProjectRuntime.Actor.PlayerStates
         public override void StateUpdate()
         {
             base.StateUpdate();
+            if (player.IsDungeonMaster)
+            {
+                return;
+            }
+
             if (_requestedJump)
             {
                 if (player.groundCheck.IsGrounded)
@@ -88,6 +113,58 @@ namespace ProjectRuntime.Actor.PlayerStates
             Vector3 right = Vector3.Cross(up, forward).normalized;
 
             return Vector3.ClampMagnitude(right * inputVec.x + forward * inputVec.z, 1f);
+        }
+    }
+
+    public class DungeonMasterMovementState : PlayerState
+    {
+        public DungeonMasterMovementState(GameplayPlayer sm) : base(sm) { }
+
+        public override void OnEnter()
+        {
+            base.OnEnter();
+            player.cam.SetCam(CharacterMode.TOP_DOWN);
+        }
+
+        public override void FixedUpdate()
+        {
+            base.FixedUpdate();
+            if (!player.isLocalPlayer)
+            {
+                return;
+            }
+
+            Vector3 moveInput = player.input != null ? player.input.MoveVector : Vector3.zero;
+            Vector3 horizontalMove = Vector3.ClampMagnitude(
+                new Vector3(moveInput.x, 0f, moveInput.z),
+                1f) * player.DungeonMasterHorizontalSpeed;
+
+            float verticalInput = 0f;
+            if (player.input != null)
+            {
+                if (player.input.JumpHold)
+                {
+                    verticalInput += 1f;
+                }
+
+                if (player.input.FlyDownHold)
+                {
+                    verticalInput -= 1f;
+                }
+            }
+
+            Vector3 moveDelta = (horizontalMove + Vector3.up * verticalInput * player.DungeonMasterVerticalSpeed) *
+                Time.fixedDeltaTime;
+            Vector3 nextPosition = player.ClampDungeonMasterPosition(player.transform.position + moveDelta);
+
+            if (player.rb != null)
+            {
+                nextPosition = player.ClampDungeonMasterPosition(player.rb.position + moveDelta);
+                player.rb.MovePosition(nextPosition);
+                return;
+            }
+
+            player.transform.position = nextPosition;
         }
     }
 

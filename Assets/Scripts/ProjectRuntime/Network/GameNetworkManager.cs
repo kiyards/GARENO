@@ -253,13 +253,13 @@ namespace ProjectRuntime.Network
                 player.ServerSetRole(PlayerRole.Survivor);
             }
 
-            var mastermind = players[UnityEngine.Random.Range(0, players.Count)];
-            mastermind.ServerSetRole(PlayerRole.Mastermind);
+            var dungeonMaster = players[UnityEngine.Random.Range(0, players.Count)];
+            dungeonMaster.ServerSetRole(PlayerRole.DungeonMaster);
 
             this._rolesAssignedForCurrentGame = true;
 
             Debug.Log(
-                $"Assigned {mastermind.playerName} (index {mastermind.playerIndex}, netId {mastermind.netId}) as Mastermind.");
+                $"Assigned {dungeonMaster.playerName} (index {dungeonMaster.playerIndex}, netId {dungeonMaster.netId}) as Dungeon Master.");
         }
 
         void SpawnGamePlayer(NetworkConnectionToClient conn)

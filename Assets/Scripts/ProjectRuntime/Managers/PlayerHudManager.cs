@@ -2,6 +2,7 @@ using ProjectRuntime.UI;
 using ProjectRuntime.Network;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace ProjectRuntime.Managers
@@ -17,7 +18,8 @@ namespace ProjectRuntime.Managers
         private GameObject SurvivorOnlyUIParent { get; set; }
 
         [field: SerializeField]
-        private GameObject MastermindOnlyUIParent { get; set; }
+        [field: FormerlySerializedAs("<MastermindOnlyUIParent>k__BackingField")]
+        private GameObject DungeonMasterOnlyUIParent { get; set; }
 
         [field: SerializeField]
         private TextMeshProUGUI RoleMessageTMP { get; set; }
@@ -96,7 +98,7 @@ namespace ProjectRuntime.Managers
             {
                 this.RoleMessageTMP.text = role == PlayerRole.Unassigned
                     ? "Assigning role..."
-                    : $"You are a {role}";
+                    : $"You are a {GetRoleDisplayName(role)}";
             }
 
             this.ApplyHudVisibility();
@@ -121,9 +123,9 @@ namespace ProjectRuntime.Managers
                 this.SurvivorOnlyUIParent = this.CreateChild("SurvivorOnlyUI").gameObject;
             }
 
-            if (this.MastermindOnlyUIParent == null)
+            if (this.DungeonMasterOnlyUIParent == null)
             {
-                this.MastermindOnlyUIParent = this.CreateChild("MastermindOnlyUI").gameObject;
+                this.DungeonMasterOnlyUIParent = this.CreateChild("DungeonMasterOnlyUI").gameObject;
             }
 
             if (this.RoleMessageTMP == null)
@@ -136,14 +138,14 @@ namespace ProjectRuntime.Managers
         {
             if (this.SharedUIParent == null ||
                 this.SurvivorOnlyUIParent == null ||
-                this.MastermindOnlyUIParent == null)
+                this.DungeonMasterOnlyUIParent == null)
             {
                 return;
             }
 
             this.SharedUIParent.SetActive(this.IsPlayerUiVisible);
             this.SurvivorOnlyUIParent.SetActive(this.IsPlayerUiVisible && this.CurrentRole == PlayerRole.Survivor);
-            this.MastermindOnlyUIParent.SetActive(this.IsPlayerUiVisible && this.CurrentRole == PlayerRole.Mastermind);
+            this.DungeonMasterOnlyUIParent.SetActive(this.IsPlayerUiVisible && this.CurrentRole == PlayerRole.DungeonMaster);
         }
 
         private void EnsureCanvas()
@@ -206,6 +208,13 @@ namespace ProjectRuntime.Managers
             roleMessage.raycastTarget = false;
             roleMessage.text = "Assigning role...";
             return roleMessage;
+        }
+
+        private static string GetRoleDisplayName(PlayerRole role)
+        {
+            return role == PlayerRole.DungeonMaster
+                ? "Dungeon Master"
+                : role.ToString();
         }
     }
 }
