@@ -65,7 +65,8 @@ namespace ProjectRuntime.Combat
 
         private void TryFire()
         {
-            if (isReloading || currentAmmo <= 0) return;
+            if (isReloading) return;
+            if (currentAmmo <= 0) { TryReload(); return; }
             if (NetworkTime.time - _clientLastFireTime < fireCooldown) return;
             _clientLastFireTime = NetworkTime.time;
 

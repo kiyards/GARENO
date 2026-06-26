@@ -1233,7 +1233,7 @@ MonoBehaviour:
   player: {fileID: 7578397109688941967}
   cam: {fileID: 5845632010730616114}
   input: {fileID: 3611815320372169542}
-  damage: 100
+  damage: 10
   magazineSize: 6
   maxRange: 100
   reloadDuration: 1.5
