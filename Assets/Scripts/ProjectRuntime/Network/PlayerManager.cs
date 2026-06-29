@@ -71,12 +71,18 @@ namespace ProjectRuntime.Network
                 return;
             }
 
+            if (player == null || player.CardManager == null)
+            {
+                return;
+            }
+
             if (!TryGetMouseGroundPosition(out Vector3 groundPosition))
             {
                 return;
             }
 
-            CmdTrySpawnBasicZombie(groundPosition);
+            // Temporary input: play hand slot 0. Slot selection arrives with the hand HUD (Task 2).
+            player.CardManager.CmdPlayCard(0, groundPosition);
         }
 
         [TargetRpc]
@@ -99,12 +105,6 @@ namespace ProjectRuntime.Network
             var auth = GameNetworkManager.Instance.SteamAuth;
             if (auth != null)
                 auth.UpdateIdentity(steamId, name);
-        }
-
-        [Command]
-        private void CmdTrySpawnBasicZombie(Vector3 requestedPosition)
-        {
-            BattleManager.Instance?.ServerTrySpawnBasicZombie(this, requestedPosition);
         }
 
         [Server]

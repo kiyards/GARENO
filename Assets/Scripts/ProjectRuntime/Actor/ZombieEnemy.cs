@@ -36,6 +36,20 @@ namespace ProjectRuntime.Actor
             this._health.OnDeathEvent -= this.OnServerDeath;
         }
 
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+
+            // Movement is server-authoritative and replicated via NetworkTransform. On
+            // clients the agent must not drive the transform, or it fights the synced
+            // position and the zombie appears frozen at its spawn point. (Host is also the
+            // server, so its agent stays enabled and remains the source of truth.)
+            if (!this.isServer && this._agent != null)
+            {
+                this._agent.enabled = false;
+            }
+        }
+
         private void FixedUpdate()
         {
             if (!this.isServer) return;
