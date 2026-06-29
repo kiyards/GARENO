@@ -148,6 +148,9 @@ MonoBehaviour:
   playerRole: 0
   characterData:
     colid: 0
+  dungeonMasterPlacementMask:
+    serializedVersion: 2
+    m_Bits: 4294967176
 --- !u!114 &6495563617837147907
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -591,6 +594,7 @@ MonoBehaviour:
   interactHold: 0
   interactRelease: 0
   reloadPress: 0
+  bearTrapPress: 0
   moveInput:
     m_Name: Move Input
     m_Type: 0

@@ -8,12 +8,6 @@ namespace ProjectRuntime.Actor
 {
     public class DungeonMasterTurretController : MonoBehaviour
     {
-        [Header("Visuals")]
-        [SerializeField] private Transform turretRoot;
-        [SerializeField] private Transform turretYawPivot;
-        [SerializeField] private Transform turretPitchPivot;
-        [SerializeField] private Transform turretMuzzle;
-
         [Header("Combat")]
         [SerializeField] private float damage = 20f;
         [SerializeField] private float maxRange = 80f;
@@ -26,7 +20,7 @@ namespace ProjectRuntime.Actor
         [SerializeField] private Material tracerMaterial;
 
         private GameplayPlayer _player;
-        private bool _visualCached;
+        private DungeonMasterTurret _activeTurret;
         private double _clientLastFireTime;
         private double _serverLastFireTime;
 
@@ -35,35 +29,39 @@ namespace ProjectRuntime.Actor
         public void Initialize(GameplayPlayer owner)
         {
             _player = owner;
-            SetVisible(false);
         }
 
-        public void Enter()
+        public void Enter(Vector3 spawnPosition)
         {
+            var player = ResolvePlayer();
+            if (player != null && player.isServer)
+            {
+                ServerSpawnTurret(spawnPosition);
+            }
+
             SetVisible(true);
-            UpdateAimFromCamera();
+            UpdateAimFromCursor();
         }
 
         public void Exit()
         {
             SetVisible(false);
+
+            var player = ResolvePlayer();
+            if (player != null && player.isServer)
+            {
+                ServerDestroyTurret();
+            }
         }
 
         public void SetVisible(bool isVisible)
         {
-            EnsureVisual();
-
-            if (turretRoot == null)
+            if (_activeTurret == null)
             {
                 return;
             }
 
-            turretRoot.gameObject.SetActive(isVisible);
-
-            foreach (Renderer turretRenderer in turretRoot.GetComponentsInChildren<Renderer>(true))
-            {
-                turretRenderer.enabled = isVisible;
-            }
+            _activeTurret.SetVisible(isVisible);
         }
 
         public void UpdateAimFromCamera()
@@ -80,25 +78,25 @@ namespace ProjectRuntime.Actor
             UpdateAim(aimDirection);
         }
 
+        public void UpdateAimFromCursor()
+        {
+            if (TryGetCursorAim(out Vector3 hitPoint, out _))
+            {
+                UpdateAim(hitPoint - GetMuzzlePosition());
+                return;
+            }
+
+            UpdateAimFromCamera();
+        }
+
         public void UpdateAim(Vector3 worldDirection)
         {
-            EnsureVisual();
-
-            if (worldDirection.sqrMagnitude <= 0.0001f)
+            if (_activeTurret == null)
             {
                 return;
             }
 
-            Vector3 flatDirection = Vector3.ProjectOnPlane(worldDirection, Vector3.up);
-            if (turretYawPivot != null && flatDirection.sqrMagnitude > 0.0001f)
-            {
-                turretYawPivot.rotation = Quaternion.LookRotation(flatDirection.normalized, Vector3.up);
-            }
-
-            if (turretPitchPivot != null)
-            {
-                turretPitchPivot.rotation = Quaternion.LookRotation(worldDirection.normalized, Vector3.up);
-            }
+            _activeTurret.UpdateAim(worldDirection);
         }
 
         public void TryFire()
@@ -124,22 +122,9 @@ namespace ProjectRuntime.Actor
 
             _clientLastFireTime = NetworkTime.time;
 
-            player.cam.GetAimData(maxRange, out Vector3 origin, out Vector3 direction, out RaycastHit occlusionHit);
-            Vector3 hitPoint = occlusionHit.collider != null
-                ? occlusionHit.point
-                : origin + direction * maxRange;
-            uint targetNetId = 0;
-
-            var hits = player.cam.GetRaycastData(maxRange);
-            if (hits.Count > 0)
+            if (!TryGetCursorAim(out Vector3 hitPoint, out uint targetNetId))
             {
-                var first = hits[0];
-                hitPoint = first.hitPoint;
-                var identity = first.hit.collider.GetComponentInParent<NetworkIdentity>();
-                if (identity != null)
-                {
-                    targetNetId = identity.netId;
-                }
+                return;
             }
 
             player.CmdFireDungeonMasterTurret(targetNetId, hitPoint);
@@ -201,11 +186,9 @@ namespace ProjectRuntime.Actor
 
         private Vector3 GetMuzzlePosition()
         {
-            EnsureVisual();
-
-            if (turretMuzzle != null)
+            if (_activeTurret != null)
             {
-                return turretMuzzle.position;
+                return _activeTurret.GetMuzzlePosition();
             }
 
             var player = ResolvePlayer();
@@ -214,56 +197,124 @@ namespace ProjectRuntime.Actor
                 : transform.position;
         }
 
-        private void EnsureVisual()
+        private bool TryGetCursorAim(out Vector3 hitPoint, out uint targetNetId)
         {
-            if (_visualCached)
+            hitPoint = Vector3.zero;
+            targetNetId = 0;
+
+            var player = ResolvePlayer();
+            if (player == null || player.cam == null)
+            {
+                return false;
+            }
+
+            if (!CursorPlacementUtility.TryGetCursorRay(out Ray ray))
+            {
+                return false;
+            }
+
+            bool hasOcclusion = Physics.Raycast(
+                ray,
+                out RaycastHit occlusionHit,
+                maxRange,
+                player.cam.aimOcclusionMask);
+            hitPoint = hasOcclusion
+                ? occlusionHit.point
+                : ray.origin + ray.direction * maxRange;
+
+            var hits = Physics.RaycastAll(ray, maxRange, player.cam.aimTargetMask);
+            System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+            foreach (var hit in hits)
+            {
+                if (hit.collider == player.col)
+                {
+                    continue;
+                }
+
+                if (hasOcclusion && hit.distance > occlusionHit.distance)
+                {
+                    break;
+                }
+
+                hitPoint = hit.point;
+                var identity = hit.collider.GetComponentInParent<NetworkIdentity>();
+                if (identity != null)
+                {
+                    targetNetId = identity.netId;
+                }
+
+                break;
+            }
+
+            return true;
+        }
+
+        public void AttachSpawnedTurret(DungeonMasterTurret turret)
+        {
+            var player = ResolvePlayer();
+            if (player == null || turret == null || !turret.IsOwnedBy(player))
             {
                 return;
             }
 
-            _visualCached = true;
+            _activeTurret = turret;
+            _activeTurret.SetVisible(player.currentState is DungeonMasterTurretState);
+        }
 
-            if (turretRoot != null)
+        public void DetachSpawnedTurret(DungeonMasterTurret turret)
+        {
+            if (_activeTurret != turret)
             {
-                turretRoot.gameObject.SetActive(false);
                 return;
             }
 
-            turretRoot = new GameObject("DungeonMasterTurretRoot").transform;
-            turretRoot.SetParent(transform, false);
-            turretRoot.localPosition = Vector3.zero;
-            turretRoot.localRotation = Quaternion.identity;
+            _activeTurret = null;
+        }
 
-            turretYawPivot = new GameObject("YawPivot").transform;
-            turretYawPivot.SetParent(turretRoot, false);
-            turretYawPivot.localPosition = Vector3.zero;
-            turretYawPivot.localRotation = Quaternion.identity;
+        [Server]
+        private void ServerSpawnTurret(Vector3 spawnPosition)
+        {
+            var player = ResolvePlayer();
+            if (player == null || !player.IsDungeonMaster || _activeTurret != null)
+            {
+                return;
+            }
 
-            turretPitchPivot = new GameObject("PitchPivot").transform;
-            turretPitchPivot.SetParent(turretYawPivot, false);
-            turretPitchPivot.localPosition = Vector3.up * 0.45f;
-            turretPitchPivot.localRotation = Quaternion.identity;
+            GameObject turretPrefab = GameNetworkManager.Instance != null
+                ? GameNetworkManager.Instance.DungeonMasterTurretPrefab
+                : null;
+            if (turretPrefab == null)
+            {
+                Debug.LogWarning("[DungeonMasterTurretController] Assign the dungeon master turret prefab on GameNetworkManager.");
+                return;
+            }
 
-            var baseObject = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            baseObject.name = "TurretBase";
-            baseObject.transform.SetParent(turretRoot, false);
-            baseObject.transform.localPosition = Vector3.up * 0.15f;
-            baseObject.transform.localScale = new Vector3(0.8f, 0.15f, 0.8f);
-            RemoveGeneratedCollider(baseObject);
+            if (!turretPrefab.TryGetComponent(out DungeonMasterTurret _))
+            {
+                Debug.LogWarning("[DungeonMasterTurretController] Dungeon master turret prefab must have a DungeonMasterTurret component on its root.");
+                return;
+            }
 
-            var barrelObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            barrelObject.name = "TurretBarrel";
-            barrelObject.transform.SetParent(turretPitchPivot, false);
-            barrelObject.transform.localPosition = new Vector3(0f, 0f, 0.55f);
-            barrelObject.transform.localScale = new Vector3(0.22f, 0.22f, 1.1f);
-            RemoveGeneratedCollider(barrelObject);
+            GameObject turretObject = Instantiate(turretPrefab, spawnPosition, Quaternion.identity);
+            var turret = turretObject.GetComponent<DungeonMasterTurret>();
+            turret.ServerInitialize(player);
+            NetworkServer.Spawn(turretObject);
+            AttachSpawnedTurret(turret);
+            turret.SetVisible(true);
+        }
 
-            turretMuzzle = new GameObject("MuzzlePoint").transform;
-            turretMuzzle.SetParent(turretPitchPivot, false);
-            turretMuzzle.localPosition = new Vector3(0f, 0f, 1.15f);
-            turretMuzzle.localRotation = Quaternion.identity;
+        [Server]
+        private void ServerDestroyTurret()
+        {
+            if (_activeTurret == null)
+            {
+                return;
+            }
 
-            turretRoot.gameObject.SetActive(false);
+            DungeonMasterTurret turret = _activeTurret;
+            _activeTurret = null;
+            NetworkServer.Destroy(turret.gameObject);
         }
 
         private GameplayPlayer ResolvePlayer()
@@ -274,14 +325,6 @@ namespace ProjectRuntime.Actor
             }
 
             return _player;
-        }
-
-        private static void RemoveGeneratedCollider(GameObject generatedObject)
-        {
-            if (generatedObject.TryGetComponent(out Collider generatedCollider))
-            {
-                Destroy(generatedCollider);
-            }
         }
     }
 }

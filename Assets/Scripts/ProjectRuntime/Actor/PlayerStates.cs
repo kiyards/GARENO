@@ -136,9 +136,15 @@ namespace ProjectRuntime.Actor.PlayerStates
 
             if (player.input.InteractPress)
             {
+                Vector3 spawnPos = player.transform.position;
+                if (CursorPlacementUtility.TryGetPlacementFromCursor(500f, Physics.DefaultRaycastLayers, out Vector3 cursorPos, out _))
+                {
+                    spawnPos = cursorPos;
+                }
+
                 player.QueueState(new DungeonMasterTurretState(player)
                 {
-                    m_anchorPosition = player.transform.position,
+                    m_anchorPosition = spawnPos,
                     m_hasAnchor = true
                 });
             }
@@ -220,6 +226,11 @@ namespace ProjectRuntime.Actor.PlayerStates
         public override void OnEnter()
         {
             base.OnEnter();
+            if (player.isLocalPlayer && player.input != null)
+            {
+                player.input.SetCursorLockOverride(true);
+            }
+
             if (!m_hasAnchor)
             {
                 m_anchorPosition = player.transform.position;
@@ -227,15 +238,14 @@ namespace ProjectRuntime.Actor.PlayerStates
             }
 
             m_anchorPosition = player.ClampDungeonMasterPosition(m_anchorPosition);
-            player.Turret.Enter();
+            StopMovement();
+            player.Turret.Enter(m_anchorPosition);
 
             if (player.cam != null)
             {
                 player.cam.SetCam(CharacterMode.AIM);
-                player.Turret.UpdateAimFromCamera();
+                player.Turret.UpdateAimFromCursor();
             }
-
-            StopMovement();
         }
 
         public override void Update()
@@ -266,7 +276,7 @@ namespace ProjectRuntime.Actor.PlayerStates
                 return;
             }
 
-            player.Turret.UpdateAimFromCamera();
+            player.Turret.UpdateAimFromCursor();
         }
 
         public override void FixedUpdate()
@@ -283,6 +293,11 @@ namespace ProjectRuntime.Actor.PlayerStates
         public override void OnExit()
         {
             base.OnExit();
+            if (player.isLocalPlayer && player.input != null)
+            {
+                player.input.SetCursorLockOverride(false);
+            }
+
             player.Turret.Exit();
         }
 

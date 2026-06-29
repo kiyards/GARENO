@@ -8,27 +8,51 @@ namespace ProjectRuntime.Actor
 {
     public class PlayerInput : NetworkBehaviour
     {
-        [SerializeField] private GameplayPlayer player;
-        [SerializeField] private bool lockCursorOnStart = true;
+        [SerializeField]
+        private GameplayPlayer player;
+
+        [SerializeField]
+        private bool lockCursorOnStart = true;
         private bool _shouldLockCursorForRole;
+        private bool _shouldForceCursorLock;
 
         public float sensitivity = 50f;
-        [SyncVar] public Vector3 moveVec;
-        [SyncVar] public Vector2 aimVec;
 
-        [SyncVar] public bool jump;
-        [SyncVar] public bool jumpHold;
-        [SyncVar] public bool flyDownHold;
+        [SyncVar]
+        public Vector3 moveVec;
 
-        [SyncVar] public bool clickPress;
-        [SyncVar] public bool clickHold;
-        [SyncVar] public bool clickRelease;
+        [SyncVar]
+        public Vector2 aimVec;
 
-        [SyncVar] public bool interactPress;
-        [SyncVar] public bool interactHold;
-        [SyncVar] public bool interactRelease;
+        [SyncVar]
+        public bool jump;
 
-        [SyncVar] public bool reloadPress;
+        [SyncVar]
+        public bool jumpHold;
+
+        [SyncVar]
+        public bool flyDownHold;
+
+        [SyncVar]
+        public bool clickPress;
+
+        [SyncVar]
+        public bool clickHold;
+
+        [SyncVar]
+        public bool clickRelease;
+
+        [SyncVar]
+        public bool interactPress;
+
+        [SyncVar]
+        public bool interactHold;
+
+        [SyncVar]
+        public bool interactRelease;
+
+        [SyncVar]
+        public bool reloadPress;
 
         public bool bearTrapPress;
 
@@ -58,9 +82,11 @@ namespace ProjectRuntime.Actor
             base.OnStartLocalPlayer();
             CacheComponents();
             SetInputEnabled(true);
-            SetCursorLockedForRole(player != null && player.localManager != null
-                ? player.localManager.playerRole
-                : PlayerRole.Unassigned);
+            SetCursorLockedForRole(
+                player != null && player.localManager != null
+                    ? player.localManager.playerRole
+                    : PlayerRole.Unassigned
+            );
         }
 
         private void OnDisable()
@@ -82,8 +108,12 @@ namespace ProjectRuntime.Actor
 
             jump = jumpInput != null && jumpInput.WasPerformedThisFrame();
             jumpHold = jumpInput != null && jumpInput.IsPressed();
-            flyDownHold = Keyboard.current != null &&
-                (Keyboard.current.leftShiftKey.isPressed || Keyboard.current.rightShiftKey.isPressed);
+            flyDownHold =
+                Keyboard.current != null
+                && (
+                    Keyboard.current.leftShiftKey.isPressed
+                    || Keyboard.current.rightShiftKey.isPressed
+                );
 
             clickPress = clickInput != null && clickInput.WasPressedThisFrame();
             clickHold = clickInput != null && clickInput.IsPressed();
@@ -144,6 +174,12 @@ namespace ProjectRuntime.Actor
             RefreshCursorLock();
         }
 
+        public void SetCursorLockOverride(bool shouldLock)
+        {
+            _shouldForceCursorLock = shouldLock;
+            RefreshCursorLock();
+        }
+
         private void RefreshCursorLock()
         {
             if (!isLocalPlayer)
@@ -151,7 +187,7 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            if (lockCursorOnStart && ShouldLockCursor())
+            if (lockCursorOnStart && (_shouldLockCursorForRole || _shouldForceCursorLock))
             {
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
@@ -163,10 +199,12 @@ namespace ProjectRuntime.Actor
 
         private bool ShouldLockCursor()
         {
-            return _shouldLockCursorForRole ||
-                   (player != null &&
-                    player.IsDungeonMaster &&
-                    player.currentState is DungeonMasterTurretState);
+            return _shouldLockCursorForRole
+                || (
+                    player != null
+                    && player.IsDungeonMaster
+                    && player.currentState is DungeonMasterTurretState
+                );
         }
 
         private void ReleaseCursorLock()

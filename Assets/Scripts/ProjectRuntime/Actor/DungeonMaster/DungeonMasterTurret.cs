@@ -1,0 +1,158 @@
+using Mirror;
+using UnityEngine;
+
+namespace ProjectRuntime.Actor
+{
+    [DisallowMultipleComponent]
+    [RequireComponent(typeof(NetworkIdentity))]
+    public class DungeonMasterTurret : NetworkBehaviour
+    {
+        [Header("Visuals")]
+        [SerializeField] private Transform turretRoot;
+        [SerializeField] private Transform turretYawPivot;
+        [SerializeField] private Transform turretPitchPivot;
+        [SerializeField] private Transform turretMuzzle;
+
+        [SyncVar(hook = nameof(OnOwnerNetIdChanged))]
+        private uint ownerNetId;
+
+        private GameplayPlayer _attachedOwner;
+
+        public uint OwnerNetId => ownerNetId;
+
+        [Server]
+        public void ServerInitialize(GameplayPlayer owner)
+        {
+            ownerNetId = owner != null ? owner.netId : 0;
+            RegisterWithOwner();
+        }
+
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            SetVisible(true);
+            RegisterWithOwner();
+        }
+
+        public override void OnStopClient()
+        {
+            DetachFromOwner();
+            base.OnStopClient();
+        }
+
+        public override void OnStopServer()
+        {
+            DetachFromOwner();
+            base.OnStopServer();
+        }
+
+        private void Update()
+        {
+            if (_attachedOwner == null)
+            {
+                RegisterWithOwner();
+            }
+        }
+
+        public bool IsOwnedBy(GameplayPlayer owner)
+        {
+            return owner != null && ownerNetId == owner.netId;
+        }
+
+        public void SetVisible(bool isVisible)
+        {
+            Transform root = turretRoot != null ? turretRoot : transform;
+
+            if (turretRoot != null)
+            {
+                turretRoot.gameObject.SetActive(isVisible);
+            }
+
+            foreach (Renderer turretRenderer in root.GetComponentsInChildren<Renderer>(true))
+            {
+                turretRenderer.enabled = isVisible;
+            }
+        }
+
+        public void UpdateAim(Vector3 worldDirection)
+        {
+            if (worldDirection.sqrMagnitude <= 0.0001f)
+            {
+                return;
+            }
+
+            Vector3 flatDirection = Vector3.ProjectOnPlane(worldDirection, Vector3.up);
+            if (turretYawPivot != null && flatDirection.sqrMagnitude > 0.0001f)
+            {
+                turretYawPivot.rotation = Quaternion.LookRotation(flatDirection.normalized, Vector3.up);
+            }
+
+            if (turretPitchPivot != null)
+            {
+                turretPitchPivot.rotation = Quaternion.LookRotation(worldDirection.normalized, Vector3.up);
+            }
+        }
+
+        public Vector3 GetMuzzlePosition()
+        {
+            return turretMuzzle != null
+                ? turretMuzzle.position
+                : transform.position + transform.forward * 0.75f;
+        }
+
+        private void OnOwnerNetIdChanged(uint oldValue, uint newValue)
+        {
+            if (oldValue != newValue)
+            {
+                DetachFromOwner();
+            }
+
+            RegisterWithOwner();
+        }
+
+        private void RegisterWithOwner()
+        {
+            if (_attachedOwner != null || ownerNetId == 0)
+            {
+                return;
+            }
+
+            GameplayPlayer owner = ResolveOwner();
+            if (owner == null)
+            {
+                return;
+            }
+
+            _attachedOwner = owner;
+            owner.Turret.AttachSpawnedTurret(this);
+        }
+
+        private void DetachFromOwner()
+        {
+            if (_attachedOwner == null)
+            {
+                return;
+            }
+
+            _attachedOwner.Turret.DetachSpawnedTurret(this);
+            _attachedOwner = null;
+        }
+
+        private GameplayPlayer ResolveOwner()
+        {
+            if (NetworkClient.active &&
+                NetworkClient.spawned.TryGetValue(ownerNetId, out NetworkIdentity clientIdentity))
+            {
+                return clientIdentity.GetComponent<GameplayPlayer>();
+            }
+
+            if (NetworkServer.active &&
+                NetworkServer.spawned.TryGetValue(ownerNetId, out NetworkIdentity serverIdentity))
+            {
+                return serverIdentity.GetComponent<GameplayPlayer>();
+            }
+
+            return null;
+        }
+    }
+}

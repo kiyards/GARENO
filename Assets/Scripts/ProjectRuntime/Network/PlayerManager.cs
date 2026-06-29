@@ -1,11 +1,11 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using Mirror;
 using ProjectRuntime.Actor;
 using ProjectRuntime.Managers;
 using ProjectRuntime.Network.Steam;
 using Steamworks;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -24,26 +24,46 @@ namespace ProjectRuntime.Network
     public class PlayerManager : NetworkSingleton<PlayerManager>
     {
         [Header("Components")]
-        [field: SerializeField] public GameplayPlayer player {get; private set;}
-        [field: SerializeField] public Canvas playerCanvas { get; private set; }
-        [field: SerializeField] public TextMeshProUGUI playerNameText { get; private set; }
+        [field: SerializeField]
+        public GameplayPlayer player { get; private set; }
+
+        [field: SerializeField]
+        public Canvas playerCanvas { get; private set; }
+
+        [field: SerializeField]
+        public TextMeshProUGUI playerNameText { get; private set; }
 
         [Header("Syncvars")]
-        [SyncVar(hook = nameof(OnPlayerNameSynced))] public string playerName;
-        [SyncVar] public ulong playerSteamId;
-        [SyncVar] public int playerIndex;
-        [SyncVar(hook = nameof(OnPlayerRoleSynced))] public PlayerRole playerRole = PlayerRole.Unassigned;
+        [SyncVar(hook = nameof(OnPlayerNameSynced))]
+        public string playerName;
+
+        [SyncVar]
+        public ulong playerSteamId;
+
+        [SyncVar]
+        public int playerIndex;
+
+        [SyncVar(hook = nameof(OnPlayerRoleSynced))]
+        public PlayerRole playerRole = PlayerRole.Unassigned;
         public Action<string> OnPlayerNameChanged;
 
         [Header("Variables")]
-        [SyncVar(hook = nameof(OnCharacterDataSynced))] public CharacterData characterData;
+        [SyncVar(hook = nameof(OnCharacterDataSynced))]
+        public CharacterData characterData;
+
+        [Header("Dungeon Master")]
+        [SerializeField]
+        private LayerMask dungeonMasterPlacementMask = Physics.DefaultRaycastLayers;
 
         public override void OnStartLocalPlayer()
         {
             base.OnStartLocalPlayer();
 
             if (SteamManager.Initialized)
-                CmdSendSteamIdentity(SteamUser.GetSteamID().m_SteamID, SteamFriends.GetPersonaName());
+                CmdSendSteamIdentity(
+                    SteamUser.GetSteamID().m_SteamID,
+                    SteamFriends.GetPersonaName()
+                );
 
             StartupSpawned(this);
             PlayerHudManager.EnsureInstance()?.SetLocalPlayer(this);
@@ -57,7 +77,10 @@ namespace ProjectRuntime.Network
         }
 
         [TargetRpc]
-        public void RpcSyncNetworkSMsToPlayer(NetworkConnectionToClient target, List<NetworkBaseState> states)
+        public void RpcSyncNetworkSMsToPlayer(
+            NetworkConnectionToClient target,
+            List<NetworkBaseState> states
+        )
         {
             foreach (var state in states)
             {
@@ -129,9 +152,22 @@ namespace ProjectRuntime.Network
                 return;
             }
 
-            playerCanvas.gameObject.SetActive(!isLocalPlayer && playerRole != PlayerRole.DungeonMaster);
+            playerCanvas.gameObject.SetActive(
+                !isLocalPlayer && playerRole != PlayerRole.DungeonMaster
+            );
         }
 
+        private bool TryGetMouseGroundPosition(out Vector3 position)
+        {
+            return CursorPlacementUtility.TryGetPlacementFromCursor(
+                1000f,
+                dungeonMasterPlacementMask,
+                out position,
+                out _,
+                QueryTriggerInteraction.Ignore,
+                fallbackToWorldGroundPlane: false
+            );
+        }
     }
 
     [Serializable]

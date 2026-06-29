@@ -8,6 +8,7 @@ namespace ProjectRuntime.Actor
     {
         [Header("Placement")]
         [SerializeField] private float maxPlacementRange = 80f;
+        [SerializeField] private LayerMask placementSurfaceMask = Physics.DefaultRaycastLayers;
         [SerializeField] private float placementCooldown = 0.35f;
         [SerializeField] private float groundProbeHeight = 3f;
         [SerializeField] private float maxGroundSnapDistance = 2f;
@@ -39,7 +40,11 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            if (!TryGetPlacementFromCamera(out Vector3 position, out Vector3 normal))
+            if (!CursorPlacementUtility.TryGetPlacementFromCursor(
+                    maxPlacementRange,
+                    placementSurfaceMask,
+                    out Vector3 position,
+                    out Vector3 normal))
             {
                 return;
             }
@@ -91,39 +96,6 @@ namespace ProjectRuntime.Actor
             NetworkServer.Spawn(trapObject);
         }
 
-        private bool TryGetPlacementFromCamera(out Vector3 position, out Vector3 normal)
-        {
-            position = Vector3.zero;
-            normal = Vector3.up;
-
-            var player = ResolvePlayer();
-            if (player == null || player.cam == null)
-            {
-                return false;
-            }
-
-            bool hitGround = player.cam.GetAimData(maxPlacementRange, out Vector3 origin, out Vector3 direction,
-                out RaycastHit hit);
-
-            if (hitGround && hit.collider != null)
-            {
-                position = hit.point;
-                normal = hit.normal;
-                return true;
-            }
-
-            var ray = new Ray(origin, direction);
-            var groundPlane = new Plane(Vector3.up, Vector3.zero);
-            if (groundPlane.Raycast(ray, out float enter) && enter <= maxPlacementRange)
-            {
-                position = ray.GetPoint(enter);
-                normal = Vector3.up;
-                return true;
-            }
-
-            return false;
-        }
-
         private bool TryValidatePlacement(
             Vector3 requestedPosition,
             Vector3 requestedNormal,
@@ -144,10 +116,9 @@ namespace ProjectRuntime.Actor
                 return false;
             }
 
-            int groundMask = LayerMask.GetMask("Ground");
             Vector3 probeStart = requestedPosition + Vector3.up * groundProbeHeight;
             if (!Physics.Raycast(probeStart, Vector3.down, out RaycastHit groundHit,
-                    groundProbeHeight * 2f, groundMask, QueryTriggerInteraction.Ignore))
+                    groundProbeHeight * 2f, placementSurfaceMask, QueryTriggerInteraction.Ignore))
             {
                 return false;
             }
