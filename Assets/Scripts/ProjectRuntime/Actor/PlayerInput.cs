@@ -27,6 +27,8 @@ namespace ProjectRuntime.Actor
 
         [SyncVar] public bool reloadPress;
 
+        public bool bearTrapPress;
+
         public Vector3 MoveVector => moveVec;
         public Vector2 AimVector => aimVec;
         public bool JumpPress => jump;
@@ -39,6 +41,7 @@ namespace ProjectRuntime.Actor
         public bool InteractHold => interactHold;
         public bool InteractRelease => interactRelease;
         public bool ReloadPress => reloadPress;
+        public bool BearTrapPress => bearTrapPress;
 
         public InputAction moveInput;
         public InputAction aimInput;
@@ -86,6 +89,7 @@ namespace ProjectRuntime.Actor
             interactRelease = interactInput != null && interactInput.WasReleasedThisFrame();
 
             reloadPress = reloadInput != null && reloadInput.WasPressedThisFrame();
+            bearTrapPress = Keyboard.current != null && Keyboard.current.bKey.wasPressedThisFrame;
         }
 
         private void SetInputEnabled(bool isEnabled)
@@ -120,6 +124,7 @@ namespace ProjectRuntime.Actor
             interactHold = false;
             interactRelease = false;
             reloadPress = false;
+            bearTrapPress = false;
         }
 
         private void CacheComponents()

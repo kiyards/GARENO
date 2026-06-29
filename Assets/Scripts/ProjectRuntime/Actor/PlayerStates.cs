@@ -142,6 +142,11 @@ namespace ProjectRuntime.Actor.PlayerStates
                     m_hasAnchor = true
                 });
             }
+
+            if (player.input.BearTrapPress)
+            {
+                player.BearTrapController.TryPlace();
+            }
         }
 
         public override void FixedUpdate()
@@ -298,6 +303,99 @@ namespace ProjectRuntime.Actor.PlayerStates
     public abstract class BaseInactiveState : PlayerState
     {
         protected BaseInactiveState(GameplayPlayer sm) : base(sm) { }
+    }
+
+    public class BearTrappedState : PlayerState
+    {
+        public uint m_trapNetId;
+        public Vector3 m_anchorPosition;
+
+        public BearTrappedState(GameplayPlayer sm) : base(sm) { }
+
+        public override void OnSerialize(NetworkWriter writer)
+        {
+            base.OnSerialize(writer);
+            writer.WriteUInt(m_trapNetId);
+            writer.Write(m_anchorPosition);
+        }
+
+        public override void OnDeserialize(NetworkReader reader)
+        {
+            base.OnDeserialize(reader);
+            m_trapNetId = reader.ReadUInt();
+            m_anchorPosition = reader.Read<Vector3>();
+        }
+
+        public override void OnEnter()
+        {
+            base.OnEnter();
+            if (player.cam != null)
+            {
+                player.cam.SetCam(CharacterMode.AIM);
+            }
+
+            StopMovement();
+        }
+
+        public override void Update()
+        {
+            base.Update();
+            if (!player.isLocalPlayer || player.input == null)
+            {
+                return;
+            }
+
+            if (player.input.InteractPress)
+            {
+                player.CmdMashBearTrap(m_trapNetId);
+            }
+        }
+
+        public override void LateUpdate()
+        {
+            base.LateUpdate();
+            if (!player.isLocalPlayer)
+            {
+                return;
+            }
+
+            RotateAim();
+        }
+
+        public override void FixedUpdate()
+        {
+            base.FixedUpdate();
+            if (!player.isLocalPlayer && !player.isServer)
+            {
+                return;
+            }
+
+            StopMovement();
+        }
+
+        private void StopMovement()
+        {
+            if (player.rb != null)
+            {
+                player.rb.linearVelocity = Vector3.zero;
+                player.rb.angularVelocity = Vector3.zero;
+                player.rb.MovePosition(m_anchorPosition);
+                return;
+            }
+
+            player.transform.position = m_anchorPosition;
+        }
+
+        private void RotateAim()
+        {
+            if (player.cam == null || player.aimRig == null)
+            {
+                return;
+            }
+
+            player.transform.localEulerAngles = new Vector3(0f, player.cam.transform.localEulerAngles.y, 0f);
+            player.aimRig.localEulerAngles = new Vector3(player.cam.transform.localEulerAngles.x, 0f, 0f);
+        }
     }
 
     public class DeathState : BaseInactiveState

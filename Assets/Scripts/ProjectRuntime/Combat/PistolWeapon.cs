@@ -88,6 +88,8 @@ namespace ProjectRuntime.Combat
                 return;
             if (player == null || player.IsInactive || input == null)
                 return;
+            if (player.IsBearTrapped)
+                return;
             if (player.IsDungeonMaster)
                 return;
 
@@ -138,7 +140,7 @@ namespace ProjectRuntime.Combat
         [Command]
         private void CmdFire(uint targetNetId, Vector3 hitPoint, Vector3 tracerStart)
         {
-            if (player != null && player.IsDungeonMaster)
+            if (player != null && (player.IsDungeonMaster || player.IsBearTrapped))
                 return;
             if (isReloading || currentAmmo <= 0)
                 return;
@@ -190,7 +192,7 @@ namespace ProjectRuntime.Combat
         [Command]
         private void CmdReload()
         {
-            if (player != null && player.IsDungeonMaster)
+            if (player != null && (player.IsDungeonMaster || player.IsBearTrapped))
                 return;
             if (isReloading || currentAmmo >= magazineSize)
                 return;

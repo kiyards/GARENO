@@ -119,8 +119,19 @@ namespace ProjectRuntime.Network
         public void RpcApplyState(NetworkBaseState newState) // OnDeserialize runs here
         {
             if (isServer) return; // state already applied on host, avoid double calling
-            if (currentState != null && newState.serverTick < currentState.serverTick) // Reject stale corrections - a later tick is already running locally
-                return;
+            ApplyRemoteState(newState);
+        }
+
+        [TargetRpc]
+        public void TargetApplyState(NetworkConnectionToClient target, NetworkBaseState newState)
+        {
+            if (isServer) return; // state already applied on host, avoid double calling
+            ApplyRemoteState(newState);
+        }
+
+        [Server]
+        public void ServerApplyState(NetworkBaseState newState) // OnDeserialize runs here
+        {
             currentState?.OnExit();
             newState.ApplyTickOffset();
             nextState = null;
@@ -129,9 +140,25 @@ namespace ProjectRuntime.Network
             newState.OnEnter();
             currentState = newState;
         }
+
         [Server]
-        public void ServerApplyState(NetworkBaseState newState) // OnDeserialize runs here
+        public void ServerForceState(NetworkBaseState newState)
         {
+            chainBudget = 0;
+            newState.serverTick = NetworkTick.Current;
+            ServerApplyState(newState);
+            RpcApplyState(newState);
+
+            if (connectionToClient != null)
+            {
+                TargetApplyState(connectionToClient, newState);
+            }
+        }
+
+        private void ApplyRemoteState(NetworkBaseState newState)
+        {
+            if (currentState != null && newState.serverTick < currentState.serverTick) // Reject stale corrections - a later tick is already running locally
+                return;
             currentState?.OnExit();
             newState.ApplyTickOffset();
             nextState = null;

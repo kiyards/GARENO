@@ -28,6 +28,11 @@ namespace ProjectRuntime.Combat
         public float CurrentHealth => currentHealth;
         public bool IsAlive => !_isDead && currentHealth > 0f;
 
+        public void ConfigureMaxHealth(float value)
+        {
+            maxHealth = Mathf.Max(1f, value);
+        }
+
         public override void OnStartServer()
         {
             base.OnStartServer();

@@ -1,4 +1,5 @@
 using Mirror;
+using ProjectRuntime.Actor;
 using ProjectRuntime.Managers;
 using ProjectRuntime.Network.Steam;
 using Steamworks;
@@ -19,12 +20,15 @@ namespace ProjectRuntime.Network
 
         [Header("Prefabs")]
         [field: SerializeField] private LobbyPlayer LobbyPlayerPrefab { get; set; }
+        [SerializeField] private GameObject bearTrapPrefab;
 
         public List<LobbyPlayer> LobbyPlayers { get; } = new List<LobbyPlayer>();
         public Dictionary<NetworkConnectionToClient, PlayerManager> ConnectedPlayersCurrent = new();
         public Dictionary<(uint, int), NetworkStateMachine> NetId2SM { get; private set; } = new();
         public Dictionary<int, Type> Guid2StateCache = new Dictionary<int, Type>();
         public Dictionary<Type, int> State2GuidCache = new Dictionary<Type, int>();
+
+        public GameObject BearTrapPrefab => bearTrapPrefab;
 
         public CSteamID HostedLobbyId;
 

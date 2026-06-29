@@ -50,6 +50,11 @@ namespace ProjectRuntime.Actor
         private DungeonMasterTurretController _turret;
         public DungeonMasterTurretController Turret
             => this._turret != null ? this._turret : this._turret = this.EnsureTurretController();
+        private DungeonMasterBearTrapController _bearTrapController;
+        public DungeonMasterBearTrapController BearTrapController
+            => this._bearTrapController != null
+                ? this._bearTrapController
+                : this._bearTrapController = this.EnsureBearTrapController();
         private Renderer[] _roleRenderers;
         private bool[] _roleRendererInitialEnabled;
         private bool _initialColliderEnabled;
@@ -58,6 +63,7 @@ namespace ProjectRuntime.Actor
         private bool _cachedRoleDefaults;
 
         public bool IsInactive => currentState is BaseInactiveState;
+        public bool IsBearTrapped => currentState is BearTrappedState;
         public bool IsDungeonMaster => _currentRole == PlayerRole.DungeonMaster;
         public float DungeonMasterHorizontalSpeed => dungeonMasterHorizontalSpeed;
         public float DungeonMasterVerticalSpeed => dungeonMasterVerticalSpeed;
@@ -73,6 +79,7 @@ namespace ProjectRuntime.Actor
             base.Awake();
             CacheRoleDefaults();
             Turret.SetVisible(false);
+            BearTrapController.Initialize(this);
         }
 
         public override void NetworkStart()
@@ -170,6 +177,56 @@ namespace ProjectRuntime.Actor
         public void CmdFireDungeonMasterTurret(uint targetNetId, Vector3 hitPoint)
         {
             Turret.ServerFire(targetNetId, hitPoint);
+        }
+
+        [Command]
+        public void CmdPlaceBearTrap(Vector3 position, Vector3 normal)
+        {
+            BearTrapController.ServerPlace(position, normal);
+        }
+
+        [Command]
+        public void CmdMashBearTrap(uint trapNetId)
+        {
+            if (!NetworkServer.spawned.TryGetValue(trapNetId, out NetworkIdentity trapIdentity))
+            {
+                return;
+            }
+
+            var bearTrap = trapIdentity.GetComponent<BearTrap>();
+            if (bearTrap == null)
+            {
+                return;
+            }
+
+            bearTrap.ServerHandleMash(this);
+        }
+
+        [Server]
+        public void ServerEnterBearTrap(BearTrap trap, Vector3 anchorPosition)
+        {
+            if (trap == null || IsDungeonMaster || IsInactive)
+            {
+                return;
+            }
+
+            ServerForceState(new BearTrappedState(this)
+            {
+                m_trapNetId = trap.netId,
+                m_anchorPosition = anchorPosition
+            });
+        }
+
+        [Server]
+        public void ServerExitBearTrap(uint trapNetId)
+        {
+            if (!(currentState is BearTrappedState trappedState) ||
+                trappedState.m_trapNetId != trapNetId)
+            {
+                return;
+            }
+
+            ServerForceState(new BaseMovementState(this));
         }
 
         [ClientRpc]
@@ -308,6 +365,17 @@ namespace ProjectRuntime.Actor
 
             turret.Initialize(this);
             return turret;
+        }
+
+        private DungeonMasterBearTrapController EnsureBearTrapController()
+        {
+            if (!TryGetComponent(out DungeonMasterBearTrapController bearTrapController))
+            {
+                bearTrapController = gameObject.AddComponent<DungeonMasterBearTrapController>();
+            }
+
+            bearTrapController.Initialize(this);
+            return bearTrapController;
         }
     }
 }
