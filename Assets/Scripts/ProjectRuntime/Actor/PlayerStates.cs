@@ -413,30 +413,57 @@ namespace ProjectRuntime.Actor.PlayerStates
         }
     }
 
-    public class DeathState : BaseInactiveState
+    // A survivor at 0 HP is downed rather than killed outright: immobilized at the spot they fell,
+    // waiting for a teammate to revive them or for the revive window to expire. The revive timer and
+    // hold progress are server-authoritative and live on GameplayPlayer; this state only replicates
+    // the anchor position and pins the body there. Resolution (revive or timeout) routes through the
+    // existing RespawnState, so this state has no exit logic of its own.
+    public class DownedState : BaseInactiveState
     {
-        const float DeathTime = 2f;
-        bool _requestedRespawn;
-        public DeathState(GameplayPlayer sm) : base(sm) { }
+        public Vector3 m_anchorPosition;
+
+        public DownedState(GameplayPlayer sm) : base(sm) { }
+
+        public override void OnSerialize(NetworkWriter writer)
+        {
+            base.OnSerialize(writer);
+            writer.Write(m_anchorPosition);
+        }
+
+        public override void OnDeserialize(NetworkReader reader)
+        {
+            base.OnDeserialize(reader);
+            m_anchorPosition = reader.Read<Vector3>();
+        }
+
         public override void OnEnter()
         {
             base.OnEnter();
-            player.cam.SetCam(CharacterMode.SPECTATE);
+            StopMovement();
         }
 
-        public override void Update()
+        public override void FixedUpdate()
         {
-            base.Update();
-            if (!player.isLocalPlayer) return;
-            if (elapsedTime >= DeathTime)
-                _requestedRespawn = true;
+            base.FixedUpdate();
+            if (!player.isLocalPlayer && !player.isServer)
+            {
+                return;
+            }
+
+            StopMovement();
         }
 
-        public override void StateUpdate()
+        private void StopMovement()
         {
-            base.StateUpdate();
-            if (_requestedRespawn)
-                player.CmdEnterRespawnState();
+            if (player.rb != null)
+            {
+                player.rb.linearVelocity = Vector3.zero;
+                player.rb.angularVelocity = Vector3.zero;
+                player.rb.MovePosition(m_anchorPosition);
+                return;
+            }
+
+            player.transform.position = m_anchorPosition;
         }
     }
 
@@ -464,24 +491,25 @@ namespace ProjectRuntime.Actor.PlayerStates
         public override void OnEnter()
         {
             base.OnEnter();
-            if (player.isLocalPlayer)
+            // Teleport to the spawn point immediately (no lerp). Snap the transform on every peer so
+            // remote views jump too; drive the rigidbody on the local (authority) player.
+            player.transform.position = m_respawnPos;
+            player.transform.rotation = Quaternion.identity;
+            if (player.isLocalPlayer && player.rb != null)
             {
                 player.rb.isKinematic = true;
+                player.rb.position = m_respawnPos;
+                player.rb.rotation = Quaternion.identity;
+                player.rb.linearVelocity = Vector3.zero;
+                player.rb.angularVelocity = Vector3.zero;
             }
-        }
-        public override void FixedUpdate()
-        {
-            base.FixedUpdate();
-            if (!player.isLocalPlayer) return;
-            player.transform.position = Vector3.Lerp(player.transform.position, m_respawnPos, elapsedTime / duration);
-            player.transform.rotation = Quaternion.Lerp(player.transform.rotation, Quaternion.identity, elapsedTime / duration);
         }
         public override void OnExit()
         {
             base.OnExit();
             player.transform.position = m_respawnPos;
             player.transform.rotation = Quaternion.identity;
-            if (player.isLocalPlayer)
+            if (player.isLocalPlayer && player.rb != null)
             {
                 player.rb.isKinematic = false;
             }

@@ -1087,6 +1087,9 @@ MonoBehaviour:
   dungeonMasterVerticalSpeed: 12
   dungeonMasterMinY: 0
   dungeonMasterMaxY: 40
+  reviveWindow: 30
+  reviveHoldTime: 2
+  reviveRange: 2.5
 --- !u!54 &1249909608370010987
 Rigidbody:
   m_ObjectHideFlags: 0

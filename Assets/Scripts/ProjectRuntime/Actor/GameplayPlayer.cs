@@ -1,6 +1,7 @@
 using Mirror;
 using ProjectRuntime.Actor.PlayerStates;
 using ProjectRuntime.Combat;
+using ProjectRuntime.Managers;
 using ProjectRuntime.Network;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -43,6 +44,28 @@ namespace ProjectRuntime.Actor
         [SerializeField] private float dungeonMasterMinY = 0f;
         [SerializeField] private float dungeonMasterMaxY = 40f;
 
+        [Header("Revive")]
+        // How long a downed survivor waits before auto-resolving if no teammate revives them.
+        [SerializeField] private float reviveWindow = 30f;
+        // How long a teammate must hold Interact in range to revive a downed survivor.
+        [SerializeField] private float reviveHoldTime = 2f;
+        // How close a teammate must be to revive a downed survivor.
+        [SerializeField] private float reviveRange = 2.5f;
+
+        // If no revive contact arrives for this long, the hold streak is considered broken (the
+        // reviver left range or stopped holding Interact) and the next contact starts a fresh hold.
+        private const float ReviveContactGrace = 0.25f;
+
+        private double _downedStartTime;
+        // Server time (NetworkTime.time) when the current continuous revive-hold streak began, and
+        // the last time a valid revive contact arrived. Hold duration is measured in real time so it
+        // can't be outrun by command batching/frame-rate.
+        private double _reviveContactStartTime;
+        private double _lastReviveContactTime;
+        // Guards against re-resolving while the downed→respawn state transition round-trips back from
+        // the owning client (the state authority), which would otherwise re-fire every physics frame.
+        private bool _downedResolved;
+
         private PlayerRole _currentRole = PlayerRole.Unassigned;
         private DungeonMasterCardManager _cardManager;
         public DungeonMasterCardManager CardManager
@@ -64,6 +87,7 @@ namespace ProjectRuntime.Actor
 
         public bool IsInactive => currentState is BaseInactiveState;
         public bool IsBearTrapped => currentState is BearTrappedState;
+        public bool IsDowned => currentState is DownedState;
         public bool IsDungeonMaster => _currentRole == PlayerRole.DungeonMaster;
         public float DungeonMasterHorizontalSpeed => dungeonMasterHorizontalSpeed;
         public float DungeonMasterVerticalSpeed => dungeonMasterVerticalSpeed;
@@ -104,15 +128,26 @@ namespace ProjectRuntime.Actor
         [Server]
         private void OnHealthDepleted(uint killerNetId)
         {
-            ServerApplyDeath();
+            ServerEnterDowned();
         }
 
         protected override void FixedUpdate()
         {
             base.FixedUpdate();
-            if (!IsDungeonMaster && isServer && transform.position.y < -10f)
+
+            if (isServer)
             {
-                ServerApplyDeath();
+                ServerTickDowned();
+
+                if (!IsDungeonMaster && !IsInactive && transform.position.y < -10f)
+                {
+                    ServerEnterDowned();
+                }
+            }
+
+            if (isLocalPlayer)
+            {
+                ClientTickRevive();
             }
         }
 
@@ -142,35 +177,157 @@ namespace ProjectRuntime.Actor
         }
 
         [Server]
-        public void ServerApplyDeath()
+        public void ServerEnterDowned()
         {
-            if (IsDungeonMaster)
+            if (IsDungeonMaster || IsInactive)
             {
                 return;
             }
 
-            RpcApplyDeath();
-        }
-        [ClientRpc]
-        public void RpcApplyDeath()
-        {
-            if (IsInactive) return;
-            QueueState(new DeathState(this));
+            _downedStartTime = NetworkTime.time;
+            // Sentinel in the past so the first contact always starts a fresh hold streak.
+            _lastReviveContactTime = double.NegativeInfinity;
+            _reviveContactStartTime = 0d;
+            _downedResolved = false;
+
+            ServerForceState(new DownedState(this)
+            {
+                m_anchorPosition = transform.position
+            });
         }
 
+        [Server]
+        private void ServerTickDowned()
+        {
+            if (!IsDowned)
+            {
+                return;
+            }
+
+            if (NetworkTime.time - _downedStartTime >= reviveWindow)
+            {
+                ServerResolveDowned();
+            }
+        }
+
+        // Called on the reviving survivor; downedNetId identifies the teammate being revived. Sent
+        // each FixedUpdate while the reviver holds Interact in range, mirroring CmdMashBearTrap.
         [Command]
-        public void CmdEnterRespawnState()
+        public void CmdReviveTeammate(uint downedNetId)
         {
-            if (IsDungeonMaster)
+            if (IsDungeonMaster || IsInactive)
             {
                 return;
             }
+
+            if (!NetworkServer.spawned.TryGetValue(downedNetId, out NetworkIdentity identity))
+            {
+                return;
+            }
+
+            // The NetworkIdentity is on the player root, but GameplayPlayer lives on a child object,
+            // so GetComponent on the identity's GameObject misses it — search children.
+            var target = identity.GetComponentInChildren<GameplayPlayer>();
+            if (target == null || target == this || !target.IsDowned)
+            {
+                return;
+            }
+
+            if ((target.transform.position - transform.position).sqrMagnitude >
+                reviveRange * reviveRange)
+            {
+                return;
+            }
+
+            target.ServerRegisterReviveContact();
+        }
+
+        // Called on the downed survivor each time a teammate channels a valid revive. The hold is
+        // measured as continuous real-time contact: a gap longer than the grace restarts the streak,
+        // and reviveHoldTime seconds of unbroken contact completes the revive.
+        [Server]
+        public void ServerRegisterReviveContact()
+        {
+            if (!IsDowned)
+            {
+                return;
+            }
+
+            double now = NetworkTime.time;
+            if (now - _lastReviveContactTime > ReviveContactGrace)
+            {
+                _reviveContactStartTime = now;
+            }
+
+            _lastReviveContactTime = now;
+            if (now - _reviveContactStartTime >= reviveHoldTime)
+            {
+                ServerResolveDowned();
+            }
+        }
+
+        // Single resolution point for both revive-completed and revive-window-expired. In this slice
+        // both outcomes are identical: restore health and respawn at the start point.
+        [Server]
+        public void ServerResolveDowned()
+        {
+            if (!IsDowned || _downedResolved)
+            {
+                return;
+            }
+
+            _downedResolved = true;
 
             if (health != null)
+            {
                 health.ServerResetHealth();
+            }
 
             Vector3 respawnPos = GameNetworkManager.Instance.GetStartPosition().position;
             RpcEnterRespawnState(respawnPos);
+        }
+
+        private void ClientTickRevive()
+        {
+            if (IsDungeonMaster || IsInactive || input == null || !input.InteractHold)
+            {
+                return;
+            }
+
+            var target = FindReviveTarget();
+            if (target != null)
+            {
+                CmdReviveTeammate(target.netId);
+            }
+        }
+
+        private GameplayPlayer FindReviveTarget()
+        {
+            var battleManager = BattleManager.Instance;
+            if (battleManager == null)
+            {
+                return null;
+            }
+
+            GameplayPlayer nearest = null;
+            float nearestSqr = reviveRange * reviveRange;
+            foreach (var pm in battleManager.Players)
+            {
+                var candidate = pm != null ? pm.player : null;
+                if (candidate == null || candidate == this || !candidate.IsDowned)
+                {
+                    continue;
+                }
+
+                float sqr = (candidate.transform.position - transform.position).sqrMagnitude;
+                if (sqr <= nearestSqr)
+                {
+                    nearestSqr = sqr;
+                    nearest = candidate;
+                }
+            }
+
+            return nearest;
         }
 
         [Command]
