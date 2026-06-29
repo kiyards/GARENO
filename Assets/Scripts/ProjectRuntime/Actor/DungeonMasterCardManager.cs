@@ -116,7 +116,7 @@ namespace ProjectRuntime.Actor
         {
             switch (card.Effect)
             {
-                case CardEffectType.SpawnBasicZombie:
+                case CardEffectType.SPAWN_BASIC_ZOMBIE:
                     var battleManager = BattleManager.Instance;
                     if (battleManager == null)
                     {

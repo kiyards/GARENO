@@ -131,7 +131,7 @@ public class DCard : ScriptableObject, IDataImport
                 CardId = paramList[1],
                 DisplayName = paramList[2],
                 ManaCost = CommonUtil.ConvertToInt32(paramList[3]),
-                Effect = ParseEnumOrDefault(paramList[4], CardEffectType.SpawnBasicZombie, paramList[1]),
+                Effect = ParseEnumOrDefault(paramList[4], CardEffectType.SPAWN_BASIC_ZOMBIE, paramList[1]),
             };
             s_loadedData.Data.Add(cardData);
         }
@@ -161,7 +161,7 @@ public class DCard : ScriptableObject, IDataImport
 /// </summary>
 public enum CardEffectType
 {
-    SpawnBasicZombie,
+    SPAWN_BASIC_ZOMBIE,
 }
 
 [Serializable]
