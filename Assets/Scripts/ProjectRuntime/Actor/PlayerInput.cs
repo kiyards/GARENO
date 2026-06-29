@@ -1,4 +1,5 @@
 using Mirror;
+using ProjectRuntime.Network;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,6 +9,7 @@ namespace ProjectRuntime.Actor
     {
         [SerializeField] private GameplayPlayer player;
         [SerializeField] private bool lockCursorOnStart = true;
+        private bool _shouldLockCursorForRole;
 
         public float sensitivity = 50f;
         [SyncVar] public Vector3 moveVec;
@@ -55,7 +57,9 @@ namespace ProjectRuntime.Actor
             base.OnStartLocalPlayer();
             CacheComponents();
             SetInputEnabled(true);
-            ApplyCursorLock();
+            SetCursorLockedForRole(player != null && player.localManager != null
+                ? player.localManager.playerRole
+                : PlayerRole.Unassigned);
         }
 
         private void OnDisable()
@@ -69,7 +73,7 @@ namespace ProjectRuntime.Actor
             if (!isLocalPlayer)
                 return;
 
-            ApplyCursorLock();
+            RefreshCursorLock();
 
             Vector2 inputVec = moveInput != null ? moveInput.ReadValue<Vector2>() : Vector2.zero;
             moveVec = new Vector3(inputVec.x, 0f, inputVec.y);
@@ -133,15 +137,27 @@ namespace ProjectRuntime.Actor
             player ??= transform.root.GetComponentInChildren<GameplayPlayer>(true);
         }
 
-        private void ApplyCursorLock()
+        public void SetCursorLockedForRole(PlayerRole role)
         {
-            if (!lockCursorOnStart)
+            _shouldLockCursorForRole = role == PlayerRole.Survivor;
+            RefreshCursorLock();
+        }
+
+        private void RefreshCursorLock()
+        {
+            if (!isLocalPlayer)
             {
                 return;
             }
 
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            if (lockCursorOnStart && _shouldLockCursorForRole)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+                return;
+            }
+
+            ReleaseCursorLock();
         }
 
         private void ReleaseCursorLock()

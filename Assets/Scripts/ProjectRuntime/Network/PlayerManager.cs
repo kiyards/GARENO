@@ -146,6 +146,7 @@ namespace ProjectRuntime.Network
 
             if (isLocalPlayer)
             {
+                player?.input?.SetCursorLockedForRole(role);
                 PlayerHudManager.EnsureInstance()?.SetRole(role);
             }
         }
