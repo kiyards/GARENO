@@ -1,4 +1,5 @@
 using Mirror;
+using ProjectRuntime.Actor.PlayerStates;
 using ProjectRuntime.Network;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -150,7 +151,7 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            if (lockCursorOnStart && _shouldLockCursorForRole)
+            if (lockCursorOnStart && ShouldLockCursor())
             {
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
@@ -158,6 +159,14 @@ namespace ProjectRuntime.Actor
             }
 
             ReleaseCursorLock();
+        }
+
+        private bool ShouldLockCursor()
+        {
+            return _shouldLockCursorForRole ||
+                   (player != null &&
+                    player.IsDungeonMaster &&
+                    player.currentState is DungeonMasterTurretState);
         }
 
         private void ReleaseCursorLock()

@@ -6,8 +6,8 @@ namespace ProjectRuntime.UI
     /// <summary>
     /// Renders the Dungeon Master's 4-card hand. Binds to the local player's
     /// <see cref="DungeonMasterCardManager"/> (via <see cref="PlayerHudManager"/>) and refreshes
-    /// the slots whenever the replicated hand or the mana changes. Display-only this slice;
-    /// cards are played through the existing input path.
+    /// the slots whenever the replicated hand or the mana changes. Clicking a slot asks the
+    /// local card manager to enter placement mode for that hand index.
     /// </summary>
     public class UIDungeonMasterHand : MonoBehaviour
     {
@@ -29,6 +29,7 @@ namespace ProjectRuntime.UI
 
             this._cardManager.OnHandChangedEvent += this.OnHandChanged;
             this._cardManager.OnManaChangedEvent += this.OnManaChanged;
+            this.BindSlots();
             this.RefreshHand();
         }
 
@@ -41,6 +42,7 @@ namespace ProjectRuntime.UI
 
             this._cardManager.OnHandChangedEvent -= this.OnHandChanged;
             this._cardManager.OnManaChangedEvent -= this.OnManaChanged;
+            this.UnbindSlots();
             this._cardManager = null;
         }
 
@@ -73,6 +75,37 @@ namespace ProjectRuntime.UI
                 var cardId = i < hand.Count ? hand[i] : null;
                 this.slots[i].SetCard(cardId, mana);
             }
+        }
+
+        private void BindSlots()
+        {
+            if (this.slots == null)
+            {
+                return;
+            }
+
+            for (var i = 0; i < this.slots.Length; i++)
+            {
+                this.slots[i]?.Bind(this, i);
+            }
+        }
+
+        private void UnbindSlots()
+        {
+            if (this.slots == null)
+            {
+                return;
+            }
+
+            foreach (var slot in this.slots)
+            {
+                slot?.Unbind();
+            }
+        }
+
+        public void SelectSlot(int slotIndex)
+        {
+            this._cardManager?.TryBeginPlacementFromHand(slotIndex);
         }
     }
 }

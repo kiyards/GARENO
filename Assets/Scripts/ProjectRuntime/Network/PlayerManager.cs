@@ -8,7 +8,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace ProjectRuntime.Network
 {
@@ -55,34 +54,6 @@ namespace ProjectRuntime.Network
         {
             base.OnStartClient();
             ApplyRole(this.playerRole);
-        }
-
-        private void Update()
-        {
-            if (!isLocalPlayer || playerRole != PlayerRole.DungeonMaster)
-            {
-                return;
-            }
-
-            if (Keyboard.current == null ||
-                Mouse.current == null ||
-                !Keyboard.current.digit1Key.wasPressedThisFrame)
-            {
-                return;
-            }
-
-            if (player == null || player.CardManager == null)
-            {
-                return;
-            }
-
-            if (!TryGetMouseGroundPosition(out Vector3 groundPosition))
-            {
-                return;
-            }
-
-            // Temporary input: play hand slot 0. Slot selection arrives with the hand HUD (Task 2).
-            player.CardManager.CmdPlayCard(0, groundPosition);
         }
 
         [TargetRpc]
@@ -161,31 +132,6 @@ namespace ProjectRuntime.Network
             playerCanvas.gameObject.SetActive(!isLocalPlayer && playerRole != PlayerRole.DungeonMaster);
         }
 
-        private static bool TryGetMouseGroundPosition(out Vector3 position)
-        {
-            position = Vector3.zero;
-
-            Camera camera = Camera.main;
-            if (camera == null)
-            {
-                return false;
-            }
-
-            int groundLayer = LayerMask.NameToLayer("Ground");
-            if (groundLayer < 0)
-            {
-                return false;
-            }
-
-            Ray ray = camera.ScreenPointToRay(Mouse.current.position.ReadValue());
-            if (!Physics.Raycast(ray, out RaycastHit hit, 1000f, 1 << groundLayer))
-            {
-                return false;
-            }
-
-            position = hit.point;
-            return true;
-        }
     }
 
     [Serializable]
