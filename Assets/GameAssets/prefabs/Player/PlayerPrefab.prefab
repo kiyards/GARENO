@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 4329926396842036309}
   - component: {fileID: 7190968621733133702}
   - component: {fileID: 6495563617837147907}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PlayerPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -263,7 +263,7 @@ GameObject:
   - component: {fileID: 3755640324832242681}
   - component: {fileID: 8277495380130426580}
   - component: {fileID: 5620791204912389779}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: FirstPersonCam
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -539,7 +539,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4026340512582019932}
   - component: {fileID: 3611815320372169542}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Input
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -577,6 +577,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   player: {fileID: 7578397109688941967}
+  lockCursorOnStart: 1
   sensitivity: 50
   moveVec: {x: 0, y: 0, z: 0}
   aimVec: {x: 0, y: 0}
@@ -819,7 +820,7 @@ GameObject:
   - component: {fileID: 3086394861078213070}
   - component: {fileID: 5845632010730616114}
   - component: {fileID: 7805670267703114024}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CameraController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1240,6 +1241,10 @@ MonoBehaviour:
   reloadDuration: 1.5
   fireCooldown: 0.25
   damagePopupPrefab: {fileID: 8824996141537536103, guid: 8f299d7398d8b7c48917932052b6b2f6, type: 3}
+  tracerDuration: 0.12
+  tracerWidth: 0.05
+  tracerColor: {r: 1, g: 0.76, b: 0.22, a: 1}
+  tracerMaterial: {fileID: 0}
 --- !u!114 &6988870576730226306
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1271,7 +1276,7 @@ GameObject:
   - component: {fileID: 1374426062021327346}
   - component: {fileID: 4530458533011293639}
   - component: {fileID: 6711707841149257512}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: ThirdPersonCam
   m_TagString: Untagged
   m_Icon: {fileID: 0}

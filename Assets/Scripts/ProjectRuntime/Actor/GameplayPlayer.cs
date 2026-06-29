@@ -47,6 +47,9 @@ namespace ProjectRuntime.Actor
         private DungeonMasterCardManager _cardManager;
         public DungeonMasterCardManager CardManager
             => this._cardManager ??= this.GetComponent<DungeonMasterCardManager>();
+        private DungeonMasterTurretController _turret;
+        public DungeonMasterTurretController Turret
+            => this._turret != null ? this._turret : this._turret = this.EnsureTurretController();
         private Renderer[] _roleRenderers;
         private bool[] _roleRendererInitialEnabled;
         private bool _initialColliderEnabled;
@@ -69,6 +72,7 @@ namespace ProjectRuntime.Actor
         {
             base.Awake();
             CacheRoleDefaults();
+            Turret.SetVisible(false);
         }
 
         public override void NetworkStart()
@@ -117,6 +121,7 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
+            Turret.SetVisible(false);
             ApplySurvivorBody();
             QueueRoleState(new BaseMovementState(this));
         }
@@ -160,6 +165,19 @@ namespace ProjectRuntime.Actor
             Vector3 respawnPos = GameNetworkManager.Instance.GetStartPosition().position;
             RpcEnterRespawnState(respawnPos);
         }
+
+        [Command]
+        public void CmdFireDungeonMasterTurret(uint targetNetId, Vector3 hitPoint)
+        {
+            Turret.ServerFire(targetNetId, hitPoint);
+        }
+
+        [ClientRpc]
+        public void RpcShowDungeonMasterTurretTracer(Vector3 hitPoint)
+        {
+            Turret.ShowTracer(hitPoint);
+        }
+
         [ClientRpc]
         public void RpcEnterRespawnState(Vector3 respawnPos)
         {
@@ -223,6 +241,7 @@ namespace ProjectRuntime.Actor
         private void ApplyDungeonMasterBody()
         {
             SetRenderersVisible(false);
+            Turret.SetVisible(false);
 
             if (col != null)
             {
@@ -278,6 +297,17 @@ namespace ProjectRuntime.Actor
 
                 _roleRenderers[i].enabled = isVisible && _roleRendererInitialEnabled[i];
             }
+        }
+
+        private DungeonMasterTurretController EnsureTurretController()
+        {
+            if (!TryGetComponent(out DungeonMasterTurretController turret))
+            {
+                turret = gameObject.AddComponent<DungeonMasterTurretController>();
+            }
+
+            turret.Initialize(this);
+            return turret;
         }
     }
 }

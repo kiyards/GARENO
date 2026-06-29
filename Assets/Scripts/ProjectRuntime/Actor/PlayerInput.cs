@@ -7,6 +7,7 @@ namespace ProjectRuntime.Actor
     public class PlayerInput : NetworkBehaviour
     {
         [SerializeField] private GameplayPlayer player;
+        [SerializeField] private bool lockCursorOnStart = true;
 
         public float sensitivity = 50f;
         [SyncVar] public Vector3 moveVec;
@@ -51,17 +52,21 @@ namespace ProjectRuntime.Actor
             base.OnStartLocalPlayer();
             CacheComponents();
             SetInputEnabled(true);
+            ApplyCursorLock();
         }
 
         private void OnDisable()
         {
             SetInputEnabled(false);
+            ReleaseCursorLock();
         }
 
         private void Update()
         {
             if (!isLocalPlayer)
                 return;
+
+            ApplyCursorLock();
 
             Vector2 inputVec = moveInput != null ? moveInput.ReadValue<Vector2>() : Vector2.zero;
             moveVec = new Vector3(inputVec.x, 0f, inputVec.y);
@@ -121,6 +126,28 @@ namespace ProjectRuntime.Actor
         {
             player ??= GetComponentInParent<GameplayPlayer>();
             player ??= transform.root.GetComponentInChildren<GameplayPlayer>(true);
+        }
+
+        private void ApplyCursorLock()
+        {
+            if (!lockCursorOnStart)
+            {
+                return;
+            }
+
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+
+        private void ReleaseCursorLock()
+        {
+            if (!isLocalPlayer || !lockCursorOnStart)
+            {
+                return;
+            }
+
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
     }
 }

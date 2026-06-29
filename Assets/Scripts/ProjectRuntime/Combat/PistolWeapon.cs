@@ -1,9 +1,9 @@
+using System;
+using System.Collections;
 using Mirror;
 using ProjectRuntime.Actor;
 using ProjectRuntime.Network;
 using ProjectRuntime.UI;
-using System;
-using System.Collections;
 using UnityEngine;
 
 namespace ProjectRuntime.Combat
@@ -16,22 +16,52 @@ namespace ProjectRuntime.Combat
     public class PistolWeapon : NetworkBehaviour
     {
         [Header("Components")]
-        [SerializeField] private GameplayPlayer player;
-        [SerializeField] private CameraController cam;
-        [SerializeField] private PlayerInput input;
+        [SerializeField]
+        private GameplayPlayer player;
+
+        [SerializeField]
+        private CameraController cam;
+
+        [SerializeField]
+        private PlayerInput input;
 
         [Header("Config")]
-        [SerializeField] private float damage = 100f;
-        [SerializeField] private int magazineSize = 6;
-        [SerializeField] private float maxRange = 100f;
-        [SerializeField] private float reloadDuration = 1.5f;
-        [SerializeField] private float fireCooldown = 0.25f;
+        [SerializeField]
+        private float damage = 100f;
+
+        [SerializeField]
+        private int magazineSize = 6;
+
+        [SerializeField]
+        private float maxRange = 100f;
+
+        [SerializeField]
+        private float reloadDuration = 1.5f;
+
+        [SerializeField]
+        private float fireCooldown = 0.25f;
 
         [Header("FX")]
-        [SerializeField] private DamagePopup damagePopupPrefab;
+        [SerializeField]
+        private DamagePopup damagePopupPrefab;
 
-        [SyncVar(hook = nameof(OnAmmoSynced))] private int currentAmmo;
-        [SyncVar] private bool isReloading;
+        [SerializeField]
+        private float tracerDuration = 0.08f;
+
+        [SerializeField]
+        private float tracerWidth = 0.025f;
+
+        [SerializeField]
+        private Color tracerColor = new(1f, 0.76f, 0.22f, 1f);
+
+        [SerializeField]
+        private Material tracerMaterial;
+
+        [SyncVar(hook = nameof(OnAmmoSynced))]
+        private int currentAmmo;
+
+        [SyncVar]
+        private bool isReloading;
 
         // Separate cooldown clocks: on the host the same instance is both client and server,
         // so a shared field would let the client's TryFire stamp block the server's CmdFire.
@@ -54,9 +84,12 @@ namespace ProjectRuntime.Combat
 
         private void Update()
         {
-            if (!isLocalPlayer) return;
-            if (player == null || player.IsInactive || input == null) return;
-            if (player.IsDungeonMaster) return;
+            if (!isLocalPlayer)
+                return;
+            if (player == null || player.IsInactive || input == null)
+                return;
+            if (player.IsDungeonMaster)
+                return;
 
             if (input.ClickHold)
                 TryFire();
@@ -66,9 +99,15 @@ namespace ProjectRuntime.Combat
 
         private void TryFire()
         {
-            if (isReloading) return;
-            if (currentAmmo <= 0) { TryReload(); return; }
-            if (NetworkTime.time - _clientLastFireTime < fireCooldown) return;
+            if (isReloading)
+                return;
+            if (currentAmmo <= 0)
+            {
+                TryReload();
+                return;
+            }
+            if (NetworkTime.time - _clientLastFireTime < fireCooldown)
+                return;
             _clientLastFireTime = NetworkTime.time;
 
             // Fallback hit point along the aim ray when nothing is hit.
@@ -86,21 +125,25 @@ namespace ProjectRuntime.Combat
                     targetNetId = identity.netId;
             }
 
-            CmdFire(targetNetId, hitPoint);
+            CmdFire(targetNetId, hitPoint, origin);
         }
 
         private void TryReload()
         {
-            if (isReloading || currentAmmo >= magazineSize) return;
+            if (isReloading || currentAmmo >= magazineSize)
+                return;
             CmdReload();
         }
 
         [Command]
-        private void CmdFire(uint targetNetId, Vector3 hitPoint)
+        private void CmdFire(uint targetNetId, Vector3 hitPoint, Vector3 tracerStart)
         {
-            if (player != null && player.IsDungeonMaster) return;
-            if (isReloading || currentAmmo <= 0) return;
-            if (NetworkTime.time - _serverLastFireTime < fireCooldown - 0.05f) return; // loose server gate
+            if (player != null && player.IsDungeonMaster)
+                return;
+            if (isReloading || currentAmmo <= 0)
+                return;
+            if (NetworkTime.time - _serverLastFireTime < fireCooldown - 0.05f)
+                return; // loose server gate
             _serverLastFireTime = NetworkTime.time;
 
             // Loose range sanity check against the networked player position
@@ -109,12 +152,21 @@ namespace ProjectRuntime.Combat
                 return;
 
             currentAmmo--;
+            RpcShowBulletTracer(tracerStart, hitPoint);
 
-            if (targetNetId != 0 &&
-                NetworkServer.spawned.TryGetValue(targetNetId, out var targetIdentity))
+            if (
+                targetNetId != 0
+                && NetworkServer.spawned.TryGetValue(targetNetId, out var targetIdentity)
+            )
             {
-                var damageable = targetIdentity.GetComponentInParent<IDamageable>();
-                if (damageable != null && damageable.IsAlive && !IsBlockedByFriendlyFire(targetIdentity))
+                var damageable =
+                    targetIdentity.GetComponentInParent<IDamageable>()
+                    ?? targetIdentity.GetComponentInChildren<IDamageable>();
+                if (
+                    damageable != null
+                    && damageable.IsAlive
+                    && !IsBlockedByFriendlyFire(targetIdentity)
+                )
                 {
                     damageable.ServerTakeDamage(damage, netId, hitPoint);
                     RpcShowDamageNumber(hitPoint, damage);
@@ -128,18 +180,22 @@ namespace ProjectRuntime.Combat
         {
             var shooterManager = player != null ? player.localManager : null;
             var targetManager = target.GetComponentInParent<PlayerManager>();
-            if (shooterManager == null || targetManager == null) return false;
+            if (shooterManager == null || targetManager == null)
+                return false;
 
-            return shooterManager.playerRole == PlayerRole.Survivor &&
-                   targetManager.playerRole == PlayerRole.Survivor;
+            return shooterManager.playerRole == PlayerRole.Survivor
+                && targetManager.playerRole == PlayerRole.Survivor;
         }
 
         [Command]
         private void CmdReload()
         {
-            if (player != null && player.IsDungeonMaster) return;
-            if (isReloading || currentAmmo >= magazineSize) return;
-            if (_reloadRoutine != null) StopCoroutine(_reloadRoutine);
+            if (player != null && player.IsDungeonMaster)
+                return;
+            if (isReloading || currentAmmo >= magazineSize)
+                return;
+            if (_reloadRoutine != null)
+                StopCoroutine(_reloadRoutine);
             _reloadRoutine = StartCoroutine(ServerReloadRoutine());
         }
 
@@ -157,6 +213,21 @@ namespace ProjectRuntime.Combat
         private void RpcShowDamageNumber(Vector3 worldPos, float amount)
         {
             DamagePopup.Spawn(damagePopupPrefab, worldPos, amount);
+        }
+
+        [ClientRpc]
+        private void RpcShowBulletTracer(Vector3 start, Vector3 end)
+        {
+            BulletTracer.Spawn(
+                this,
+                start,
+                end,
+                tracerDuration,
+                tracerWidth,
+                tracerColor,
+                tracerMaterial,
+                "PistolBulletTracer"
+            );
         }
 
         private void OnAmmoSynced(int oldValue, int newValue)

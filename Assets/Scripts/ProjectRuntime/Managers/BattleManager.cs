@@ -1,9 +1,9 @@
+using System;
+using System.Collections.Generic;
 using Core;
 using Mirror;
 using ProjectRuntime.Network;
 using ProjectRuntime.Objectives;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -18,7 +18,7 @@ namespace ProjectRuntime.Managers
     public class BattleManager : NetworkSingleton<BattleManager>
     {
         public readonly SyncList<PlayerManager> Players = new();
-        public int playersToStart = 2;
+        public int playersToStart = 1;
 
         [Header("Dungeon Master")]
         [SerializeField] private GameObject basicZombiePrefab;
@@ -183,7 +183,8 @@ namespace ProjectRuntime.Managers
         {
             var crystals = FindObjectsByType<CrystalObjective>(
                 FindObjectsInactive.Include,
-                FindObjectsSortMode.None);
+                FindObjectsSortMode.None
+            );
 
             foreach (var crystal in crystals)
             {
@@ -211,7 +212,8 @@ namespace ProjectRuntime.Managers
             this.OnCrystalObjectiveChanged?.Invoke(
                 this.destroyedCrystals,
                 this.requiredCrystals,
-                this.roundPhase);
+                this.roundPhase
+            );
         }
     }
 }

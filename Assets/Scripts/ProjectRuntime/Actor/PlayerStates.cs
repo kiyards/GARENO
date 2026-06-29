@@ -126,10 +126,33 @@ namespace ProjectRuntime.Actor.PlayerStates
             player.cam.SetCam(CharacterMode.TOP_DOWN);
         }
 
+        public override void Update()
+        {
+            base.Update();
+            if (!player.isLocalPlayer || player.input == null)
+            {
+                return;
+            }
+
+            if (player.input.InteractPress)
+            {
+                player.QueueState(new DungeonMasterTurretState(player)
+                {
+                    m_anchorPosition = player.transform.position,
+                    m_hasAnchor = true
+                });
+            }
+        }
+
         public override void FixedUpdate()
         {
             base.FixedUpdate();
-            if (!player.isLocalPlayer)
+            if (!player.isLocalPlayer && !player.isServer)
+            {
+                return;
+            }
+
+            if (player.nextState is DungeonMasterTurretState)
             {
                 return;
             }
@@ -165,6 +188,110 @@ namespace ProjectRuntime.Actor.PlayerStates
             }
 
             player.transform.position = nextPosition;
+        }
+    }
+
+    public class DungeonMasterTurretState : PlayerState
+    {
+        public Vector3 m_anchorPosition;
+        public bool m_hasAnchor;
+
+        public DungeonMasterTurretState(GameplayPlayer sm) : base(sm) { }
+
+        public override void OnSerialize(NetworkWriter writer)
+        {
+            base.OnSerialize(writer);
+            writer.Write(m_anchorPosition);
+            writer.WriteByte(m_hasAnchor ? (byte)1 : (byte)0);
+        }
+
+        public override void OnDeserialize(NetworkReader reader)
+        {
+            base.OnDeserialize(reader);
+            m_anchorPosition = reader.Read<Vector3>();
+            m_hasAnchor = reader.ReadByte() != 0;
+        }
+
+        public override void OnEnter()
+        {
+            base.OnEnter();
+            if (!m_hasAnchor)
+            {
+                m_anchorPosition = player.transform.position;
+                m_hasAnchor = true;
+            }
+
+            m_anchorPosition = player.ClampDungeonMasterPosition(m_anchorPosition);
+            player.Turret.Enter();
+
+            if (player.cam != null)
+            {
+                player.cam.SetCam(CharacterMode.AIM);
+                player.Turret.UpdateAimFromCamera();
+            }
+
+            StopMovement();
+        }
+
+        public override void Update()
+        {
+            base.Update();
+            if (!player.isLocalPlayer || player.input == null)
+            {
+                return;
+            }
+
+            if (player.input.InteractPress)
+            {
+                player.QueueState(new DungeonMasterMovementState(player));
+                return;
+            }
+
+            if (player.input.ClickHold)
+            {
+                player.Turret.TryFire();
+            }
+        }
+
+        public override void LateUpdate()
+        {
+            base.LateUpdate();
+            if (!player.isLocalPlayer)
+            {
+                return;
+            }
+
+            player.Turret.UpdateAimFromCamera();
+        }
+
+        public override void FixedUpdate()
+        {
+            base.FixedUpdate();
+            if (!player.isLocalPlayer && !player.isServer)
+            {
+                return;
+            }
+
+            StopMovement();
+        }
+
+        public override void OnExit()
+        {
+            base.OnExit();
+            player.Turret.Exit();
+        }
+
+        private void StopMovement()
+        {
+            if (player.rb != null)
+            {
+                player.rb.linearVelocity = Vector3.zero;
+                player.rb.angularVelocity = Vector3.zero;
+                player.rb.MovePosition(m_anchorPosition);
+                return;
+            }
+
+            player.transform.position = m_anchorPosition;
         }
     }
 
