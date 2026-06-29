@@ -29,6 +29,14 @@ namespace ProjectRuntime.Actor
         public event Action<float, int> OnManaChangedEvent;
         public int MaxMana => this.maxMana;
 
+        // Replicated mirror of the server-authoritative _hand so the owning Dungeon Master's HUD
+        // can render the 4 cards. Server writes it; clients read it. A null/empty entry marks an
+        // empty hand slot (the deck and used pile have run dry).
+        public readonly SyncList<string> HandCardIds = new();
+
+        // Raised on every peer when the hand contents change. The hand HUD subscribes to refresh.
+        public event Action OnHandChangedEvent;
+
         // Server-only deck state. Stores card ids; null/empty marks an empty hand slot.
         private readonly List<string> _hand = new();
         private readonly Queue<string> _deck = new();
@@ -36,6 +44,19 @@ namespace ProjectRuntime.Actor
 
         private GameplayPlayer _player;
         private GameplayPlayer Player => this._player ??= this.GetComponent<GameplayPlayer>();
+
+        private void Awake()
+        {
+            this.HandCardIds.OnChange += this.OnHandCardsChanged;
+        }
+
+        private void OnDestroy()
+        {
+            this.HandCardIds.OnChange -= this.OnHandCardsChanged;
+        }
+
+        private void OnHandCardsChanged(SyncList<string>.Operation op, int index, string item)
+            => this.OnHandChangedEvent?.Invoke();
 
         public override void OnStartServer()
         {
@@ -108,6 +129,7 @@ namespace ProjectRuntime.Actor
 
             this._used.Add(cardId);
             this._hand[handSlot] = this.ServerDrawCardId();
+            this.HandCardIds[handSlot] = this._hand[handSlot];
             return true;
         }
 
@@ -139,6 +161,7 @@ namespace ProjectRuntime.Actor
             this._deck.Clear();
             this._used.Clear();
             this._hand.Clear();
+            this.HandCardIds.Clear();
 
             var ids = new List<string>(StartingDeckCardIds);
             ServerShuffle(ids);
@@ -149,7 +172,9 @@ namespace ProjectRuntime.Actor
 
             for (var slot = 0; slot < HandSize; slot++)
             {
-                this._hand.Add(this.ServerDrawCardId());
+                var cardId = this.ServerDrawCardId();
+                this._hand.Add(cardId);
+                this.HandCardIds.Add(cardId);
             }
         }
 

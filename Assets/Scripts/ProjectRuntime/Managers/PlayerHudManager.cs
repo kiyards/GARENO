@@ -46,6 +46,9 @@ namespace ProjectRuntime.Managers
         [field: SerializeField, Header("Dungeon Master")]
         private Image ManaBarFill { get; set; }
 
+        [field: SerializeField]
+        private UIDungeonMasterHand DungeonMasterHand { get; set; }
+
         private Health BoundHealth { get; set; }
         private PistolWeapon BoundWeapon { get; set; }
         private DungeonMasterCardManager BoundCardManager { get; set; }
@@ -141,6 +144,7 @@ namespace ProjectRuntime.Managers
             {
                 this.BoundCardManager.OnManaChangedEvent += this.OnManaChanged;
                 this.OnManaChanged(this.BoundCardManager.Mana, this.BoundCardManager.MaxMana);
+                this.DungeonMasterHand?.Bind(this.BoundCardManager);
             }
         }
 
@@ -161,6 +165,7 @@ namespace ProjectRuntime.Managers
             if (this.BoundCardManager != null)
             {
                 this.BoundCardManager.OnManaChangedEvent -= this.OnManaChanged;
+                this.DungeonMasterHand?.Unbind();
                 this.BoundCardManager = null;
             }
         }
