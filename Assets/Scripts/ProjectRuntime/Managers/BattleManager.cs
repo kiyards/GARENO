@@ -13,6 +13,14 @@ namespace ProjectRuntime.Managers
     {
         DestroyCrystals,
         CrystalsComplete,
+        RoundComplete,
+    }
+
+    public enum RoundWinner
+    {
+        None,
+        Survivors,
+        DungeonMaster,
     }
 
     public class BattleManager : NetworkSingleton<BattleManager>
@@ -22,14 +30,17 @@ namespace ProjectRuntime.Managers
 
         [Header("Dungeon Master")]
         [SerializeField] private GameObject basicZombiePrefab;
-        [SerializeField] private float basicZombieSpawnSampleRadius = 2f;
+        // Max distance the requested point is snapped onto the navmesh. Kept large so a click
+        // that lands off the navmesh (on an obstacle, a wall, or past an edge) still spawns at
+        // the nearest valid point instead of silently failing.
+        [SerializeField] private float basicZombieSpawnSampleRadius = 50f;
 
         [Header("Crystal Objective")]
         [SerializeField, SyncVar(hook = nameof(OnObjectiveStateSynced))]
         private int requiredCrystals = 3;
 
         [SerializeField, SyncVar(hook = nameof(OnObjectiveStateSynced))]
-        private int totalCrystals = 4;
+        private int totalCrystals = 5;
 
         [SyncVar(hook = nameof(OnObjectiveStateSynced))]
         private int destroyedCrystals;
@@ -37,14 +48,27 @@ namespace ProjectRuntime.Managers
         [SyncVar(hook = nameof(OnRoundPhaseSynced))]
         private RoundPhase roundPhase = RoundPhase.DestroyCrystals;
 
-        private readonly HashSet<CrystalObjective> _crystals = new();
+        [SyncVar(hook = nameof(OnObjectiveStateSynced))]
+        private int extractedSurvivors;
 
-        public event Action<int, int, RoundPhase> OnCrystalObjectiveChanged;
+        [SyncVar(hook = nameof(OnObjectiveStateSynced))]
+        private int requiredExtractedSurvivors;
+
+        [SyncVar(hook = nameof(OnRoundWinnerSynced))]
+        private RoundWinner winner = RoundWinner.None;
+
+        private readonly HashSet<CrystalObjective> _crystals = new();
+        private readonly HashSet<PlayerManager> _survivorsInExtraction = new();
+
+        public event Action OnRoundStateChanged;
 
         public int RequiredCrystals => requiredCrystals;
         public int TotalCrystals => totalCrystals;
         public int DestroyedCrystals => destroyedCrystals;
         public RoundPhase CurrentRoundPhase => roundPhase;
+        public int ExtractedSurvivors => extractedSurvivors;
+        public int RequiredExtractedSurvivors => requiredExtractedSurvivors;
+        public RoundWinner Winner => winner;
 
         private void Awake()
         {
@@ -56,21 +80,47 @@ namespace ProjectRuntime.Managers
             DestroyInstance();
         }
 
+        private void Update()
+        {
+            if (!this.isServer || this.roundPhase == RoundPhase.RoundComplete)
+            {
+                return;
+            }
+
+            this.ServerRefreshExtractionObjective();
+        }
+
         [Server]
         public void ServerAddPlayer(PlayerManager player)
         {
-            Players.Add(player);
+            if (player != null && !Players.Contains(player))
+            {
+                Players.Add(player);
+            }
+
+            this.ServerRefreshExtractionObjective();
         }
 
         [Server]
         public void ServerRemovePlayer(PlayerManager player)
         {
             Players.Remove(player);
+            if (player != null)
+            {
+                this._survivorsInExtraction.Remove(player);
+            }
+
+            this.ServerRefreshExtractionObjective();
         }
 
         [Server]
         public bool ServerTrySpawnBasicZombie(PlayerManager caster, Vector3 requestedPosition)
         {
+            if (this.roundPhase == RoundPhase.RoundComplete)
+            {
+                return false;
+            }
+
             if (caster == null || caster.playerRole != PlayerRole.DungeonMaster)
             {
                 return false;
@@ -103,15 +153,20 @@ namespace ProjectRuntime.Managers
         {
             base.OnStartServer();
             this._crystals.Clear();
+            this._survivorsInExtraction.Clear();
             this.destroyedCrystals = 0;
+            this.extractedSurvivors = 0;
+            this.requiredExtractedSurvivors = 0;
+            this.winner = RoundWinner.None;
             this.roundPhase = RoundPhase.DestroyCrystals;
             this.ServerRefreshCrystalRegistry();
+            this.ServerRefreshExtractionObjective();
         }
 
         public override void OnStartClient()
         {
             base.OnStartClient();
-            this.NotifyCrystalObjectiveChanged();
+            this.NotifyRoundStateChanged();
         }
 
         [Server]
@@ -124,7 +179,7 @@ namespace ProjectRuntime.Managers
 
             this.totalCrystals = Mathf.Max(this.totalCrystals, this._crystals.Count);
 
-            if (this.roundPhase == RoundPhase.CrystalsComplete)
+            if (this.roundPhase != RoundPhase.DestroyCrystals)
             {
                 crystal.ServerDespawn();
             }
@@ -159,7 +214,7 @@ namespace ProjectRuntime.Managers
         [Server]
         private void ServerCompleteCrystalObjective()
         {
-            if (this.roundPhase == RoundPhase.CrystalsComplete)
+            if (this.roundPhase != RoundPhase.DestroyCrystals)
             {
                 return;
             }
@@ -176,6 +231,40 @@ namespace ProjectRuntime.Managers
 
                 crystal.ServerDespawn();
             }
+
+            this.ServerRefreshExtractionObjective();
+        }
+
+        [Server]
+        public void ServerSetPlayerInExtraction(PlayerManager player, bool isInside)
+        {
+            if (player == null)
+            {
+                return;
+            }
+
+            if (isInside)
+            {
+                this._survivorsInExtraction.Add(player);
+            }
+            else
+            {
+                this._survivorsInExtraction.Remove(player);
+            }
+
+            this.ServerRefreshExtractionObjective();
+        }
+
+        [Server]
+        private void ServerCompleteRound(RoundWinner roundWinner)
+        {
+            if (this.roundPhase == RoundPhase.RoundComplete)
+            {
+                return;
+            }
+
+            this.winner = roundWinner;
+            this.roundPhase = RoundPhase.RoundComplete;
         }
 
         [Server]
@@ -197,22 +286,64 @@ namespace ProjectRuntime.Managers
             this.totalCrystals = Mathf.Max(this.requiredCrystals, this._crystals.Count);
         }
 
+        [Server]
+        private void ServerRefreshExtractionObjective()
+        {
+            this._survivorsInExtraction.RemoveWhere(player => !IsRequiredForExtraction(player));
+
+            this.requiredExtractedSurvivors = this.CountRequiredSurvivors();
+            this.extractedSurvivors = Mathf.Min(
+                this._survivorsInExtraction.Count,
+                this.requiredExtractedSurvivors);
+
+            if (this.roundPhase == RoundPhase.CrystalsComplete &&
+                this.requiredExtractedSurvivors > 0 &&
+                this.extractedSurvivors >= this.requiredExtractedSurvivors)
+            {
+                this.ServerCompleteRound(RoundWinner.Survivors);
+            }
+        }
+
+        [Server]
+        private int CountRequiredSurvivors()
+        {
+            int count = 0;
+            foreach (var player in this.Players)
+            {
+                if (IsRequiredForExtraction(player))
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        private static bool IsRequiredForExtraction(PlayerManager player)
+        {
+            return player != null &&
+                   player.playerRole == PlayerRole.Survivor &&
+                   player.player != null;
+        }
+
         private void OnObjectiveStateSynced(int oldValue, int newValue)
         {
-            this.NotifyCrystalObjectiveChanged();
+            this.NotifyRoundStateChanged();
         }
 
         private void OnRoundPhaseSynced(RoundPhase oldValue, RoundPhase newValue)
         {
-            this.NotifyCrystalObjectiveChanged();
+            this.NotifyRoundStateChanged();
         }
 
-        private void NotifyCrystalObjectiveChanged()
+        private void OnRoundWinnerSynced(RoundWinner oldValue, RoundWinner newValue)
         {
-            this.OnCrystalObjectiveChanged?.Invoke(
-                this.destroyedCrystals,
-                this.requiredCrystals,
-                this.roundPhase
+            this.NotifyRoundStateChanged();
+        }
+
+        private void NotifyRoundStateChanged()
+        {
+            this.OnRoundStateChanged?.Invoke(
             );
         }
     }

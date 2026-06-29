@@ -198,15 +198,9 @@ namespace ProjectRuntime.Managers
         {
             this.CurrentRole = role;
 
-            if (this.RoleMessageTMP != null)
-            {
-                this.RoleMessageTMP.text = role == PlayerRole.Unassigned
-                    ? "Assigning role..."
-                    : $"You are a {GetRoleDisplayName(role)}";
-            }
-
             this.ApplyHudVisibility();
             this.BindBattleManager(BattleManager.Instance);
+            this.RefreshRoleMessage();
             this.RefreshObjectiveText();
         }
 
@@ -246,7 +240,7 @@ namespace ProjectRuntime.Managers
             }
 
             this.BoundBattleManager = battleManager;
-            this.BoundBattleManager.OnCrystalObjectiveChanged += this.OnCrystalObjectiveChanged;
+            this.BoundBattleManager.OnRoundStateChanged += this.OnRoundStateChanged;
             this.RefreshObjectiveText();
         }
 
@@ -257,12 +251,13 @@ namespace ProjectRuntime.Managers
                 return;
             }
 
-            this.BoundBattleManager.OnCrystalObjectiveChanged -= this.OnCrystalObjectiveChanged;
+            this.BoundBattleManager.OnRoundStateChanged -= this.OnRoundStateChanged;
             this.BoundBattleManager = null;
         }
 
-        private void OnCrystalObjectiveChanged(int destroyed, int required, RoundPhase phase)
+        private void OnRoundStateChanged()
         {
+            this.RefreshRoleMessage();
             this.RefreshObjectiveText();
         }
 
@@ -289,9 +284,40 @@ namespace ProjectRuntime.Managers
                 return;
             }
 
-            this.ObjectiveTMP.text = battleManager.CurrentRoundPhase == RoundPhase.CrystalsComplete
-                ? "Extract Yourselves"
-                : $"Crystals: {battleManager.DestroyedCrystals}/{battleManager.RequiredCrystals}";
+            this.ObjectiveTMP.text = battleManager.CurrentRoundPhase switch
+            {
+                RoundPhase.CrystalsComplete =>
+                    $"Extract: {battleManager.ExtractedSurvivors}/{battleManager.RequiredExtractedSurvivors}",
+                RoundPhase.RoundComplete => string.Empty,
+                _ => $"Crystals: {battleManager.DestroyedCrystals}/{battleManager.RequiredCrystals}",
+            };
+        }
+
+        private void RefreshRoleMessage()
+        {
+            if (this.RoleMessageTMP == null)
+            {
+                return;
+            }
+
+            var battleManager = this.BoundBattleManager != null
+                ? this.BoundBattleManager
+                : BattleManager.Instance;
+
+            if (battleManager != null && battleManager.CurrentRoundPhase == RoundPhase.RoundComplete)
+            {
+                this.RoleMessageTMP.text = battleManager.Winner switch
+                {
+                    RoundWinner.Survivors => "Survivors Win",
+                    RoundWinner.DungeonMaster => "Dungeon Master Wins",
+                    _ => "Round Complete",
+                };
+                return;
+            }
+
+            this.RoleMessageTMP.text = this.CurrentRole == PlayerRole.Unassigned
+                ? "Assigning role..."
+                : $"You are a {GetRoleDisplayName(this.CurrentRole)}";
         }
 
         private static string GetRoleDisplayName(PlayerRole role)
