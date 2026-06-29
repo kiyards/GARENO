@@ -5,6 +5,7 @@ using ProjectRuntime.Objectives;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace ProjectRuntime.Managers
 {
@@ -18,6 +19,10 @@ namespace ProjectRuntime.Managers
     {
         public readonly SyncList<PlayerManager> Players = new();
         public int playersToStart = 2;
+
+        [Header("Dungeon Master")]
+        [SerializeField] private GameObject basicZombiePrefab;
+        [SerializeField] private float basicZombieSpawnSampleRadius = 2f;
 
         [Header("Crystal Objective")]
         [SerializeField, SyncVar(hook = nameof(OnObjectiveStateSynced))]
@@ -61,6 +66,37 @@ namespace ProjectRuntime.Managers
         public void ServerRemovePlayer(PlayerManager player)
         {
             Players.Remove(player);
+        }
+
+        [Server]
+        public bool ServerTrySpawnBasicZombie(PlayerManager caster, Vector3 requestedPosition)
+        {
+            if (caster == null || caster.playerRole != PlayerRole.DungeonMaster)
+            {
+                return false;
+            }
+
+            if (this.basicZombiePrefab == null)
+            {
+                Debug.LogWarning("Cannot spawn Basic Zombie: no prefab assigned.");
+                return false;
+            }
+
+            if (!NavMesh.SamplePosition(
+                    requestedPosition,
+                    out NavMeshHit navMeshHit,
+                    this.basicZombieSpawnSampleRadius,
+                    NavMesh.AllAreas))
+            {
+                return false;
+            }
+
+            var zombie = Instantiate(
+                this.basicZombiePrefab,
+                navMeshHit.position,
+                Quaternion.identity);
+            NetworkServer.Spawn(zombie);
+            return true;
         }
 
         public override void OnStartServer()

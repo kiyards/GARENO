@@ -9,6 +9,11 @@ using UnityEngine.UI;
 
 namespace ProjectRuntime.Managers
 {
+    /// <summary>
+    /// HUD logic only. The canvas and all widgets are authored in the scene/prefab and
+    /// wired into the serialized fields below — this class subscribes to gameplay events
+    /// and pushes values into those references. It does not build any UI at runtime.
+    /// </summary>
     public class PlayerHudManager : MonoBehaviour
     {
         public static PlayerHudManager Instance { get; private set; }
@@ -50,6 +55,10 @@ namespace ProjectRuntime.Managers
         private PlayerRole CurrentRole { get; set; } = PlayerRole.Unassigned;
         private bool IsPlayerUiVisible { get; set; } = true;
 
+        /// <summary>
+        /// Returns the scene-authored HUD instance. The HUD must exist in the active scene
+        /// (added via the PlayerHUD prefab); this never constructs one at runtime.
+        /// </summary>
         public static PlayerHudManager EnsureInstance()
         {
             if (Instance != null)
@@ -57,24 +66,15 @@ namespace ProjectRuntime.Managers
                 return Instance;
             }
 
-            var existing = FindFirstObjectByType<PlayerHudManager>();
+            var existing = FindFirstObjectByType<PlayerHudManager>(FindObjectsInactive.Include);
             if (existing != null)
             {
                 return existing;
             }
 
-            var hudObject = new GameObject(nameof(PlayerHudManager));
-            var canvas = hudObject.AddComponent<Canvas>();
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvas.sortingOrder = 50;
-
-            var canvasScaler = hudObject.AddComponent<CanvasScaler>();
-            canvasScaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            canvasScaler.referenceResolution = new Vector2(1920, 1080);
-            canvasScaler.matchWidthOrHeight = 0.5f;
-
-            hudObject.AddComponent<GraphicRaycaster>();
-            return hudObject.AddComponent<PlayerHudManager>();
+            Debug.LogError(
+                "[PlayerHudManager] No HUD found in the active scene. Add the PlayerHUD prefab to ScGame.");
+            return null;
         }
 
         private void Awake()
@@ -86,8 +86,6 @@ namespace ProjectRuntime.Managers
             }
 
             Instance = this;
-            this.EnsureCanvas();
-            this.EnsureHudReferences();
             this.SetRole(PlayerRole.Unassigned);
         }
 
@@ -123,8 +121,6 @@ namespace ProjectRuntime.Managers
             {
                 return;
             }
-
-            this.EnsureHudReferences();
 
             this.BoundHealth = gameplayPlayer.health;
             if (this.BoundHealth != null)
@@ -201,7 +197,6 @@ namespace ProjectRuntime.Managers
         public void SetRole(PlayerRole role)
         {
             this.CurrentRole = role;
-            this.EnsureHudReferences();
 
             if (this.RoleMessageTMP != null)
             {
@@ -218,55 +213,7 @@ namespace ProjectRuntime.Managers
         public void TogglePlayerUI(bool toggle)
         {
             this.IsPlayerUiVisible = toggle;
-            this.EnsureHudReferences();
             this.ApplyHudVisibility();
-        }
-
-        private void EnsureHudReferences()
-        {
-            if (this.SharedUIParent == null)
-            {
-                this.SharedUIParent = this.CreateChild("SharedUI").gameObject;
-            }
-
-            if (this.SurvivorOnlyUIParent == null)
-            {
-                this.SurvivorOnlyUIParent = this.CreateChild("SurvivorOnlyUI").gameObject;
-            }
-
-            if (this.DungeonMasterOnlyUIParent == null)
-            {
-                this.DungeonMasterOnlyUIParent = this.CreateChild("DungeonMasterOnlyUI").gameObject;
-            }
-
-            if (this.RoleMessageTMP == null)
-            {
-                this.RoleMessageTMP = this.CreateRoleMessage(this.SharedUIParent.transform);
-            }
-
-            if (this.PlayerHealthTMP == null)
-            {
-                this.PlayerHealthTMP = this.CreateCornerText(
-                    this.SurvivorOnlyUIParent.transform, "PlayerHealth",
-                    new Vector2(0f, 0f), new Vector2(32f, 32f), TextAlignmentOptions.BottomLeft, "100");
-            }
-
-            if (this.PlayerAmmoTMP == null)
-            {
-                this.PlayerAmmoTMP = this.CreateCornerText(
-                    this.SurvivorOnlyUIParent.transform, "PlayerAmmo",
-                    new Vector2(1f, 0f), new Vector2(-32f, 32f), TextAlignmentOptions.BottomRight, "6/∞");
-            }
-
-            if (this.ObjectiveTMP == null)
-            {
-                this.ObjectiveTMP = this.CreateObjectiveText(this.SurvivorOnlyUIParent.transform);
-            }
-
-            if (this.ManaBarFill == null)
-            {
-                this.ManaBarFill = this.CreateManaBar(this.DungeonMasterOnlyUIParent.transform);
-            }
         }
 
         private void ApplyHudVisibility()
@@ -281,160 +228,6 @@ namespace ProjectRuntime.Managers
             this.SharedUIParent.SetActive(this.IsPlayerUiVisible);
             this.SurvivorOnlyUIParent.SetActive(this.IsPlayerUiVisible && this.CurrentRole == PlayerRole.Survivor);
             this.DungeonMasterOnlyUIParent.SetActive(this.IsPlayerUiVisible && this.CurrentRole == PlayerRole.DungeonMaster);
-        }
-
-        private void EnsureCanvas()
-        {
-            if (this.GetComponentInParent<Canvas>() != null)
-            {
-                return;
-            }
-
-            var canvas = this.gameObject.GetComponent<Canvas>();
-            if (canvas == null)
-            {
-                canvas = this.gameObject.AddComponent<Canvas>();
-            }
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvas.sortingOrder = 50;
-
-            var canvasScaler = this.gameObject.GetComponent<CanvasScaler>();
-            if (canvasScaler == null)
-            {
-                canvasScaler = this.gameObject.AddComponent<CanvasScaler>();
-            }
-            canvasScaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            canvasScaler.referenceResolution = new Vector2(1920, 1080);
-            canvasScaler.matchWidthOrHeight = 0.5f;
-
-            if (this.gameObject.GetComponent<GraphicRaycaster>() == null)
-            {
-                this.gameObject.AddComponent<GraphicRaycaster>();
-            }
-        }
-
-        private RectTransform CreateChild(string childName, Transform parent = null)
-        {
-            var child = new GameObject(childName, typeof(RectTransform));
-            var rectTransform = child.GetComponent<RectTransform>();
-            rectTransform.SetParent(parent != null ? parent : this.transform, false);
-            rectTransform.anchorMin = Vector2.zero;
-            rectTransform.anchorMax = Vector2.one;
-            rectTransform.offsetMin = Vector2.zero;
-            rectTransform.offsetMax = Vector2.zero;
-            return rectTransform;
-        }
-
-        private TextMeshProUGUI CreateRoleMessage(Transform parent)
-        {
-            var roleMessageObject = new GameObject("RoleMessage", typeof(RectTransform));
-            var rectTransform = roleMessageObject.GetComponent<RectTransform>();
-            rectTransform.SetParent(parent, false);
-            rectTransform.anchorMin = new Vector2(0.5f, 1f);
-            rectTransform.anchorMax = new Vector2(0.5f, 1f);
-            rectTransform.pivot = new Vector2(0.5f, 1f);
-            rectTransform.anchoredPosition = new Vector2(0f, -48f);
-            rectTransform.sizeDelta = new Vector2(720f, 80f);
-
-            var roleMessage = roleMessageObject.AddComponent<TextMeshProUGUI>();
-            roleMessage.alignment = TextAlignmentOptions.Center;
-            roleMessage.color = Color.white;
-            roleMessage.fontSize = 36f;
-            roleMessage.raycastTarget = false;
-            roleMessage.text = "Assigning role...";
-            return roleMessage;
-        }
-
-        private TextMeshProUGUI CreateCornerText(Transform parent, string objectName, Vector2 anchor,
-            Vector2 anchoredPosition, TextAlignmentOptions alignment, string initialText)
-        {
-            var textObject = new GameObject(objectName, typeof(RectTransform));
-            var rectTransform = textObject.GetComponent<RectTransform>();
-            rectTransform.SetParent(parent, false);
-            rectTransform.anchorMin = anchor;
-            rectTransform.anchorMax = anchor;
-            rectTransform.pivot = anchor;
-            rectTransform.anchoredPosition = anchoredPosition;
-            rectTransform.sizeDelta = new Vector2(360f, 80f);
-
-            var text = textObject.AddComponent<TextMeshProUGUI>();
-            text.alignment = alignment;
-            text.color = Color.white;
-            text.fontSize = 36f;
-            text.raycastTarget = false;
-            text.text = initialText;
-            return text;
-        }
-
-        private TextMeshProUGUI CreateObjectiveText(Transform parent)
-        {
-            var textObject = new GameObject("ObjectiveText", typeof(RectTransform));
-            var rectTransform = textObject.GetComponent<RectTransform>();
-            rectTransform.SetParent(parent, false);
-            rectTransform.anchorMin = new Vector2(0.5f, 1f);
-            rectTransform.anchorMax = new Vector2(0.5f, 1f);
-            rectTransform.pivot = new Vector2(0.5f, 1f);
-            rectTransform.anchoredPosition = new Vector2(0f, -128f);
-            rectTransform.sizeDelta = new Vector2(640f, 72f);
-
-            var text = textObject.AddComponent<TextMeshProUGUI>();
-            text.alignment = TextAlignmentOptions.Center;
-            text.color = Color.white;
-            text.fontSize = 32f;
-            text.raycastTarget = false;
-            text.text = "Crystals: 0/3";
-            return text;
-        }
-
-        private Image CreateManaBar(Transform parent)
-        {
-            // Background
-            var bgObject = new GameObject("ManaBarBG", typeof(RectTransform));
-            var bgRect = bgObject.GetComponent<RectTransform>();
-            bgRect.SetParent(parent, false);
-            bgRect.anchorMin = new Vector2(0.5f, 0f);
-            bgRect.anchorMax = new Vector2(0.5f, 0f);
-            bgRect.pivot = new Vector2(0.5f, 0f);
-            bgRect.anchoredPosition = new Vector2(0f, 24f);
-            bgRect.sizeDelta = new Vector2(600f, 30f);
-            var bgImage = bgObject.AddComponent<Image>();
-            bgImage.color = new Color(0.1f, 0.1f, 0.3f, 0.8f);
-            bgImage.raycastTarget = false;
-
-            // Fill
-            var fillObject = new GameObject("ManaBarFill", typeof(RectTransform));
-            var fillRect = fillObject.GetComponent<RectTransform>();
-            fillRect.SetParent(bgRect, false);
-            fillRect.anchorMin = Vector2.zero;
-            fillRect.anchorMax = Vector2.one;
-            fillRect.offsetMin = Vector2.zero;
-            fillRect.offsetMax = Vector2.zero;
-            var fillImage = fillObject.AddComponent<Image>();
-            fillImage.sprite = CreateSolidSprite();
-            fillImage.color = new Color(0.2f, 0.4f, 1f, 1f);
-            fillImage.raycastTarget = false;
-            fillImage.type = Image.Type.Filled;
-            fillImage.fillMethod = Image.FillMethod.Horizontal;
-            fillImage.fillAmount = 0f;
-
-            return fillImage;
-        }
-
-        private static Sprite _solidSprite;
-
-        private static Sprite CreateSolidSprite()
-        {
-            if (_solidSprite != null)
-            {
-                return _solidSprite;
-            }
-
-            var tex = Texture2D.whiteTexture;
-            _solidSprite = Sprite.Create(
-                tex,
-                new Rect(0f, 0f, tex.width, tex.height),
-                new Vector2(0.5f, 0.5f));
-            return _solidSprite;
         }
 
         private void BindBattleManager(BattleManager battleManager)
@@ -492,7 +285,7 @@ namespace ProjectRuntime.Managers
 
             if (battleManager == null)
             {
-                this.ObjectiveTMP.text = "Crystals: 0/3";
+                this.ObjectiveTMP.text = "Crystals: 0/0";
                 return;
             }
 

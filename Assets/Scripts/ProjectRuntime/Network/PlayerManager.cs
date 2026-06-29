@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace ProjectRuntime.Network
 {
@@ -56,6 +57,28 @@ namespace ProjectRuntime.Network
             ApplyRole(this.playerRole);
         }
 
+        private void Update()
+        {
+            if (!isLocalPlayer || playerRole != PlayerRole.DungeonMaster)
+            {
+                return;
+            }
+
+            if (Keyboard.current == null ||
+                Mouse.current == null ||
+                !Keyboard.current.digit1Key.wasPressedThisFrame)
+            {
+                return;
+            }
+
+            if (!TryGetMouseGroundPosition(out Vector3 groundPosition))
+            {
+                return;
+            }
+
+            CmdTrySpawnBasicZombie(groundPosition);
+        }
+
         [TargetRpc]
         public void RpcSyncNetworkSMsToPlayer(NetworkConnectionToClient target, List<NetworkBaseState> states)
         {
@@ -76,6 +99,12 @@ namespace ProjectRuntime.Network
             var auth = GameNetworkManager.Instance.SteamAuth;
             if (auth != null)
                 auth.UpdateIdentity(steamId, name);
+        }
+
+        [Command]
+        private void CmdTrySpawnBasicZombie(Vector3 requestedPosition)
+        {
+            BattleManager.Instance?.ServerTrySpawnBasicZombie(this, requestedPosition);
         }
 
         [Server]
@@ -129,6 +158,32 @@ namespace ProjectRuntime.Network
             }
 
             playerCanvas.gameObject.SetActive(!isLocalPlayer && playerRole != PlayerRole.DungeonMaster);
+        }
+
+        private static bool TryGetMouseGroundPosition(out Vector3 position)
+        {
+            position = Vector3.zero;
+
+            Camera camera = Camera.main;
+            if (camera == null)
+            {
+                return false;
+            }
+
+            int groundLayer = LayerMask.NameToLayer("Ground");
+            if (groundLayer < 0)
+            {
+                return false;
+            }
+
+            Ray ray = camera.ScreenPointToRay(Mouse.current.position.ReadValue());
+            if (!Physics.Raycast(ray, out RaycastHit hit, 1000f, 1 << groundLayer))
+            {
+                return false;
+            }
+
+            position = hit.point;
+            return true;
         }
     }
 

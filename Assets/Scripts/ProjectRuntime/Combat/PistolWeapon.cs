@@ -56,6 +56,7 @@ namespace ProjectRuntime.Combat
         {
             if (!isLocalPlayer) return;
             if (player == null || player.IsInactive || input == null) return;
+            if (player.IsDungeonMaster) return;
 
             if (input.ClickHold)
                 TryFire();
@@ -97,6 +98,7 @@ namespace ProjectRuntime.Combat
         [Command]
         private void CmdFire(uint targetNetId, Vector3 hitPoint)
         {
+            if (player != null && player.IsDungeonMaster) return;
             if (isReloading || currentAmmo <= 0) return;
             if (NetworkTime.time - _serverLastFireTime < fireCooldown - 0.05f) return; // loose server gate
             _serverLastFireTime = NetworkTime.time;
@@ -135,6 +137,7 @@ namespace ProjectRuntime.Combat
         [Command]
         private void CmdReload()
         {
+            if (player != null && player.IsDungeonMaster) return;
             if (isReloading || currentAmmo >= magazineSize) return;
             if (_reloadRoutine != null) StopCoroutine(_reloadRoutine);
             _reloadRoutine = StartCoroutine(ServerReloadRoutine());
