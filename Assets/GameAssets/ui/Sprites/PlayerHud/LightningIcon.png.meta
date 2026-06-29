@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: dc07c9973d347834597db38abfe4287c
+guid: e78edfe8ea8bebd409322c22074a8db2
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 350341356906426757
-    second: RoundedBorder_0
+      213: -8648899799364307595
+    second: LightningIcon_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -52,7 +52,7 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
-  spriteBorder: {x: 70, y: 70, z: 70, w: 70}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: RoundedBorder_0
+      name: LightningIcon_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 512
+        x: 259
+        y: 88
+        width: 747
+        height: 795
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5813980ab99acd400800000000000000
-      internalID: 350341356906426757
+      spriteID: 57571f0d47fe8f780800000000000000
+      internalID: -8648899799364307595
       vertices: []
       indices: 
       edges: []
@@ -126,7 +126,7 @@ TextureImporter:
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
-    internalID: 1537655665
+    internalID: 0
     vertices: []
     indices: 
     edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      RoundedBorder_0: 350341356906426757
+      LightningIcon_0: -8648899799364307595
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
