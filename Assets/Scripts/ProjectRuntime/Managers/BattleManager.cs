@@ -88,6 +88,7 @@ namespace ProjectRuntime.Managers
             }
 
             this.ServerRefreshExtractionObjective();
+            this.ServerRefreshSurvivorDefeatState();
         }
 
         [Server]
@@ -161,6 +162,7 @@ namespace ProjectRuntime.Managers
             this.roundPhase = RoundPhase.DestroyCrystals;
             this.ServerRefreshCrystalRegistry();
             this.ServerRefreshExtractionObjective();
+            this.ServerRefreshSurvivorDefeatState();
         }
 
         public override void OnStartClient()
@@ -233,6 +235,7 @@ namespace ProjectRuntime.Managers
             }
 
             this.ServerRefreshExtractionObjective();
+            this.ServerRefreshSurvivorDefeatState();
         }
 
         [Server]
@@ -253,6 +256,7 @@ namespace ProjectRuntime.Managers
             }
 
             this.ServerRefreshExtractionObjective();
+            this.ServerRefreshSurvivorDefeatState();
         }
 
         [Server]
@@ -265,6 +269,35 @@ namespace ProjectRuntime.Managers
 
             this.winner = roundWinner;
             this.roundPhase = RoundPhase.RoundComplete;
+        }
+
+        [Server]
+        public void ServerRefreshSurvivorDefeatState()
+        {
+            if (this.roundPhase == RoundPhase.RoundComplete)
+            {
+                return;
+            }
+
+            bool hasSurvivor = false;
+            foreach (var player in this.Players)
+            {
+                if (player == null || player.playerRole != PlayerRole.Survivor)
+                {
+                    continue;
+                }
+
+                hasSurvivor = true;
+                if (IsActiveSurvivor(player))
+                {
+                    return;
+                }
+            }
+
+            if (hasSurvivor)
+            {
+                this.ServerCompleteRound(RoundWinner.DungeonMaster);
+            }
         }
 
         [Server]
@@ -324,6 +357,16 @@ namespace ProjectRuntime.Managers
             return player != null &&
                    player.playerRole == PlayerRole.Survivor &&
                    player.player != null;
+        }
+
+        private static bool IsActiveSurvivor(PlayerManager player)
+        {
+            return player != null &&
+                   player.playerRole == PlayerRole.Survivor &&
+                   player.player != null &&
+                   !player.player.IsInactive &&
+                   player.player.health != null &&
+                   player.player.health.IsAlive;
         }
 
         private void OnObjectiveStateSynced(int oldValue, int newValue)

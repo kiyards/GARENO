@@ -194,12 +194,20 @@ namespace ProjectRuntime.Actor
             {
                 m_anchorPosition = transform.position
             });
+
+            BattleManager.Instance?.ServerRefreshSurvivorDefeatState();
         }
 
         [Server]
         private void ServerTickDowned()
         {
             if (!IsDowned)
+            {
+                return;
+            }
+
+            if (BattleManager.Instance != null &&
+                BattleManager.Instance.CurrentRoundPhase == RoundPhase.RoundComplete)
             {
                 return;
             }

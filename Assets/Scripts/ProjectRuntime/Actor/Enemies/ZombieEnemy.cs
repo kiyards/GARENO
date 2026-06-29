@@ -88,7 +88,10 @@ namespace ProjectRuntime.Actor
             foreach (PlayerManager pm in BattleManager.Instance.Players)
             {
                 if (pm == null || pm.playerRole != PlayerRole.Survivor) continue;
-                if (pm.player == null || !pm.player.health.IsAlive) continue;
+                if (pm.player == null ||
+                    pm.player.IsInactive ||
+                    pm.player.health == null ||
+                    !pm.player.health.IsAlive) continue;
 
                 float d = Vector3.Distance(this.transform.position, pm.player.transform.position);
                 if (d < minDist)
