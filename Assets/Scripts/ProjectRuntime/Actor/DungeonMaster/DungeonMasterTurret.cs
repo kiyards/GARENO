@@ -2,6 +2,7 @@ using System.Collections;
 using Mirror;
 using ProjectRuntime.Actor.PlayerStates;
 using ProjectRuntime.Combat;
+using ProjectRuntime.Managers;
 using UnityEngine;
 
 namespace ProjectRuntime.Actor
@@ -210,7 +211,12 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            if (next == TurretStatus.Assembled)
+            if (next == TurretStatus.Assembling)
+            {
+                if (PlayerHudManager.Instance != null)
+                    PlayerHudManager.Instance.SetTurretAssemblingActive(true);
+            }
+            else if (next == TurretStatus.Assembled)
             {
                 _attachedOwner.QueueState(
                     new DungeonMasterTurretState(_attachedOwner)
@@ -219,6 +225,11 @@ namespace ProjectRuntime.Actor
                         m_hasAnchor = true,
                     }
                 );
+            }
+            else if (next == TurretStatus.Disassembling)
+            {
+                if (PlayerHudManager.Instance != null)
+                    PlayerHudManager.Instance.SetTurretReticleActive(false);
             }
         }
 
@@ -237,6 +248,9 @@ namespace ProjectRuntime.Actor
 
             _attachedOwner = owner;
             owner.Turret.AttachSpawnedTurret(this);
+
+            if (owner.isLocalPlayer && _status == TurretStatus.Assembling && PlayerHudManager.Instance != null)
+                PlayerHudManager.Instance.SetTurretAssemblingActive(true);
         }
 
         private void DetachFromOwner()

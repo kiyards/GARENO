@@ -1,7 +1,7 @@
 using ProjectRuntime.Actor;
 using ProjectRuntime.Combat;
-using ProjectRuntime.UI;
 using ProjectRuntime.Network;
+using ProjectRuntime.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -91,7 +91,8 @@ namespace ProjectRuntime.Managers
             }
 
             Debug.LogError(
-                "[PlayerHudManager] No HUD found in the active scene. Add the PlayerHUD prefab to ScGame.");
+                "[PlayerHudManager] No HUD found in the active scene. Add the PlayerHUD prefab to ScGame."
+            );
             return null;
         }
 
@@ -235,6 +236,22 @@ namespace ProjectRuntime.Managers
                 CardDescription.SetActive(!active);
         }
 
+        public void SetTurretReticleActive(bool active)
+        {
+            if (TurretReticle != null)
+                TurretReticle.SetActive(active);
+        }
+
+        public void SetTurretAssemblingActive(bool active)
+        {
+            if (DungeonMasterHand != null)
+                DungeonMasterHand.gameObject.SetActive(!active);
+            if (ManaBarParent != null)
+                ManaBarParent.SetActive(!active);
+            if (CardDescription != null)
+                CardDescription.SetActive(!active);
+        }
+
         public void TogglePlayerUI(bool toggle)
         {
             this.IsPlayerUiVisible = toggle;
@@ -243,16 +260,22 @@ namespace ProjectRuntime.Managers
 
         private void ApplyHudVisibility()
         {
-            if (this.SharedUIParent == null ||
-                this.SurvivorOnlyUIParent == null ||
-                this.DungeonMasterOnlyUIParent == null)
+            if (
+                this.SharedUIParent == null
+                || this.SurvivorOnlyUIParent == null
+                || this.DungeonMasterOnlyUIParent == null
+            )
             {
                 return;
             }
 
             this.SharedUIParent.SetActive(this.IsPlayerUiVisible);
-            this.SurvivorOnlyUIParent.SetActive(this.IsPlayerUiVisible && this.CurrentRole == PlayerRole.Survivor);
-            this.DungeonMasterOnlyUIParent.SetActive(this.IsPlayerUiVisible && this.CurrentRole == PlayerRole.DungeonMaster);
+            this.SurvivorOnlyUIParent.SetActive(
+                this.IsPlayerUiVisible && this.CurrentRole == PlayerRole.Survivor
+            );
+            this.DungeonMasterOnlyUIParent.SetActive(
+                this.IsPlayerUiVisible && this.CurrentRole == PlayerRole.DungeonMaster
+            );
         }
 
         private void BindBattleManager(BattleManager battleManager)
@@ -310,9 +333,8 @@ namespace ProjectRuntime.Managers
                 return;
             }
 
-            var battleManager = this.BoundBattleManager != null
-                ? this.BoundBattleManager
-                : BattleManager.Instance;
+            var battleManager =
+                this.BoundBattleManager != null ? this.BoundBattleManager : BattleManager.Instance;
 
             if (battleManager == null)
             {
@@ -325,7 +347,8 @@ namespace ProjectRuntime.Managers
                 RoundPhase.CrystalsComplete =>
                     $"Extract: {battleManager.ExtractedSurvivors}/{battleManager.RequiredExtractedSurvivors}",
                 RoundPhase.RoundComplete => string.Empty,
-                _ => $"Crystals: {battleManager.DestroyedCrystals}/{battleManager.RequiredCrystals}",
+                _ =>
+                    $"Crystals: {battleManager.DestroyedCrystals}/{battleManager.RequiredCrystals}",
             };
 
             this.ObjectiveTMP.text = this.ComposeObjectiveText(objectiveText);
@@ -358,9 +381,8 @@ namespace ProjectRuntime.Managers
 
         private string GetFormattedTimerText()
         {
-            var battleManager = this.BoundBattleManager != null
-                ? this.BoundBattleManager
-                : BattleManager.Instance;
+            var battleManager =
+                this.BoundBattleManager != null ? this.BoundBattleManager : BattleManager.Instance;
 
             if (battleManager == null)
             {
@@ -383,11 +405,13 @@ namespace ProjectRuntime.Managers
                 return;
             }
 
-            var battleManager = this.BoundBattleManager != null
-                ? this.BoundBattleManager
-                : BattleManager.Instance;
+            var battleManager =
+                this.BoundBattleManager != null ? this.BoundBattleManager : BattleManager.Instance;
 
-            if (battleManager != null && battleManager.CurrentRoundPhase == RoundPhase.RoundComplete)
+            if (
+                battleManager != null
+                && battleManager.CurrentRoundPhase == RoundPhase.RoundComplete
+            )
             {
                 this.RoleMessageTMP.text = battleManager.Winner switch
                 {
@@ -398,9 +422,10 @@ namespace ProjectRuntime.Managers
                 return;
             }
 
-            var roleText = this.CurrentRole == PlayerRole.Unassigned
-                ? "Assigning role..."
-                : $"You are a {GetRoleDisplayName(this.CurrentRole)}";
+            var roleText =
+                this.CurrentRole == PlayerRole.Unassigned
+                    ? "Assigning role..."
+                    : $"You are a {GetRoleDisplayName(this.CurrentRole)}";
 
             if (this.ShouldComposeTimerWithRoleMessage())
             {
@@ -412,15 +437,13 @@ namespace ProjectRuntime.Managers
 
         private bool ShouldComposeTimerWithRoleMessage()
         {
-            return this.CurrentRole == PlayerRole.DungeonMaster &&
-                   this.IsTimerComposedWithObjectiveText();
+            return this.CurrentRole == PlayerRole.DungeonMaster
+                && this.IsTimerComposedWithObjectiveText();
         }
 
         private static string GetRoleDisplayName(PlayerRole role)
         {
-            return role == PlayerRole.DungeonMaster
-                ? "Dungeon Master"
-                : role.ToString();
+            return role == PlayerRole.DungeonMaster ? "Dungeon Master" : role.ToString();
         }
     }
 }
