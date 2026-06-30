@@ -62,6 +62,7 @@ namespace ProjectRuntime.Actor
         // can't be outrun by command batching/frame-rate.
         private double _reviveContactStartTime;
         private double _lastReviveContactTime;
+        private uint _downedSourceNetId;
         // Guards against re-resolving while the downed→respawn state transition round-trips back from
         // the owning client (the state authority), which would otherwise re-fire every physics frame.
         private bool _downedResolved;
@@ -136,7 +137,7 @@ namespace ProjectRuntime.Actor
         [Server]
         private void OnHealthDepleted(uint killerNetId)
         {
-            ServerEnterDowned();
+            ServerEnterDowned(killerNetId);
         }
 
         protected override void FixedUpdate()
@@ -149,7 +150,7 @@ namespace ProjectRuntime.Actor
 
                 if (!IsDungeonMaster && !IsInactive && transform.position.y < -10f)
                 {
-                    ServerEnterDowned();
+                    ServerEnterDowned(0);
                 }
             }
 
@@ -285,7 +286,7 @@ namespace ProjectRuntime.Actor
         }
 
         [Server]
-        public void ServerEnterDowned()
+        public void ServerEnterDowned(uint sourceNetId = 0)
         {
             if (IsDungeonMaster || IsInactive)
             {
@@ -297,11 +298,12 @@ namespace ProjectRuntime.Actor
             // anyway.
             if (localManager != null && localManager.lives <= 1)
             {
-                ServerDieOutright();
+                ServerDieOutright(sourceNetId);
                 return;
             }
 
             _downedStartTime = NetworkTime.time;
+            _downedSourceNetId = sourceNetId;
             // Sentinel in the past so the first contact always starts a fresh hold streak.
             _lastReviveContactTime = double.NegativeInfinity;
             _reviveContactStartTime = 0d;
@@ -312,15 +314,17 @@ namespace ProjectRuntime.Actor
                 m_anchorPosition = transform.position
             });
 
+            BattleManager.Instance?.ServerReportSurvivorDowned(localManager, sourceNetId);
             BattleManager.Instance?.ServerRefreshSurvivorDefeatState();
         }
 
         // Permanently kills the survivor without a downed/revive window (used when they're already on
         // their last life). Spends the final life and sends everyone into the ghost state.
         [Server]
-        private void ServerDieOutright()
+        private void ServerDieOutright(uint sourceNetId)
         {
             localManager?.ServerLoseLives(1);
+            BattleManager.Instance?.ServerReportSurvivorDied(localManager, sourceNetId);
             RpcEnterDeadState(transform.position);
             BattleManager.Instance?.ServerRefreshSurvivorDefeatState();
         }
@@ -421,6 +425,7 @@ namespace ProjectRuntime.Actor
             if (localManager != null && localManager.IsPermanentlyDead)
             {
                 // Out of lives: stay where they fell and spectate instead of respawning.
+                BattleManager.Instance?.ServerReportSurvivorDied(localManager, _downedSourceNetId);
                 RpcEnterDeadState(transform.position);
             }
             else

@@ -40,6 +40,8 @@ namespace ProjectRuntime.Managers
         [Header("Round Timer")]
         [SerializeField] private int startingRoundSeconds = 600;
         [SerializeField] private int zombieKillTimeBonusSeconds = 10;
+        [SerializeField] private int survivorDownedTimePenaltySeconds = 15;
+        [SerializeField] private int survivorDeathTimePenaltySeconds = 30;
 
         [Header("Crystal Objective")]
         [SerializeField, SyncVar(hook = nameof(OnObjectiveStateSynced))]
@@ -69,6 +71,7 @@ namespace ProjectRuntime.Managers
         private readonly HashSet<CrystalObjective> _crystals = new();
         private readonly HashSet<PlayerManager> _survivorsInExtraction = new();
         private float _timerAccumulator;
+        private bool _resolvingAllDownedSurvivors;
 
         public event Action OnRoundStateChanged;
 
@@ -353,6 +356,28 @@ namespace ProjectRuntime.Managers
         }
 
         [Server]
+        public void ServerReportSurvivorDowned(PlayerManager survivor, uint sourceNetId)
+        {
+            if (!this.IsTimerPenaltyTarget(survivor))
+            {
+                return;
+            }
+
+            this.ServerAddRoundTime(-this.survivorDownedTimePenaltySeconds);
+        }
+
+        [Server]
+        public void ServerReportSurvivorDied(PlayerManager survivor, uint sourceNetId)
+        {
+            if (!this.IsTimerPenaltyTarget(survivor))
+            {
+                return;
+            }
+
+            this.ServerAddRoundTime(-this.survivorDeathTimePenaltySeconds);
+        }
+
+        [Server]
         private void ServerSetRemainingRoundSeconds(int value)
         {
             int clampedValue = Mathf.Max(0, value);
@@ -368,12 +393,14 @@ namespace ProjectRuntime.Managers
         [Server]
         public void ServerRefreshSurvivorDefeatState()
         {
-            if (this.roundPhase == RoundPhase.RoundComplete)
+            if (this.roundPhase == RoundPhase.RoundComplete || this._resolvingAllDownedSurvivors)
             {
                 return;
             }
 
             bool hasSurvivor = false;
+            bool hasLivingSurvivor = false;
+            bool allLivingSurvivorsDowned = true;
             foreach (var player in this.Players)
             {
                 if (player == null || player.playerRole != PlayerRole.Survivor)
@@ -382,16 +409,52 @@ namespace ProjectRuntime.Managers
                 }
 
                 hasSurvivor = true;
-                if (IsActiveSurvivor(player))
+                if (player.lives <= 0)
                 {
+                    continue;
+                }
+
+                hasLivingSurvivor = true;
+                if (player.player == null || !player.player.IsDowned)
+                {
+                    allLivingSurvivorsDowned = false;
                     return;
                 }
             }
 
-            if (hasSurvivor)
+            if (hasLivingSurvivor && allLivingSurvivorsDowned)
+            {
+                this.ServerResolveAllDownedSurvivors();
+                return;
+            }
+
+            if (hasSurvivor && !hasLivingSurvivor)
             {
                 this.ServerCompleteRound(RoundWinner.DungeonMaster);
             }
+        }
+
+        [Server]
+        private void ServerResolveAllDownedSurvivors()
+        {
+            this._resolvingAllDownedSurvivors = true;
+
+            foreach (var player in this.Players)
+            {
+                if (player == null ||
+                    player.playerRole != PlayerRole.Survivor ||
+                    player.lives <= 0 ||
+                    player.player == null ||
+                    !player.player.IsDowned)
+                {
+                    continue;
+                }
+
+                // Resolve everyone as if their revive window timed out.
+                player.player.ServerResolveDowned(2);
+            }
+
+            this._resolvingAllDownedSurvivors = false;
         }
 
         [Server]
@@ -463,6 +526,13 @@ namespace ProjectRuntime.Managers
             return player != null &&
                    player.playerRole == PlayerRole.Survivor &&
                    player.lives > 0;
+        }
+
+        private bool IsTimerPenaltyTarget(PlayerManager player)
+        {
+            return this.roundPhase != RoundPhase.RoundComplete &&
+                   player != null &&
+                   player.playerRole == PlayerRole.Survivor;
         }
 
         private void OnObjectiveStateSynced(int oldValue, int newValue)
