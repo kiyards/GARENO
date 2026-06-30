@@ -31,6 +31,16 @@ namespace ProjectRuntime.Actor
         [SerializeField]
         private Transform turretMuzzle;
 
+        [Header("Combat")]
+        [SerializeField]
+        private float damage = 20f;
+
+        [SerializeField]
+        private float maxRange = 80f;
+
+        [SerializeField]
+        private float fireCooldown = 0.18f;
+
         [Header("Assembly")]
         [SerializeField]
         private float assemblyDuration = 2f;
@@ -51,6 +61,9 @@ namespace ProjectRuntime.Actor
         public uint OwnerNetId => ownerNetId;
         public bool IsAssembled => _status == TurretStatus.Assembled;
         public bool IsDisassembling => _status == TurretStatus.Disassembling;
+        public float Damage => damage;
+        public float MaxRange => maxRange;
+        public float FireCooldown => fireCooldown;
 
         [Server]
         public void ServerInitialize(GameplayPlayer owner)

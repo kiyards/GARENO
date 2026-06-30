@@ -8,15 +8,12 @@ namespace ProjectRuntime.Actor
 {
     public class DungeonMasterTurretController : MonoBehaviour
     {
-        [Header("Combat")]
+        [Header("Aim")]
         [SerializeField]
-        private float damage = 20f;
+        private LayerMask aimOcclusionMask;
 
         [SerializeField]
-        private float maxRange = 80f;
-
-        [SerializeField]
-        private float fireCooldown = 0.18f;
+        private LayerMask aimTargetMask;
 
         [Header("Tracer")]
         [SerializeField]
@@ -36,7 +33,7 @@ namespace ProjectRuntime.Actor
         private double _clientLastFireTime;
         private double _serverLastFireTime;
 
-        public float MaxRange => maxRange;
+        public float MaxRange => _activeTurret != null ? _activeTurret.MaxRange : 0f;
         public bool IsDisassembling => _activeTurret != null && _activeTurret.IsDisassembling;
         public bool IsAssembling => _activeTurret != null && !_activeTurret.IsAssembled && !_activeTurret.IsDisassembling;
 
@@ -135,7 +132,7 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            if (NetworkTime.time - _clientLastFireTime < fireCooldown)
+            if (NetworkTime.time - _clientLastFireTime < _activeTurret.FireCooldown)
             {
                 return;
             }
@@ -168,12 +165,12 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            if (NetworkTime.time - _serverLastFireTime < fireCooldown - 0.05f)
+            if (NetworkTime.time - _serverLastFireTime < _activeTurret.FireCooldown - 0.05f)
             {
                 return;
             }
 
-            if (Vector3.Distance(player.transform.position, hitPoint) > maxRange * 1.1f)
+            if (Vector3.Distance(player.transform.position, hitPoint) > _activeTurret.MaxRange * 1.1f)
             {
                 return;
             }
@@ -206,7 +203,7 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            damageable.ServerTakeDamage(damage, player.netId, hitPoint);
+            damageable.ServerTakeDamage(_activeTurret.Damage, player.netId, hitPoint);
         }
 
         public void ShowTracer(Vector3 hitPoint)
@@ -254,15 +251,16 @@ namespace ProjectRuntime.Actor
                 return false;
             }
 
+            float range = _activeTurret != null ? _activeTurret.MaxRange : 0f;
             bool hasOcclusion = Physics.Raycast(
                 ray,
                 out RaycastHit occlusionHit,
-                maxRange,
-                player.cam.aimOcclusionMask
+                range,
+                aimOcclusionMask
             );
-            hitPoint = hasOcclusion ? occlusionHit.point : ray.origin + ray.direction * maxRange;
+            hitPoint = hasOcclusion ? occlusionHit.point : ray.origin + ray.direction * range;
 
-            var hits = Physics.RaycastAll(ray, maxRange, player.cam.aimTargetMask);
+            var hits = Physics.RaycastAll(ray, range, aimTargetMask);
             System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
 
             foreach (var hit in hits)

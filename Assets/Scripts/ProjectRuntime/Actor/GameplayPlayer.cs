@@ -205,35 +205,14 @@ namespace ProjectRuntime.Actor
                 rb.useGravity = _initialRigidbodyUseGravity;
             }
 
-            IgnoreOtherPlayerCollisions();
+            SetLayerRecursive(gameObject, LayerMask.NameToLayer("Ghost"));
         }
 
-        // Disables physics contact between this ghost and every other player's collider so the ghost can
-        // walk through teammates and the Dungeon Master while still colliding with the world. Runs per
-        // client (Physics.IgnoreCollision is local to each physics scene).
-        private void IgnoreOtherPlayerCollisions()
+        private static void SetLayerRecursive(GameObject go, int layer)
         {
-            if (col == null)
-            {
-                return;
-            }
-
-            var battleManager = BattleManager.Instance;
-            if (battleManager == null)
-            {
-                return;
-            }
-
-            foreach (var pm in battleManager.Players)
-            {
-                var other = pm != null ? pm.player : null;
-                if (other == null || other == this || other.col == null)
-                {
-                    continue;
-                }
-
-                Physics.IgnoreCollision(col, other.col, true);
-            }
+            go.layer = layer;
+            foreach (Transform child in go.transform)
+                SetLayerRecursive(child.gameObject, layer);
         }
 
         // Leaves a corpse marker where the survivor fell. The project has no character models yet, so the
@@ -708,22 +687,14 @@ namespace ProjectRuntime.Actor
 
         private DungeonMasterTurretController EnsureTurretController()
         {
-            if (!TryGetComponent(out DungeonMasterTurretController turret))
-            {
-                turret = gameObject.AddComponent<DungeonMasterTurretController>();
-            }
-
+            var turret = GetComponent<DungeonMasterTurretController>();
             turret.Initialize(this);
             return turret;
         }
 
         private DungeonMasterBearTrapController EnsureBearTrapController()
         {
-            if (!TryGetComponent(out DungeonMasterBearTrapController bearTrapController))
-            {
-                bearTrapController = gameObject.AddComponent<DungeonMasterBearTrapController>();
-            }
-
+            var bearTrapController = GetComponent<DungeonMasterBearTrapController>();
             bearTrapController.Initialize(this);
             return bearTrapController;
         }
