@@ -1085,7 +1085,7 @@ MonoBehaviour:
   <health>k__BackingField: {fileID: 2200131109173453123}
   <aimRig>k__BackingField: {fileID: 2490783541060357679}
   jumpForce: 10
-  moveSpeed: 10
+  moveSpeed: 8
   dungeonMasterHorizontalSpeed: 18
   dungeonMasterVerticalSpeed: 12
   dungeonMasterMinY: 0
