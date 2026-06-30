@@ -9,19 +9,16 @@ using UnityEngine.InputSystem;
 
 namespace ProjectRuntime.Actor
 {
+    public enum DungeonMasterCardPlacementState
+    {
+        Idle,
+        SelectingPlacement,
+        ChargingPlacement,
+    }
+
     public class DungeonMasterCardManager : NetworkBehaviour
     {
         private const int HandSize = 4;
-
-        // Hardcoded prototype deck — card ids resolved against the DCard data table.
-        // Future iterations let the Dungeon Master build their own deck.
-        private static readonly string[] StartingDeckCardIds =
-        {
-            "CARD_BASIC_ZOMBIE",
-            "CARD_CREEPER_ZOMBIE",
-            "CARD_BEAR_TRAP",
-            "CARD_TURRET",
-        };
 
         [SerializeField] private float manaRegenRate = 1f;
         [SerializeField] private int maxMana = 10;
@@ -30,6 +27,7 @@ namespace ProjectRuntime.Actor
         [SerializeField] private float placementRayDistance = 1000f;
         [SerializeField] private float placementIndicatorRadius = 1.5f;
         [SerializeField] private float placementIndicatorHeight = 0.03f;
+        [SerializeField] private float placementChargeDuration = 1f;
 
         [SyncVar(hook = nameof(OnManaChanged))]
         public float Mana;
@@ -44,6 +42,7 @@ namespace ProjectRuntime.Actor
 
         // Raised on every peer when the hand contents change. The hand HUD subscribes to refresh.
         public event Action OnHandChangedEvent;
+        public event Action OnPlacementStateChangedEvent;
 
         // Server-only deck state. Stores card ids; null/empty marks an empty hand slot.
         private readonly List<string> _hand = new();
@@ -56,10 +55,23 @@ namespace ProjectRuntime.Actor
         private GameObject _placementIndicator;
         private Material _placementIndicatorMaterial;
         private int _selectedHandSlot = -1;
-        private bool _isPlacementActive;
+        private string _selectedCardId;
+        private DungeonMasterCardPlacementState _placementState = DungeonMasterCardPlacementState.Idle;
         private bool _hasPlacementPoint;
         private Vector3 _placementPosition;
         private Vector3 _placementNormal = Vector3.up;
+        private float _placementChargeStartTime;
+        private int _placementStartedFrame = -1;
+        private int _committedHandSlot = -1;
+        private string _committedCardId;
+
+        public DungeonMasterCardPlacementState PlacementState => this._placementState;
+        public bool IsPlacementModeActive => this._placementState != DungeonMasterCardPlacementState.Idle;
+        public bool IsPlacementCharging => this._placementState == DungeonMasterCardPlacementState.ChargingPlacement;
+        public string SelectedCardId => this._selectedCardId;
+        public float PlacementChargeProgress => this.IsPlacementCharging && this.placementChargeDuration > 0f
+            ? Mathf.Clamp01((Time.time - this._placementChargeStartTime) / this.placementChargeDuration)
+            : 0f;
 
         private void Awake()
         {
@@ -118,6 +130,30 @@ namespace ProjectRuntime.Actor
             this.ServerPlayCard(handSlot, groundPosition);
         }
 
+        [Command]
+        private void CmdCommitCardCharge(int handSlot, string cardId)
+        {
+            if (!this.ServerCommitCardCharge(handSlot, cardId))
+            {
+                this.TargetRejectCardCharge(this.connectionToClient);
+            }
+        }
+
+        [Command]
+        private void CmdPlayCommittedCard(int handSlot, string cardId, Vector3 groundPosition)
+        {
+            this.ServerPlayCommittedCard(handSlot, cardId, groundPosition);
+        }
+
+        [TargetRpc]
+        private void TargetRejectCardCharge(NetworkConnectionToClient target)
+        {
+            if (this._placementState == DungeonMasterCardPlacementState.ChargingPlacement)
+            {
+                this.CancelPlacement();
+            }
+        }
+
         private void ClientTickPlacement()
         {
             if (!this.CanUseLocalPlacement())
@@ -126,7 +162,7 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            if (!this._isPlacementActive)
+            if (this._placementState == DungeonMasterCardPlacementState.Idle)
             {
                 return;
             }
@@ -137,18 +173,34 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            if (mouse.rightButton.wasPressedThisFrame)
+            if (this._placementState == DungeonMasterCardPlacementState.SelectingPlacement &&
+                mouse.rightButton.wasPressedThisFrame)
             {
                 this.CancelPlacement();
                 return;
             }
 
-            this.UpdatePlacementPoint(mouse);
-            if (this._hasPlacementPoint &&
-                mouse.leftButton.wasPressedThisFrame &&
-                !IsPointerOverUi())
+            if (this._placementState == DungeonMasterCardPlacementState.SelectingPlacement)
             {
-                this.PlaySelectedCardAtPlacementPoint();
+                this.UpdatePlacementPoint(mouse);
+                if (this._hasPlacementPoint &&
+                    Time.frameCount != this._placementStartedFrame &&
+                    mouse.leftButton.wasPressedThisFrame &&
+                    !IsPointerOverUi())
+                {
+                    this.BeginPlacementCharge();
+                }
+
+                return;
+            }
+
+            if (this._placementState == DungeonMasterCardPlacementState.ChargingPlacement)
+            {
+                this.UpdateChargingIndicator();
+                if (Time.time - this._placementChargeStartTime >= this.placementChargeDuration)
+                {
+                    this.PlayChargedCardAtPlacementPoint();
+                }
             }
         }
 
@@ -190,11 +242,16 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
+            this.CancelPlacement();
+
             this._selectedHandSlot = handSlot;
-            this._isPlacementActive = true;
+            this._selectedCardId = cardId;
+            this._placementState = DungeonMasterCardPlacementState.SelectingPlacement;
+            this._placementStartedFrame = Time.frameCount;
             this._hasPlacementPoint = false;
             this.EnsurePlacementIndicator();
             this.SetPlacementIndicatorVisible(false);
+            this.NotifyPlacementStateChanged();
         }
 
         private void UpdatePlacementPoint(Mouse mouse)
@@ -210,23 +267,76 @@ namespace ProjectRuntime.Actor
             this._placementPosition = position;
             this._placementNormal = normal;
             this.SetPlacementIndicator(position, normal);
+            this.SetPlacementIndicatorColor(new Color(0.1f, 1f, 0.25f, 0.65f));
             this.SetPlacementIndicatorVisible(true);
         }
 
-        private void PlaySelectedCardAtPlacementPoint()
+        private void BeginPlacementCharge()
+        {
+            if (!this._hasPlacementPoint)
+            {
+                return;
+            }
+
+            this.CmdCommitCardCharge(this._selectedHandSlot, this._selectedCardId);
+            this._placementState = DungeonMasterCardPlacementState.ChargingPlacement;
+            this._placementChargeStartTime = Time.time;
+            this.UpdateChargingIndicator();
+            this.NotifyPlacementStateChanged();
+        }
+
+        private void UpdateChargingIndicator()
+        {
+            if (this._placementIndicator == null)
+            {
+                return;
+            }
+
+            float progress = this.PlacementChargeProgress;
+            float pulse = 1f + Mathf.Sin(Time.time * 18f) * 0.08f;
+            Vector3 safeNormal = this._placementNormal.sqrMagnitude > 0.0001f
+                ? this._placementNormal.normalized
+                : Vector3.up;
+
+            this._placementIndicator.transform.SetPositionAndRotation(
+                this._placementPosition + safeNormal * this.placementIndicatorHeight,
+                Quaternion.FromToRotation(Vector3.up, safeNormal));
+            this._placementIndicator.transform.localScale = new Vector3(
+                this.placementIndicatorRadius * 2f * pulse,
+                this.placementIndicatorHeight,
+                this.placementIndicatorRadius * 2f * pulse);
+            this.SetPlacementIndicatorColor(Color.Lerp(
+                new Color(0.1f, 1f, 0.25f, 0.65f),
+                new Color(0.75f, 1f, 0.2f, 0.85f),
+                progress));
+            this.SetPlacementIndicatorVisible(true);
+        }
+
+        private void PlayChargedCardAtPlacementPoint()
         {
             int handSlot = this._selectedHandSlot;
+            string cardId = this._selectedCardId;
             Vector3 groundPosition = this._placementPosition;
             this.CancelPlacement();
-            this.CmdPlayCard(handSlot, groundPosition);
+            this.CmdPlayCommittedCard(handSlot, cardId, groundPosition);
         }
 
         private void CancelPlacement()
         {
+            if (this._placementState == DungeonMasterCardPlacementState.Idle &&
+                this._selectedHandSlot < 0 &&
+                string.IsNullOrEmpty(this._selectedCardId))
+            {
+                return;
+            }
+
             this._selectedHandSlot = -1;
-            this._isPlacementActive = false;
+            this._selectedCardId = null;
+            this._placementState = DungeonMasterCardPlacementState.Idle;
+            this._placementStartedFrame = -1;
             this._hasPlacementPoint = false;
             this.SetPlacementIndicatorVisible(false);
+            this.NotifyPlacementStateChanged();
         }
 
         private bool TryGetGroundPoint(Mouse mouse, out Vector3 position, out Vector3 normal)
@@ -270,7 +380,7 @@ namespace ProjectRuntime.Actor
             }
 
             this._placementIndicator = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            this._placementIndicator.name = "DungeonMasterBasicZombiePlacementIndicator";
+            this._placementIndicator.name = "DungeonMasterPlacementIndicator";
 
             if (this._placementIndicator.TryGetComponent(out Collider indicatorCollider))
             {
@@ -315,6 +425,14 @@ namespace ProjectRuntime.Actor
             }
         }
 
+        private void SetPlacementIndicatorColor(Color color)
+        {
+            if (this._placementIndicatorMaterial != null)
+            {
+                this._placementIndicatorMaterial.color = color;
+            }
+        }
+
         private void DestroyPlacementIndicator()
         {
             if (this._placementIndicatorMaterial != null)
@@ -338,6 +456,85 @@ namespace ProjectRuntime.Actor
         [Server]
         public bool ServerPlayCard(int handSlot, Vector3 groundPosition)
         {
+            if (!this.ServerTryGetCardInHand(handSlot, null, out string cardId, out CardData card))
+            {
+                return false;
+            }
+
+            if (this.Mana < card.ManaCost)
+            {
+                return false;
+            }
+
+            if (!this.ServerExecuteCardEffect(card, groundPosition))
+            {
+                return false;
+            }
+
+            this.Mana = Mathf.Max(0f, this.Mana - card.ManaCost);
+            this.ServerReplacePlayedCard(handSlot, cardId);
+            return true;
+        }
+
+        [Server]
+        private bool ServerCommitCardCharge(int handSlot, string cardId)
+        {
+            if (this._committedHandSlot >= 0)
+            {
+                return false;
+            }
+
+            if (!this.ServerTryGetCardInHand(handSlot, cardId, out _, out CardData card))
+            {
+                return false;
+            }
+
+            if (!this.ServerTrySpendMana(card.ManaCost))
+            {
+                return false;
+            }
+
+            this._committedHandSlot = handSlot;
+            this._committedCardId = cardId;
+            return true;
+        }
+
+        [Server]
+        private bool ServerPlayCommittedCard(int handSlot, string cardId, Vector3 groundPosition)
+        {
+            if (this._committedHandSlot != handSlot || this._committedCardId != cardId)
+            {
+                return false;
+            }
+
+            if (!this.ServerTryGetCardInHand(handSlot, cardId, out _, out CardData card))
+            {
+                this.ServerClearCommittedCardCharge();
+                return false;
+            }
+
+            if (!this.ServerExecuteCardEffect(card, groundPosition))
+            {
+                this.Mana = Mathf.Min(this.maxMana, this.Mana + card.ManaCost);
+                this.ServerClearCommittedCardCharge();
+                return false;
+            }
+
+            this.ServerReplacePlayedCard(handSlot, cardId);
+            this.ServerClearCommittedCardCharge();
+            return true;
+        }
+
+        [Server]
+        private bool ServerTryGetCardInHand(
+            int handSlot,
+            string expectedCardId,
+            out string cardId,
+            out CardData card)
+        {
+            cardId = null;
+            card = default;
+
             if (!this.Player.IsDungeonMaster)
             {
                 return false;
@@ -348,8 +545,13 @@ namespace ProjectRuntime.Actor
                 return false;
             }
 
-            var cardId = this._hand[handSlot];
+            cardId = this._hand[handSlot];
             if (string.IsNullOrEmpty(cardId))
+            {
+                return false;
+            }
+
+            if (!string.IsNullOrEmpty(expectedCardId) && cardId != expectedCardId)
             {
                 return false;
             }
@@ -361,23 +563,23 @@ namespace ProjectRuntime.Actor
                 return false;
             }
 
-            var card = cardData.Value;
-            if (!this.ServerTrySpendMana(card.ManaCost))
-            {
-                return false;
-            }
-
-            if (!this.ServerExecuteCardEffect(card, groundPosition))
-            {
-                // Effect failed (e.g. invalid spawn position) — refund the mana and keep the card.
-                this.Mana = Mathf.Min(this.Mana + card.ManaCost, this.maxMana);
-                return false;
-            }
-
-            this._used.Add(cardId);
-            this._hand[handSlot] = this.ServerDrawCardId();
-            this.HandCardIds[handSlot] = this._hand[handSlot];
+            card = cardData.Value;
             return true;
+        }
+
+        [Server]
+        private void ServerReplacePlayedCard(int handSlot, string cardId)
+        {
+            this._used.Add(cardId);
+            this._hand[handSlot] = this.ServerDrawReplacementCardId(cardId);
+            this.HandCardIds[handSlot] = this._hand[handSlot];
+        }
+
+        [Server]
+        private void ServerClearCommittedCardCharge()
+        {
+            this._committedHandSlot = -1;
+            this._committedCardId = null;
         }
 
         [Server]
@@ -428,7 +630,7 @@ namespace ProjectRuntime.Actor
             this._hand.Clear();
             this.HandCardIds.Clear();
 
-            var ids = new List<string>(StartingDeckCardIds);
+            var ids = this.ServerBuildDeckCardIdsFromData();
             ServerShuffle(ids);
             foreach (var id in ids)
             {
@@ -444,6 +646,27 @@ namespace ProjectRuntime.Actor
         }
 
         [Server]
+        private List<string> ServerBuildDeckCardIdsFromData()
+        {
+            var ids = new List<string>();
+            var cardData = DCard.GetAllData();
+            if (cardData?.Data == null)
+            {
+                return ids;
+            }
+
+            foreach (var card in cardData.Data)
+            {
+                if (!string.IsNullOrEmpty(card.CardId))
+                {
+                    ids.Add(card.CardId);
+                }
+            }
+
+            return ids;
+        }
+
+        [Server]
         private string ServerDrawCardId()
         {
             if (this._deck.Count == 0)
@@ -452,6 +675,19 @@ namespace ProjectRuntime.Actor
             }
 
             return this._deck.Count > 0 ? this._deck.Dequeue() : null;
+        }
+
+        [Server]
+        private string ServerDrawReplacementCardId(string replacedCardId)
+        {
+            var cardId = this.ServerDrawCardId();
+            if (cardId != replacedCardId || this._deck.Count == 0)
+            {
+                return cardId;
+            }
+
+            this._deck.Enqueue(cardId);
+            return this._deck.Dequeue();
         }
 
         [Server]
@@ -478,6 +714,11 @@ namespace ProjectRuntime.Actor
                 var j = UnityEngine.Random.Range(0, i + 1);
                 (items[i], items[j]) = (items[j], items[i]);
             }
+        }
+
+        private void NotifyPlacementStateChanged()
+        {
+            this.OnPlacementStateChangedEvent?.Invoke();
         }
     }
 }

@@ -121,7 +121,7 @@ public class DCard : ScriptableObject, IDataImport
 
             if (paramList.Length < 5)
             {
-                Debug.LogWarning($"Skipped DCard row {i + 1}. Expected 5 columns but found {paramList.Length}.");
+                Debug.LogWarning($"Skipped DCard row {i + 1}. Expected at least 5 columns but found {paramList.Length}.");
                 continue;
             }
 
@@ -132,6 +132,10 @@ public class DCard : ScriptableObject, IDataImport
                 DisplayName = paramList[2],
                 ManaCost = CommonUtil.ConvertToInt32(paramList[3]),
                 Effect = ParseEnumOrDefault(paramList[4], CardEffectType.SPAWN_BASIC_ZOMBIE, paramList[1]),
+                CardType = paramList.Length > 5
+                    ? ParseEnumOrDefault(paramList[5], CardType.ZOMBIE, paramList[1])
+                    : InferCardType(paramList[4]),
+                CardDescription = paramList.Length > 6 ? paramList[6] : string.Empty,
             };
             s_loadedData.Data.Add(cardData);
         }
@@ -151,6 +155,13 @@ public class DCard : ScriptableObject, IDataImport
         Debug.LogWarning($"Failed to parse {typeof(TEnum).Name} '{value}' for card {cardId}. Using {defaultValue}.");
         return defaultValue;
     }
+
+    private static CardType InferCardType(string effect)
+    {
+        return effect != null && effect.IndexOf("TRAP", StringComparison.OrdinalIgnoreCase) >= 0
+            ? CardType.TRAP
+            : CardType.ZOMBIE;
+    }
 #endif
 }
 
@@ -167,6 +178,12 @@ public enum CardEffectType
     SPAWN_CREEPER_ZOMBIE,
 }
 
+public enum CardType
+{
+    ZOMBIE,
+    TRAP,
+}
+
 [Serializable]
 public struct CardData
 {
@@ -181,4 +198,10 @@ public struct CardData
 
     [field: SerializeField]
     public CardEffectType Effect { get; set; }
+
+    [field: SerializeField]
+    public CardType CardType { get; set; }
+
+    [field: SerializeField]
+    public string CardDescription { get; set; }
 }
