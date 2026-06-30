@@ -176,6 +176,7 @@ public enum CardEffectType
     PLACE_BEAR_TRAP,
     DEPLOY_TURRET,
     SPAWN_CREEPER_ZOMBIE,
+    SPAWN_GROUP_OF_DOGS,
 }
 
 public enum CardType

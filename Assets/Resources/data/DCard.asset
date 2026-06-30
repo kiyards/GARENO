@@ -34,7 +34,7 @@ MonoBehaviour:
   - <CardId>k__BackingField: CARD_GROUP_OF_DOGS
     <DisplayName>k__BackingField: Group of Dogs
     <ManaCost>k__BackingField: 3
-    <Effect>k__BackingField: 0
+    <Effect>k__BackingField: 4
     <CardType>k__BackingField: 0
     <CardDescription>k__BackingField: 
   - <CardId>k__BackingField: CARD_TURRET

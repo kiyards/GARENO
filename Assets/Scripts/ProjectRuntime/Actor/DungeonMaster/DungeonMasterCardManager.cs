@@ -609,6 +609,17 @@ namespace ProjectRuntime.Actor
                         this.Player.localManager,
                         groundPosition);
 
+                case CardEffectType.SPAWN_GROUP_OF_DOGS:
+                    var dogBattleManager = BattleManager.Instance;
+                    if (dogBattleManager == null)
+                    {
+                        return false;
+                    }
+
+                    return dogBattleManager.ServerTrySpawnGroupOfDogs(
+                        this.Player.localManager,
+                        groundPosition);
+
                 case CardEffectType.PLACE_BEAR_TRAP:
                     return this.Player.BearTrapController.ServerPlaceFromCard(groundPosition, Vector3.up);
 

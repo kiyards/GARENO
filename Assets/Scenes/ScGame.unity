@@ -335,13 +335,16 @@ MonoBehaviour:
   playersToStart: 2
   basicZombiePrefab: {fileID: 4025126144443318060, guid: 099da0aa85ce2524cb2a561233e0141f, type: 3}
   creeperZombiePrefab: {fileID: 4025126144443318060, guid: b93a1496fcca4984aa8df766b3784379, type: 3}
+  dogPrefab: {fileID: 4025126144443318060, guid: 171c2672783f4d746b7366987f686c73, type: 3}
   basicZombieSpawnSampleRadius: 2
+  dogPackCount: 3
+  dogPackSpawnSpread: 2
   startingRoundSeconds: 600
   zombieKillTimeBonusSeconds: 10
   survivorDownedTimePenaltySeconds: 15
   survivorDeathTimePenaltySeconds: 30
   requiredCrystals: 3
-  totalCrystals: 5
+  totalCrystals: 4
 --- !u!114 &68137830
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2383,50 +2386,6 @@ Mesh:
     offset: 0
     size: 0
     path: 
---- !u!1 &427572164
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 427572166}
-  - component: {fileID: 427572165}
-  m_Layer: 0
-  m_Name: GameObject (1)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &427572165
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 427572164}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 41f84591ce72545258ea98cb7518d8b9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &427572166
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 427572164}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 15.25, y: 2.73, z: -7.98}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &430108854
 Mesh:
   m_ObjectHideFlags: 0
@@ -5324,7 +5283,7 @@ Transform:
   m_GameObject: {fileID: 737941654}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.5241523, y: 2.6494408, z: 29.768612}
+  m_LocalPosition: {x: -2.5241523, y: 7.13, z: -20.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8255,6 +8214,7 @@ MonoBehaviour:
   - {fileID: 1557000337860514814, guid: f2731096b6dea1747afb433b3285d364, type: 3}
   - {fileID: 7487658207218452854, guid: 50462a344c15d8346855aaa878e75bfe, type: 3}
   - {fileID: 4025126144443318060, guid: 099da0aa85ce2524cb2a561233e0141f, type: 3}
+  - {fileID: 4025126144443318060, guid: 171c2672783f4d746b7366987f686c73, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -12776,50 +12736,6 @@ Mesh:
     offset: 0
     size: 0
     path: 
---- !u!1 &1994619282
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1994619284}
-  - component: {fileID: 1994619283}
-  m_Layer: 0
-  m_Name: GameObject
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1994619283
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1994619282}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 41f84591ce72545258ea98cb7518d8b9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &1994619284
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1994619282}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 14.75, y: 1.76, z: 2.2778494}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &2010821280
 Mesh:
   m_ObjectHideFlags: 0
@@ -13658,5 +13574,3 @@ SceneRoots:
   - {fileID: 947252258}
   - {fileID: 710280035}
   - {fileID: 737941656}
-  - {fileID: 427572166}
-  - {fileID: 1994619284}

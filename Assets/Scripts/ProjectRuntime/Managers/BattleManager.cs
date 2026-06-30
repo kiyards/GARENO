@@ -32,10 +32,17 @@ namespace ProjectRuntime.Managers
         [Header("Dungeon Master")]
         [SerializeField] private GameObject basicZombiePrefab;
         [SerializeField] private GameObject creeperZombiePrefab;
+        // A single dog. The Group of Dogs card spawns dogPackCount copies of this prefab.
+        [SerializeField] private GameObject dogPrefab;
         // Max distance the requested point is snapped onto the navmesh. Kept large so a click
         // that lands off the navmesh (on an obstacle, a wall, or past an edge) still spawns at
         // the nearest valid point instead of silently failing.
         [SerializeField] private float basicZombieSpawnSampleRadius = 50f;
+
+        // Group of Dogs spawns dogPackCount independent dogs around the placement point: the first
+        // at the click, the rest on a ring of dogPackSpawnSpread radius. Each is NavMesh-sampled.
+        [SerializeField] private int dogPackCount = 3;
+        [SerializeField] private float dogPackSpawnSpread = 2f;
 
         [Header("Round Timer")]
         [SerializeField] private int startingRoundSeconds = 600;
@@ -147,11 +154,62 @@ namespace ProjectRuntime.Managers
         }
 
         [Server]
+        public bool ServerTrySpawnGroupOfDogs(PlayerManager caster, Vector3 requestedPosition)
+        {
+            if (!this.ServerCanSpawnEnemy(caster, this.dogPrefab, "Group of Dogs"))
+            {
+                return false;
+            }
+
+            int count = Mathf.Max(1, this.dogPackCount);
+            int spawned = 0;
+            for (int i = 0; i < count; i++)
+            {
+                Vector3 spawnPosition = this.GetDogPackSpawnPosition(requestedPosition, i, count);
+                if (this.ServerSpawnEnemyAt(this.dogPrefab, spawnPosition))
+                {
+                    spawned++;
+                }
+            }
+
+            // Reports success (no mana refund) as long as at least one dog landed on the navmesh.
+            return spawned > 0;
+        }
+
+        // Spreads the pack around the placement point: the first dog at the center, the rest on an
+        // evenly spaced ring of radius dogPackSpawnSpread. Each point is NavMesh-sampled by the
+        // caller, so off-mesh ring points snap to the nearest valid spot.
+        private Vector3 GetDogPackSpawnPosition(Vector3 center, int index, int count)
+        {
+            if (index == 0 || count <= 1)
+            {
+                return center;
+            }
+
+            float angle = Mathf.PI * 2f * (index - 1) / (count - 1);
+            return center + new Vector3(
+                Mathf.Cos(angle) * this.dogPackSpawnSpread,
+                0f,
+                Mathf.Sin(angle) * this.dogPackSpawnSpread);
+        }
+
+        [Server]
         private bool ServerTrySpawnEnemy(
             PlayerManager caster,
             Vector3 requestedPosition,
             GameObject prefab,
             string enemyName)
+        {
+            if (!this.ServerCanSpawnEnemy(caster, prefab, enemyName))
+            {
+                return false;
+            }
+
+            return this.ServerSpawnEnemyAt(prefab, requestedPosition);
+        }
+
+        [Server]
+        private bool ServerCanSpawnEnemy(PlayerManager caster, GameObject prefab, string enemyName)
         {
             if (this.roundPhase == RoundPhase.RoundComplete)
             {
@@ -169,6 +227,12 @@ namespace ProjectRuntime.Managers
                 return false;
             }
 
+            return true;
+        }
+
+        [Server]
+        private bool ServerSpawnEnemyAt(GameObject prefab, Vector3 requestedPosition)
+        {
             if (!NavMesh.SamplePosition(
                     requestedPosition,
                     out NavMeshHit navMeshHit,
