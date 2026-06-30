@@ -38,7 +38,10 @@ namespace ProjectRuntime.Managers
         private TextMeshProUGUI PlayerHealthTMP { get; set; }
 
         [field: SerializeField]
-        private TextMeshProUGUI PlayerAmmoTMP { get; set; }
+        private TextMeshProUGUI SurvivorCurrentAmmoTMP { get; set; }
+
+        [field: SerializeField]
+        private TextMeshProUGUI SurvivorSpareAmmoTMP { get; set; }
 
         [field: SerializeField]
         private TextMeshProUGUI ObjectiveTMP { get; set; }
@@ -186,12 +189,10 @@ namespace ProjectRuntime.Managers
             }
         }
 
-        private void OnAmmoChanged(int current, int magazineSize)
+        private void OnAmmoChanged(int currentAmmo, int magazineSize)
         {
-            if (this.PlayerAmmoTMP != null)
-            {
-                this.PlayerAmmoTMP.text = $"{current}/∞";
-            }
+            this.SurvivorCurrentAmmoTMP.text = $"{currentAmmo}";
+            this.SurvivorSpareAmmoTMP.text = "∞";
         }
 
         private void OnManaChanged(float current, int max)
