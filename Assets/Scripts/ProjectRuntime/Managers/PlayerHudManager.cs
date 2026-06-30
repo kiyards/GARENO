@@ -53,7 +53,16 @@ namespace ProjectRuntime.Managers
         private Image ManaBarFill { get; set; }
 
         [field: SerializeField]
+        private GameObject TurretReticle { get; set; }
+
+        [field: SerializeField]
         private UIDungeonMasterHand DungeonMasterHand { get; set; }
+
+        [field: SerializeField]
+        private GameObject ManaBarParent { get; set; }
+
+        [field: SerializeField]
+        private GameObject CardDescription { get; set; }
 
         private Health BoundHealth { get; set; }
         private PistolWeapon BoundWeapon { get; set; }
@@ -212,6 +221,18 @@ namespace ProjectRuntime.Managers
             this.RefreshRoleMessage();
             this.RefreshTimerText();
             this.RefreshObjectiveText();
+        }
+
+        public void SetTurretModeActive(bool active)
+        {
+            if (TurretReticle != null)
+                TurretReticle.SetActive(active);
+            if (DungeonMasterHand != null)
+                DungeonMasterHand.gameObject.SetActive(!active);
+            if (ManaBarParent != null)
+                ManaBarParent.SetActive(!active);
+            if (CardDescription != null)
+                CardDescription.SetActive(!active);
         }
 
         public void TogglePlayerUI(bool toggle)

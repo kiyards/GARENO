@@ -1,4 +1,5 @@
 using Mirror;
+using ProjectRuntime.Managers;
 using ProjectRuntime.Network;
 using UnityEngine;
 using static UnityEngine.RuleTile.TilingRuleOutput;
@@ -215,6 +216,8 @@ namespace ProjectRuntime.Actor.PlayerStates
             if (player.isLocalPlayer && player.input != null)
             {
                 player.input.SetCursorLockOverride(true);
+                if (PlayerHudManager.Instance != null)
+                    PlayerHudManager.Instance.SetTurretModeActive(true);
             }
 
             if (!m_hasAnchor)
@@ -282,6 +285,8 @@ namespace ProjectRuntime.Actor.PlayerStates
             if (player.isLocalPlayer && player.input != null)
             {
                 player.input.SetCursorLockOverride(false);
+                if (PlayerHudManager.Instance != null)
+                    PlayerHudManager.Instance.SetTurretModeActive(false);
             }
 
             player.Turret.Exit();
