@@ -53,6 +53,9 @@ namespace ProjectRuntime.Managers
         private Image ManaBarFill { get; set; }
 
         [field: SerializeField]
+        private TextMeshProUGUI ManaTMP { get; set; }
+
+        [field: SerializeField]
         private GameObject TurretReticle { get; set; }
 
         [field: SerializeField]
@@ -210,6 +213,11 @@ namespace ProjectRuntime.Managers
             if (this.ManaBarFill != null && max > 0)
             {
                 this.ManaBarFill.fillAmount = current / max;
+            }
+
+            if (this.ManaTMP != null)
+            {
+                this.ManaTMP.text = Mathf.FloorToInt(Mathf.Max(0f, current)).ToString();
             }
         }
 

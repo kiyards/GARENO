@@ -219,7 +219,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  moveSpeed: 2.4
+  moveSpeed: 5
   damage: 30
   attackRange: 1.5
   attackCooldown: 1

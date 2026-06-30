@@ -465,6 +465,7 @@ MonoBehaviour:
   <ObjectiveTMP>k__BackingField: {fileID: 7236666532106924639}
   <TimerTMP>k__BackingField: {fileID: 900100000000000003}
   <ManaBarFill>k__BackingField: {fileID: 1000000000001320003}
+  <ManaTMP>k__BackingField: {fileID: 8443430954768011309}
   <TurretReticle>k__BackingField: {fileID: 2023967056782836836}
   <DungeonMasterHand>k__BackingField: {fileID: 71498284998745294}
   <ManaBarParent>k__BackingField: {fileID: 2950810506418172780}
