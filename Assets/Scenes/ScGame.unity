@@ -828,8 +828,10 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   playersToStart: 2
-  basicZombiePrefab: {fileID: 0}
+  basicZombiePrefab: {fileID: 4025126144443318060, guid: 099da0aa85ce2524cb2a561233e0141f, type: 3}
   basicZombieSpawnSampleRadius: 2
+  startingRoundSeconds: 600
+  zombieKillTimeBonusSeconds: 10
   requiredCrystals: 3
   totalCrystals: 5
 --- !u!114 &68137830
@@ -3252,6 +3254,50 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -19.076149, y: 29.368431, z: -18.105017}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &737941654
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 737941656}
+  - component: {fileID: 737941655}
+  m_Layer: 0
+  m_Name: SpawnPoint_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &737941655
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 737941654}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41f84591ce72545258ea98cb7518d8b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &737941656
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 737941654}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.5241523, y: 2.6494408, z: 29.768612}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7002,6 +7048,10 @@ MonoBehaviour:
   spawnPrefabs:
   - {fileID: 6627681469765497537, guid: d894832f3a952524890b61a97d451726, type: 3}
   - {fileID: 7487658207218452854, guid: 50462a344c15d8346855aaa878e75bfe, type: 3}
+  - {fileID: 4025126144443318060, guid: 099da0aa85ce2524cb2a561233e0141f, type: 3}
+  - {fileID: 760105130100000001, guid: d2e99e79846f47a8a8a414c021925b73, type: 3}
+  - {fileID: 3351196883818551983, guid: eecfb830b7426144199c16d726524f52, type: 3}
+  - {fileID: 1557000337860514814, guid: f2731096b6dea1747afb433b3285d364, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -13475,3 +13525,4 @@ SceneRoots:
   - {fileID: 986938516}
   - {fileID: 947252258}
   - {fileID: 710280035}
+  - {fileID: 737941656}
