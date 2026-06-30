@@ -38,6 +38,7 @@ namespace ProjectRuntime.Actor
 
         public float MaxRange => maxRange;
         public bool IsDisassembling => _activeTurret != null && _activeTurret.IsDisassembling;
+        public bool IsAssembling => _activeTurret != null && !_activeTurret.IsAssembled && !_activeTurret.IsDisassembling;
 
         public void Initialize(GameplayPlayer owner)
         {

@@ -149,6 +149,11 @@ namespace ProjectRuntime.Actor.PlayerStates
                 return;
             }
 
+            if (player.Turret.IsAssembling)
+            {
+                return;
+            }
+
             Vector3 moveInput = player.input != null ? player.input.MoveVector : Vector3.zero;
             Vector3 horizontalMove = Vector3.ClampMagnitude(
                 new Vector3(moveInput.x, 0f, moveInput.z),
@@ -243,7 +248,7 @@ namespace ProjectRuntime.Actor.PlayerStates
                 return;
             }
 
-            if (player.input.ClickHold)
+            if (player.input.ClickHold && !player.Turret.IsDisassembling)
             {
                 player.Turret.TryFire();
             }

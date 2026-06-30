@@ -56,6 +56,11 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
+            if (player != null && player.Turret.IsDisassembling)
+            {
+                return;
+            }
+
             ControlCam(input.aimVec);
         }
         public void ControlCam(Vector2 aimVec)
