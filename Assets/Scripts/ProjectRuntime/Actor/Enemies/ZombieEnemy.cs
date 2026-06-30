@@ -107,6 +107,7 @@ namespace ProjectRuntime.Actor
         [Server]
         private void OnServerDeath(uint killerNetId)
         {
+            BattleManager.Instance?.ServerReportZombieKilled(this, killerNetId);
             NetworkServer.Destroy(this.gameObject);
         }
     }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Core;
 using Mirror;
+using ProjectRuntime.Actor;
 using ProjectRuntime.Network;
 using ProjectRuntime.Objectives;
 using UnityEngine;
@@ -35,6 +36,10 @@ namespace ProjectRuntime.Managers
         // the nearest valid point instead of silently failing.
         [SerializeField] private float basicZombieSpawnSampleRadius = 50f;
 
+        [Header("Round Timer")]
+        [SerializeField] private int startingRoundSeconds = 600;
+        [SerializeField] private int zombieKillTimeBonusSeconds = 10;
+
         [Header("Crystal Objective")]
         [SerializeField, SyncVar(hook = nameof(OnObjectiveStateSynced))]
         private int requiredCrystals = 3;
@@ -57,8 +62,12 @@ namespace ProjectRuntime.Managers
         [SyncVar(hook = nameof(OnRoundWinnerSynced))]
         private RoundWinner winner = RoundWinner.None;
 
+        [SyncVar(hook = nameof(OnTimerSynced))]
+        private int remainingRoundSeconds;
+
         private readonly HashSet<CrystalObjective> _crystals = new();
         private readonly HashSet<PlayerManager> _survivorsInExtraction = new();
+        private float _timerAccumulator;
 
         public event Action OnRoundStateChanged;
 
@@ -69,6 +78,7 @@ namespace ProjectRuntime.Managers
         public int ExtractedSurvivors => extractedSurvivors;
         public int RequiredExtractedSurvivors => requiredExtractedSurvivors;
         public RoundWinner Winner => winner;
+        public int RemainingRoundSeconds => remainingRoundSeconds;
 
         private void Awake()
         {
@@ -83,6 +93,12 @@ namespace ProjectRuntime.Managers
         private void Update()
         {
             if (!this.isServer || this.roundPhase == RoundPhase.RoundComplete)
+            {
+                return;
+            }
+
+            this.ServerTickRoundTimer();
+            if (this.roundPhase == RoundPhase.RoundComplete)
             {
                 return;
             }
@@ -160,6 +176,8 @@ namespace ProjectRuntime.Managers
             this.requiredExtractedSurvivors = 0;
             this.winner = RoundWinner.None;
             this.roundPhase = RoundPhase.DestroyCrystals;
+            this._timerAccumulator = 0f;
+            this.ServerSetRemainingRoundSeconds(this.startingRoundSeconds);
             this.ServerRefreshCrystalRegistry();
             this.ServerRefreshExtractionObjective();
             this.ServerRefreshSurvivorDefeatState();
@@ -269,6 +287,65 @@ namespace ProjectRuntime.Managers
 
             this.winner = roundWinner;
             this.roundPhase = RoundPhase.RoundComplete;
+        }
+
+        [Server]
+        private void ServerTickRoundTimer()
+        {
+            if (this.remainingRoundSeconds <= 0)
+            {
+                this.ServerCompleteRound(RoundWinner.DungeonMaster);
+                return;
+            }
+
+            this._timerAccumulator += Time.deltaTime;
+            while (this._timerAccumulator >= 1f &&
+                   this.remainingRoundSeconds > 0 &&
+                   this.roundPhase != RoundPhase.RoundComplete)
+            {
+                this._timerAccumulator -= 1f;
+                this.ServerSetRemainingRoundSeconds(this.remainingRoundSeconds - 1);
+            }
+
+            if (this.remainingRoundSeconds <= 0)
+            {
+                this.ServerCompleteRound(RoundWinner.DungeonMaster);
+            }
+        }
+
+        [Server]
+        public void ServerAddRoundTime(int seconds)
+        {
+            if (seconds == 0 || this.roundPhase == RoundPhase.RoundComplete)
+            {
+                return;
+            }
+
+            this.ServerSetRemainingRoundSeconds(this.remainingRoundSeconds + seconds);
+        }
+
+        [Server]
+        public void ServerReportZombieKilled(ZombieEnemy zombie, uint killerNetId)
+        {
+            if (zombie == null || this.roundPhase == RoundPhase.RoundComplete)
+            {
+                return;
+            }
+
+            this.ServerAddRoundTime(this.zombieKillTimeBonusSeconds);
+        }
+
+        [Server]
+        private void ServerSetRemainingRoundSeconds(int value)
+        {
+            int clampedValue = Mathf.Max(0, value);
+            if (this.remainingRoundSeconds == clampedValue)
+            {
+                return;
+            }
+
+            this.remainingRoundSeconds = clampedValue;
+            this.NotifyRoundStateChanged();
         }
 
         [Server]
@@ -382,6 +459,11 @@ namespace ProjectRuntime.Managers
         }
 
         private void OnRoundWinnerSynced(RoundWinner oldValue, RoundWinner newValue)
+        {
+            this.NotifyRoundStateChanged();
+        }
+
+        private void OnTimerSynced(int oldValue, int newValue)
         {
             this.NotifyRoundStateChanged();
         }

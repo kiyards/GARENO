@@ -43,6 +43,9 @@ namespace ProjectRuntime.Managers
         [field: SerializeField]
         private TextMeshProUGUI ObjectiveTMP { get; set; }
 
+        [field: SerializeField]
+        private TextMeshProUGUI TimerTMP { get; set; }
+
         [field: SerializeField, Header("Dungeon Master")]
         private Image ManaBarFill { get; set; }
 
@@ -206,6 +209,7 @@ namespace ProjectRuntime.Managers
             this.ApplyHudVisibility();
             this.BindBattleManager(BattleManager.Instance);
             this.RefreshRoleMessage();
+            this.RefreshTimerText();
             this.RefreshObjectiveText();
         }
 
@@ -240,12 +244,14 @@ namespace ProjectRuntime.Managers
 
             if (battleManager == null)
             {
+                this.RefreshTimerText();
                 this.RefreshObjectiveText();
                 return;
             }
 
             this.BoundBattleManager = battleManager;
             this.BoundBattleManager.OnRoundStateChanged += this.OnRoundStateChanged;
+            this.RefreshTimerText();
             this.RefreshObjectiveText();
         }
 
@@ -263,6 +269,7 @@ namespace ProjectRuntime.Managers
         private void OnRoundStateChanged()
         {
             this.RefreshRoleMessage();
+            this.RefreshTimerText();
             this.RefreshObjectiveText();
         }
 
@@ -275,7 +282,9 @@ namespace ProjectRuntime.Managers
 
             if (this.CurrentRole != PlayerRole.Survivor)
             {
-                this.ObjectiveTMP.text = string.Empty;
+                this.ObjectiveTMP.text = this.IsTimerComposedWithObjectiveText()
+                    ? this.GetFormattedTimerText()
+                    : string.Empty;
                 return;
             }
 
@@ -285,17 +294,64 @@ namespace ProjectRuntime.Managers
 
             if (battleManager == null)
             {
-                this.ObjectiveTMP.text = "Crystals: 0/0";
+                this.ObjectiveTMP.text = this.ComposeObjectiveText("Crystals: 0/0");
                 return;
             }
 
-            this.ObjectiveTMP.text = battleManager.CurrentRoundPhase switch
+            var objectiveText = battleManager.CurrentRoundPhase switch
             {
                 RoundPhase.CrystalsComplete =>
                     $"Extract: {battleManager.ExtractedSurvivors}/{battleManager.RequiredExtractedSurvivors}",
                 RoundPhase.RoundComplete => string.Empty,
                 _ => $"Crystals: {battleManager.DestroyedCrystals}/{battleManager.RequiredCrystals}",
             };
+
+            this.ObjectiveTMP.text = this.ComposeObjectiveText(objectiveText);
+        }
+
+        private void RefreshTimerText()
+        {
+            if (this.TimerTMP == null || this.IsTimerComposedWithObjectiveText())
+            {
+                return;
+            }
+
+            this.TimerTMP.text = this.GetFormattedTimerText();
+        }
+
+        private string ComposeObjectiveText(string objectiveText)
+        {
+            if (!this.IsTimerComposedWithObjectiveText())
+            {
+                return objectiveText;
+            }
+
+            if (string.IsNullOrEmpty(objectiveText))
+            {
+                return this.GetFormattedTimerText();
+            }
+
+            return $"{this.GetFormattedTimerText()} | {objectiveText}";
+        }
+
+        private string GetFormattedTimerText()
+        {
+            var battleManager = this.BoundBattleManager != null
+                ? this.BoundBattleManager
+                : BattleManager.Instance;
+
+            if (battleManager == null)
+            {
+                return "--:--";
+            }
+
+            int remainingSeconds = Mathf.Max(0, battleManager.RemainingRoundSeconds);
+            return $"{remainingSeconds / 60}:{remainingSeconds % 60:00}";
+        }
+
+        private bool IsTimerComposedWithObjectiveText()
+        {
+            return this.TimerTMP != null && this.TimerTMP == this.ObjectiveTMP;
         }
 
         private void RefreshRoleMessage()
@@ -320,9 +376,22 @@ namespace ProjectRuntime.Managers
                 return;
             }
 
-            this.RoleMessageTMP.text = this.CurrentRole == PlayerRole.Unassigned
+            var roleText = this.CurrentRole == PlayerRole.Unassigned
                 ? "Assigning role..."
                 : $"You are a {GetRoleDisplayName(this.CurrentRole)}";
+
+            if (this.ShouldComposeTimerWithRoleMessage())
+            {
+                roleText = $"{this.GetFormattedTimerText()} | {roleText}";
+            }
+
+            this.RoleMessageTMP.text = roleText;
+        }
+
+        private bool ShouldComposeTimerWithRoleMessage()
+        {
+            return this.CurrentRole == PlayerRole.DungeonMaster &&
+                   this.IsTimerComposedWithObjectiveText();
         }
 
         private static string GetRoleDisplayName(PlayerRole role)
