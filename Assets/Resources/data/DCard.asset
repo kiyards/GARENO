@@ -17,6 +17,14 @@ MonoBehaviour:
     <DisplayName>k__BackingField: Basic Zombie
     <ManaCost>k__BackingField: 2
     <Effect>k__BackingField: 0
+  - <CardId>k__BackingField: CARD_CREEPER_ZOMBIE
+    <DisplayName>k__BackingField: Creeper Zombie
+    <ManaCost>k__BackingField: 3
+    <Effect>k__BackingField: 3
+  - <CardId>k__BackingField: CARD_MIMIC_ZOMBIE
+    <DisplayName>k__BackingField: Mimic Zombie
+    <ManaCost>k__BackingField: 3
+    <Effect>k__BackingField: 0
   - <CardId>k__BackingField: CARD_GROUP_OF_DOGS
     <DisplayName>k__BackingField: Group of Dogs
     <ManaCost>k__BackingField: 3

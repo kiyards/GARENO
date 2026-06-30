@@ -57,7 +57,7 @@ namespace ProjectRuntime.Actor
         }
 
         [Server]
-        private void ServerTick()
+        protected virtual void ServerTick()
         {
             GameplayPlayer target = this.FindNearestAliveSurvivor();
             if (target == null)
@@ -72,13 +72,21 @@ namespace ProjectRuntime.Actor
             float dist = Vector3.Distance(this.transform.position, target.transform.position);
             if (dist <= this.attackRange && this._attackTimer <= 0f)
             {
-                target.health.ServerTakeDamage(this.damage, this.netId, this.transform.position);
+                this.ServerAttack(target);
                 this._attackTimer = this.attackCooldown;
             }
         }
 
+        // The action taken when a survivor comes within attackRange. Basic zombies deal melee
+        // damage; subclasses (e.g. the creeper) override this to do something else.
         [Server]
-        private GameplayPlayer FindNearestAliveSurvivor()
+        protected virtual void ServerAttack(GameplayPlayer target)
+        {
+            target.health.ServerTakeDamage(this.damage, this.netId, this.transform.position);
+        }
+
+        [Server]
+        protected GameplayPlayer FindNearestAliveSurvivor()
         {
             if (BattleManager.Instance == null) return null;
 

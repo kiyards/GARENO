@@ -18,7 +18,7 @@ namespace ProjectRuntime.Actor
         private static readonly string[] StartingDeckCardIds =
         {
             "CARD_BASIC_ZOMBIE",
-            "CARD_BASIC_ZOMBIE",
+            "CARD_CREEPER_ZOMBIE",
             "CARD_BEAR_TRAP",
             "CARD_TURRET",
         };
@@ -393,6 +393,17 @@ namespace ProjectRuntime.Actor
                     }
 
                     return battleManager.ServerTrySpawnBasicZombie(
+                        this.Player.localManager,
+                        groundPosition);
+
+                case CardEffectType.SPAWN_CREEPER_ZOMBIE:
+                    var creeperBattleManager = BattleManager.Instance;
+                    if (creeperBattleManager == null)
+                    {
+                        return false;
+                    }
+
+                    return creeperBattleManager.ServerTrySpawnCreeperZombie(
                         this.Player.localManager,
                         groundPosition);
 

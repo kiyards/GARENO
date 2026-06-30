@@ -31,6 +31,7 @@ namespace ProjectRuntime.Managers
 
         [Header("Dungeon Master")]
         [SerializeField] private GameObject basicZombiePrefab;
+        [SerializeField] private GameObject creeperZombiePrefab;
         // Max distance the requested point is snapped onto the navmesh. Kept large so a click
         // that lands off the navmesh (on an obstacle, a wall, or past an edge) still spawns at
         // the nearest valid point instead of silently failing.
@@ -133,6 +134,22 @@ namespace ProjectRuntime.Managers
         [Server]
         public bool ServerTrySpawnBasicZombie(PlayerManager caster, Vector3 requestedPosition)
         {
+            return this.ServerTrySpawnEnemy(caster, requestedPosition, this.basicZombiePrefab, "Basic Zombie");
+        }
+
+        [Server]
+        public bool ServerTrySpawnCreeperZombie(PlayerManager caster, Vector3 requestedPosition)
+        {
+            return this.ServerTrySpawnEnemy(caster, requestedPosition, this.creeperZombiePrefab, "Creeper Zombie");
+        }
+
+        [Server]
+        private bool ServerTrySpawnEnemy(
+            PlayerManager caster,
+            Vector3 requestedPosition,
+            GameObject prefab,
+            string enemyName)
+        {
             if (this.roundPhase == RoundPhase.RoundComplete)
             {
                 return false;
@@ -143,9 +160,9 @@ namespace ProjectRuntime.Managers
                 return false;
             }
 
-            if (this.basicZombiePrefab == null)
+            if (prefab == null)
             {
-                Debug.LogWarning("Cannot spawn Basic Zombie: no prefab assigned.");
+                Debug.LogWarning($"Cannot spawn {enemyName}: no prefab assigned.");
                 return false;
             }
 
@@ -158,11 +175,11 @@ namespace ProjectRuntime.Managers
                 return false;
             }
 
-            var zombie = Instantiate(
-                this.basicZombiePrefab,
+            var enemy = Instantiate(
+                prefab,
                 navMeshHit.position,
                 Quaternion.identity);
-            NetworkServer.Spawn(zombie);
+            NetworkServer.Spawn(enemy);
             return true;
         }
 

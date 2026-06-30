@@ -164,6 +164,7 @@ public enum CardEffectType
     SPAWN_BASIC_ZOMBIE,
     PLACE_BEAR_TRAP,
     DEPLOY_TURRET,
+    SPAWN_CREEPER_ZOMBIE,
 }
 
 [Serializable]
