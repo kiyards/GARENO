@@ -181,7 +181,7 @@ GameObject:
   - component: {fileID: 9046731254113563548}
   - component: {fileID: 7508752111987869477}
   - component: {fileID: 6594115256102901788}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -316,7 +316,7 @@ MonoBehaviour:
   Lens:
     FieldOfView: 90
     OrthographicSize: 10
-    NearClipPlane: 1
+    NearClipPlane: 0.01
     FarClipPlane: 100
     Dutch: 0
     ModeOverride: 0
@@ -583,7 +583,7 @@ MonoBehaviour:
   syncInterval: 0
   player: {fileID: 7578397109688941967}
   lockCursorOnStart: 1
-  sensitivity: 50
+  sensitivity: 40
   moveVec: {x: 0, y: 0, z: 0}
   aimVec: {x: 0, y: 0}
   jump: 0
@@ -1116,7 +1116,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!136 &9142501008178027207
 CapsuleCollider:
