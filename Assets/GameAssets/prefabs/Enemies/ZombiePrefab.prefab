@@ -192,7 +192,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 1
+  m_Speed: 2.4
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -219,7 +219,14 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  moveSpeed: 5
+  moveSpeed: 2.4
   damage: 30
   attackRange: 1.5
   attackCooldown: 1
+  spawnWarmupDuration: 1
+  detectionRadius: 10
+  wanderRadius: 6
+  wanderPointReachedDistance: 0.5
+  wanderPauseDuration: 1.25
+  lungeDistance: 1.2
+  lungeDuration: 0.18

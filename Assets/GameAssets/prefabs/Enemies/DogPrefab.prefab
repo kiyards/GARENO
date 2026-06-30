@@ -181,7 +181,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  maxHealth: 1000
+  maxHealth: 500
 --- !u!195 &5278251644888205944
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -192,7 +192,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 1
+  m_Speed: 4.5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -219,7 +219,14 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  moveSpeed: 5
-  damage: 30
-  attackRange: 1.5
-  attackCooldown: 1
+  moveSpeed: 4.5
+  damage: 20
+  attackRange: 2
+  attackCooldown: 0.8
+  spawnWarmupDuration: 1
+  detectionRadius: 12
+  wanderRadius: 6
+  wanderPointReachedDistance: 0.5
+  wanderPauseDuration: 0.75
+  lungeDistance: 1.7
+  lungeDuration: 0.14

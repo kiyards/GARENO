@@ -21,8 +21,14 @@ namespace ProjectRuntime.Actor
         // Guards against the cooldown-driven attack path firing the explosion more than once.
         private bool _hasExploded;
 
+        public override void OnStartServer()
+        {
+            base.OnStartServer();
+            this._hasExploded = false;
+        }
+
         [Server]
-        protected override void ServerAttack(GameplayPlayer target)
+        protected override void ServerBeginAttack(GameplayPlayer target)
         {
             if (this._hasExploded)
             {

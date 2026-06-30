@@ -18,15 +18,18 @@ namespace ProjectRuntime.Combat
 
         /// <summary>(current, max) — raised on every peer when health changes. UI subscribes.</summary>
         public event Action<float, float> OnHealthChangedEvent;
+        public event Action<float, uint, Vector3> OnDamagedEvent;
 
         /// <summary>Server-only. Raised once when health reaches zero. Arg is the killer's netId.</summary>
         public event Action<uint> OnDeathEvent;
 
         private bool _isDead;
+        private bool _damageEnabled = true;
 
         public float MaxHealth => maxHealth;
         public float CurrentHealth => currentHealth;
         public bool IsAlive => !_isDead && currentHealth > 0f;
+        public bool IsDamageEnabled => _damageEnabled;
 
         public void ConfigureMaxHealth(float value)
         {
@@ -38,14 +41,16 @@ namespace ProjectRuntime.Combat
             base.OnStartServer();
             currentHealth = maxHealth;
             _isDead = false;
+            _damageEnabled = true;
         }
 
         [Server]
         public void ServerTakeDamage(float amount, uint sourceNetId, Vector3 hitPoint)
         {
-            if (_isDead || amount <= 0f) return;
+            if (_isDead || !_damageEnabled || amount <= 0f) return;
 
             currentHealth = Mathf.Clamp(currentHealth - amount, 0f, maxHealth);
+            OnDamagedEvent?.Invoke(amount, sourceNetId, hitPoint);
 
             if (currentHealth <= 0f)
             {
@@ -54,12 +59,19 @@ namespace ProjectRuntime.Combat
             }
         }
 
+        [Server]
+        public void ServerSetDamageEnabled(bool enabled)
+        {
+            _damageEnabled = enabled;
+        }
+
         /// <summary>Server-only. Restore to full (e.g. on respawn).</summary>
         [Server]
         public void ServerResetHealth()
         {
             currentHealth = maxHealth;
             _isDead = false;
+            _damageEnabled = true;
         }
 
         private void OnHealthSynced(float oldValue, float newValue)
