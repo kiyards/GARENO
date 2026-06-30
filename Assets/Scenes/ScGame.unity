@@ -6999,7 +6999,9 @@ MonoBehaviour:
   playerPrefab: {fileID: 321343715389516220, guid: 3e0230eeb2c66d840be3b13d7019a117, type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
-  spawnPrefabs: []
+  spawnPrefabs:
+  - {fileID: 6627681469765497537, guid: d894832f3a952524890b61a97d451726, type: 3}
+  - {fileID: 7487658207218452854, guid: 50462a344c15d8346855aaa878e75bfe, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -7016,7 +7018,8 @@ MonoBehaviour:
   evaluationInterval: 3
   timeInterpolationGui: 0
   <LobbyPlayerPrefab>k__BackingField: {fileID: 0}
-  bearTrapPrefab: {fileID: 0}
+  bearTrapPrefab: {fileID: 6627681469765497537, guid: d894832f3a952524890b61a97d451726, type: 3}
+  dungeonMasterTurretPrefab: {fileID: 7487658207218452854, guid: 50462a344c15d8346855aaa878e75bfe, type: 3}
   HostedLobbyId:
     m_SteamID: 0
 --- !u!114 &1272274657
