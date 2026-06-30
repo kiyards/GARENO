@@ -42,6 +42,9 @@ namespace ProjectRuntime.Actor
         [SerializeField]
         private float fireCooldown = 0.18f;
 
+        [SerializeField]
+        private int maxAmmo = 50;
+
         [Header("Assembly")]
         [SerializeField]
         private float assemblyDuration = 2f;
@@ -55,6 +58,9 @@ namespace ProjectRuntime.Actor
         [SyncVar(hook = nameof(OnStatusChanged))]
         private TurretStatus _status;
 
+        [SyncVar(hook = nameof(OnAmmoSynced))]
+        private int _currentAmmo;
+
         private GameplayPlayer _attachedOwner;
         private Health _health;
 
@@ -65,16 +71,30 @@ namespace ProjectRuntime.Actor
         public float Damage => damage;
         public float MaxRange => maxRange;
         public float FireCooldown => fireCooldown;
+        public int CurrentAmmo => _currentAmmo;
+        public int MaxAmmo => maxAmmo;
 
         [Server]
         public void ServerInitialize(GameplayPlayer owner)
         {
             ownerNetId = owner != null ? owner.netId : 0;
+            _currentAmmo = maxAmmo;
             RegisterWithOwner();
             Health.OnDeathEvent += OnServerDeath;
             _status = TurretStatus.Assembling;
             Debug.Log("[Turret] Assembling...");
             StartCoroutine(AssembleCoroutine());
+        }
+
+        [Server]
+        public void ServerConsumeAmmo()
+        {
+            if (_currentAmmo <= 0)
+                return;
+
+            _currentAmmo--;
+            if (_currentAmmo <= 0)
+                ServerBeginDisassemble();
         }
 
         [Server]
@@ -194,6 +214,15 @@ namespace ProjectRuntime.Actor
                 : transform.position + transform.forward * 0.75f;
         }
 
+        private void OnAmmoSynced(int _, int next)
+        {
+            if (_attachedOwner == null || !_attachedOwner.isLocalPlayer)
+                return;
+
+            if (PlayerHudManager.Instance != null)
+                PlayerHudManager.Instance.SetTurretAmmo(next, maxAmmo);
+        }
+
         private void OnOwnerNetIdChanged(uint oldValue, uint newValue)
         {
             if (oldValue != newValue)
@@ -218,6 +247,11 @@ namespace ProjectRuntime.Actor
             }
             else if (next == TurretStatus.Assembled)
             {
+                if (PlayerHudManager.Instance != null)
+                {
+                    PlayerHudManager.Instance.SetTurretAmmo(_currentAmmo, maxAmmo);
+                    PlayerHudManager.Instance.SetTurretAmmoActive(true);
+                }
                 _attachedOwner.QueueState(
                     new DungeonMasterTurretState(_attachedOwner)
                     {
@@ -229,7 +263,10 @@ namespace ProjectRuntime.Actor
             else if (next == TurretStatus.Disassembling)
             {
                 if (PlayerHudManager.Instance != null)
+                {
                     PlayerHudManager.Instance.SetTurretReticleActive(false);
+                    PlayerHudManager.Instance.SetTurretAmmoActive(false);
+                }
             }
         }
 

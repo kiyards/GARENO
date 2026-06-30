@@ -59,6 +59,12 @@ namespace ProjectRuntime.Managers
         private GameObject TurretReticle { get; set; }
 
         [field: SerializeField]
+        private GameObject TurretAmmoParent { get; set; }
+
+        [field: SerializeField]
+        private TextMeshProUGUI TurretCurrentAmmoTMP { get; set; }
+
+        [field: SerializeField]
         private UIDungeonMasterHand DungeonMasterHand { get; set; }
 
         [field: SerializeField]
@@ -236,12 +242,26 @@ namespace ProjectRuntime.Managers
         {
             if (TurretReticle != null)
                 TurretReticle.SetActive(active);
+            if (TurretAmmoParent != null)
+                TurretAmmoParent.SetActive(active);
             if (DungeonMasterHand != null)
                 DungeonMasterHand.gameObject.SetActive(!active);
             if (ManaBarParent != null)
                 ManaBarParent.SetActive(!active);
             if (CardDescription != null)
                 CardDescription.SetActive(!active);
+        }
+
+        public void SetTurretAmmo(int current, int max)
+        {
+            if (TurretCurrentAmmoTMP != null)
+                TurretCurrentAmmoTMP.text = $"{current}/{max}";
+        }
+
+        public void SetTurretAmmoActive(bool active)
+        {
+            if (TurretAmmoParent != null)
+                TurretAmmoParent.SetActive(active);
         }
 
         public void SetTurretReticleActive(bool active)

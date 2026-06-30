@@ -127,6 +127,11 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
+            if (_activeTurret.CurrentAmmo <= 0)
+            {
+                return;
+            }
+
             if (player.cam == null || player.input == null)
             {
                 return;
@@ -176,6 +181,7 @@ namespace ProjectRuntime.Actor
             }
 
             _serverLastFireTime = NetworkTime.time;
+            _activeTurret.ServerConsumeAmmo();
             player.RpcShowDungeonMasterTurretTracer(hitPoint);
 
             if (
