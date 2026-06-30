@@ -334,7 +334,10 @@ MonoBehaviour:
   syncInterval: 0
   playersToStart: 2
   basicZombiePrefab: {fileID: 4025126144443318060, guid: 099da0aa85ce2524cb2a561233e0141f, type: 3}
+  creeperZombiePrefab: {fileID: 4025126144443318060, guid: b93a1496fcca4984aa8df766b3784379, type: 3}
   basicZombieSpawnSampleRadius: 2
+  startingRoundSeconds: 600
+  zombieKillTimeBonusSeconds: 10
   requiredCrystals: 3
   totalCrystals: 5
 --- !u!114 &68137830
@@ -8244,11 +8247,13 @@ MonoBehaviour:
   playerSpawnMethod: 0
   spawnPrefabs:
   - {fileID: 6627681469765497537, guid: d894832f3a952524890b61a97d451726, type: 3}
-  - {fileID: 7487658207218452854, guid: 50462a344c15d8346855aaa878e75bfe, type: 3}
-  - {fileID: 4025126144443318060, guid: 099da0aa85ce2524cb2a561233e0141f, type: 3}
+  - {fileID: 4025126144443318060, guid: b93a1496fcca4984aa8df766b3784379, type: 3}
   - {fileID: 760105130100000001, guid: d2e99e79846f47a8a8a414c021925b73, type: 3}
   - {fileID: 3351196883818551983, guid: eecfb830b7426144199c16d726524f52, type: 3}
   - {fileID: 1557000337860514814, guid: f2731096b6dea1747afb433b3285d364, type: 3}
+  - {fileID: 321343715389516220, guid: 3e0230eeb2c66d840be3b13d7019a117, type: 3}
+  - {fileID: 7487658207218452854, guid: 50462a344c15d8346855aaa878e75bfe, type: 3}
+  - {fileID: 4025126144443318060, guid: 099da0aa85ce2524cb2a561233e0141f, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -9456,6 +9461,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 76818151207396813, guid: 681ac0d8aa394a24ab473f45ee608863, type: 3}
+      propertyPath: sceneId
+      value: 2759559482
+      objectReference: {fileID: 0}
     - target: {fileID: 83607292938746031, guid: 681ac0d8aa394a24ab473f45ee608863, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -9480,6 +9489,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 934676948}
+    - target: {fileID: 424244295815221703, guid: 681ac0d8aa394a24ab473f45ee608863, type: 3}
+      propertyPath: sceneId
+      value: 3586381797
+      objectReference: {fileID: 0}
     - target: {fileID: 427758137210183183, guid: 681ac0d8aa394a24ab473f45ee608863, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -10036,6 +10049,10 @@ PrefabInstance:
       propertyPath: m_VersionIndex
       value: 10900
       objectReference: {fileID: 0}
+    - target: {fileID: 5020498646455900405, guid: 681ac0d8aa394a24ab473f45ee608863, type: 3}
+      propertyPath: sceneId
+      value: 1572857657
+      objectReference: {fileID: 0}
     - target: {fileID: 5030496969960698869, guid: 681ac0d8aa394a24ab473f45ee608863, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -10583,6 +10600,10 @@ PrefabInstance:
     - target: {fileID: 9018339295843041265, guid: 681ac0d8aa394a24ab473f45ee608863, type: 3}
       propertyPath: m_VersionIndex
       value: 8776
+      objectReference: {fileID: 0}
+    - target: {fileID: 9019602643765336963, guid: 681ac0d8aa394a24ab473f45ee608863, type: 3}
+      propertyPath: sceneId
+      value: 4202142805
       objectReference: {fileID: 0}
     - target: {fileID: 9054225419880721676, guid: 681ac0d8aa394a24ab473f45ee608863, type: 3}
       propertyPath: m_Mesh
