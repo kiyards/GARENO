@@ -354,19 +354,21 @@ namespace ProjectRuntime.Managers
 
         private static bool IsRequiredForExtraction(PlayerManager player)
         {
+            // Permanently dead survivors (no lives left) are not required to extract; downed ones
+            // (still have lives) are.
             return player != null &&
                    player.playerRole == PlayerRole.Survivor &&
-                   player.player != null;
+                   player.player != null &&
+                   player.lives > 0;
         }
 
         private static bool IsActiveSurvivor(PlayerManager player)
         {
+            // "Active" = still in the fight. A downed survivor (lives > 0) counts — the DM only wins
+            // once every survivor is permanently dead, not merely downed. Lives is the source of truth.
             return player != null &&
                    player.playerRole == PlayerRole.Survivor &&
-                   player.player != null &&
-                   !player.player.IsInactive &&
-                   player.player.health != null &&
-                   player.player.health.IsAlive;
+                   player.lives > 0;
         }
 
         private void OnObjectiveStateSynced(int oldValue, int newValue)

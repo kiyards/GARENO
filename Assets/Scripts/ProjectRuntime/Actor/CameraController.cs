@@ -132,6 +132,8 @@ namespace ProjectRuntime.Actor
             foreach (var hit in hits)
             {
                 if (hit.collider == player.col) continue;
+                // Ghosts (permanently dead survivors) never block or absorb shots — pass through them.
+                if (IsGhostCollider(hit.collider)) continue;
                 if (blocked && hit.distance > occlusionHit.distance) break;
                 results.Add(new RaycastData
                 {
@@ -150,7 +152,33 @@ namespace ProjectRuntime.Actor
             dir = characterMode == CharacterMode.AIM || characterMode == CharacterMode.TOP_DOWN || thirdPersonAim == null
                 ? (firstPersonCam != null ? firstPersonCam.transform.forward : transform.forward)
                 : (thirdPersonAim.AimTarget - origin).normalized;
-            return Physics.Raycast(origin, dir, out occlusionHit, maxRange, aimOcclusionMask);
+
+            // Nearest occluder, skipping ghosts so they can't cap line-of-sight. Identical to a single
+            // nearest-hit raycast when no ghost is in the way.
+            occlusionHit = default;
+            var occluders = Physics.RaycastAll(origin, dir, maxRange, aimOcclusionMask);
+            Array.Sort(occluders, (a, b) => a.distance.CompareTo(b.distance));
+            foreach (var hit in occluders)
+            {
+                if (IsGhostCollider(hit.collider)) continue;
+                occlusionHit = hit;
+                return true;
+            }
+
+            return false;
+        }
+
+        // Ghosts (permanently dead survivors) must never block or absorb shots — shared by the survivor
+        // pistol (above) and the Dungeon Master turret.
+        public static bool IsGhostCollider(Collider hitCollider)
+        {
+            if (hitCollider == null)
+            {
+                return false;
+            }
+
+            var gameplayPlayer = hitCollider.GetComponentInParent<GameplayPlayer>();
+            return gameplayPlayer != null && gameplayPlayer.IsGhost;
         }
 
         private void ConfigureDungeonMasterConfiner(bool isEnabled)

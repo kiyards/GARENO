@@ -65,6 +65,10 @@ namespace ProjectRuntime.Actor
         // Guards against re-resolving while the downed→respawn state transition round-trips back from
         // the owning client (the state authority), which would otherwise re-fire every physics frame.
         private bool _downedResolved;
+        // True once this survivor has permanently died and become a ghost. Set when the ghost body is
+        // configured — which happens inside DeadState.OnEnter, before the state machine assigns
+        // currentState — so ghost visibility can be applied without depending on that timing.
+        private bool _isGhost;
 
         private PlayerRole _currentRole = PlayerRole.Unassigned;
         private DungeonMasterCardManager _cardManager;
@@ -88,6 +92,10 @@ namespace ProjectRuntime.Actor
         public bool IsInactive => currentState is BaseInactiveState;
         public bool IsBearTrapped => currentState is BearTrappedState;
         public bool IsDowned => currentState is DownedState;
+        public bool IsDead => currentState is DeadState;
+        // Set the moment a survivor becomes a ghost (before currentState flips), so it stays reliable
+        // even mid-transition. Used to keep ghosts from blocking shots and to drive ghost visibility.
+        public bool IsGhost => _isGhost;
         public bool IsDungeonMaster => _currentRole == PlayerRole.DungeonMaster;
         public float DungeonMasterHorizontalSpeed => dungeonMasterHorizontalSpeed;
         public float DungeonMasterVerticalSpeed => dungeonMasterVerticalSpeed;
@@ -176,11 +184,141 @@ namespace ProjectRuntime.Actor
             return position;
         }
 
+        // Sets up the ghost body: a permanently-dead survivor still walks and collides with the world
+        // (normal survivor physics), but passes through every other player. The model is left intact
+        // (the ghost reuses it); per-viewer visibility is handled by RefreshGhostVisibility.
+        public void EnterGhostBody()
+        {
+            CacheRoleDefaults();
+            _isGhost = true;
+
+            if (col != null)
+            {
+                col.enabled = _initialColliderEnabled;
+            }
+
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+                rb.isKinematic = _initialRigidbodyIsKinematic;
+                rb.useGravity = _initialRigidbodyUseGravity;
+            }
+
+            IgnoreOtherPlayerCollisions();
+        }
+
+        // Disables physics contact between this ghost and every other player's collider so the ghost can
+        // walk through teammates and the Dungeon Master while still colliding with the world. Runs per
+        // client (Physics.IgnoreCollision is local to each physics scene).
+        private void IgnoreOtherPlayerCollisions()
+        {
+            if (col == null)
+            {
+                return;
+            }
+
+            var battleManager = BattleManager.Instance;
+            if (battleManager == null)
+            {
+                return;
+            }
+
+            foreach (var pm in battleManager.Players)
+            {
+                var other = pm != null ? pm.player : null;
+                if (other == null || other == this || other.col == null)
+                {
+                    continue;
+                }
+
+                Physics.IgnoreCollision(col, other.col, true);
+            }
+        }
+
+        // Leaves a corpse marker where the survivor fell. The project has no character models yet, so the
+        // corpse is a plain capsule (matching the player's capsule body) laid on its side, with no
+        // collider. Instantiated locally on every client from the replicated death position.
+        public void SpawnCorpse(Vector3 position)
+        {
+            var corpse = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            corpse.name = "Corpse";
+            corpse.transform.SetPositionAndRotation(position, Quaternion.Euler(90f, 0f, 0f));
+            corpse.transform.localScale = transform.lossyScale;
+
+            var corpseCollider = corpse.GetComponent<Collider>();
+            if (corpseCollider != null)
+            {
+                Destroy(corpseCollider);
+            }
+        }
+
+        // A ghost (permanently dead survivor) is visible only to the Dungeon Master and to other dead
+        // survivors — never to living survivors. Each client decides locally from its own viewer.
+        public void RefreshGhostVisibility()
+        {
+            if (!_isGhost)
+            {
+                return;
+            }
+
+            bool canSee = LocalViewerCanSeeGhosts();
+            SetRenderersVisible(canSee);
+            localManager?.RefreshGhostNameVisibility(canSee);
+        }
+
+        private static bool LocalViewerCanSeeGhosts()
+        {
+            var local = PlayerManager.Instance;
+            if (local == null)
+            {
+                return false;
+            }
+
+            if (local.playerRole == PlayerRole.DungeonMaster)
+            {
+                return true;
+            }
+
+            // Use _isGhost rather than IsDead: when the local player has only just died, this runs from
+            // inside DeadState.OnEnter before the state machine has assigned currentState, so IsDead would
+            // still read false. _isGhost is already set by EnterGhostBody at that point.
+            return local.player != null && local.player._isGhost;
+        }
+
+        // Re-evaluate every ghost's visibility on this client. Call when the local viewer's eligibility
+        // changes — e.g. the local survivor just died and can now see ghosts.
+        public static void RefreshAllGhostVisibility()
+        {
+            var battleManager = BattleManager.Instance;
+            if (battleManager == null)
+            {
+                return;
+            }
+
+            foreach (var pm in battleManager.Players)
+            {
+                if (pm != null && pm.player != null)
+                {
+                    pm.player.RefreshGhostVisibility();
+                }
+            }
+        }
+
         [Server]
         public void ServerEnterDowned()
         {
             if (IsDungeonMaster || IsInactive)
             {
+                return;
+            }
+
+            // On their last life even a successful revive (−1 life) would leave them at 0, so skip the
+            // downed/revive window and die outright — no point making a teammate revive a friend who dies
+            // anyway.
+            if (localManager != null && localManager.lives <= 1)
+            {
+                ServerDieOutright();
                 return;
             }
 
@@ -195,6 +333,16 @@ namespace ProjectRuntime.Actor
                 m_anchorPosition = transform.position
             });
 
+            BattleManager.Instance?.ServerRefreshSurvivorDefeatState();
+        }
+
+        // Permanently kills the survivor without a downed/revive window (used when they're already on
+        // their last life). Spends the final life and sends everyone into the ghost state.
+        [Server]
+        private void ServerDieOutright()
+        {
+            localManager?.ServerLoseLives(1);
+            RpcEnterDeadState(transform.position);
             BattleManager.Instance?.ServerRefreshSurvivorDefeatState();
         }
 
@@ -214,7 +362,8 @@ namespace ProjectRuntime.Actor
 
             if (NetworkTime.time - _downedStartTime >= reviveWindow)
             {
-                ServerResolveDowned();
+                // Window expired with no revive: costs 2 lives.
+                ServerResolveDowned(2);
             }
         }
 
@@ -270,14 +419,16 @@ namespace ProjectRuntime.Actor
             _lastReviveContactTime = now;
             if (now - _reviveContactStartTime >= reviveHoldTime)
             {
-                ServerResolveDowned();
+                // Revived by a teammate: costs 1 life.
+                ServerResolveDowned(1);
             }
         }
 
-        // Single resolution point for both revive-completed and revive-window-expired. In this slice
-        // both outcomes are identical: restore health and respawn at the start point.
+        // Single resolution point for both revive-completed and revive-window-expired. livesLost is the
+        // life cost of this resolution (1 for a revive, 2 for a timeout). If it empties the survivor's
+        // lives they stay permanently dead and spectate; otherwise they respawn at the start point.
         [Server]
-        public void ServerResolveDowned()
+        public void ServerResolveDowned(int livesLost)
         {
             if (!IsDowned || _downedResolved)
             {
@@ -286,13 +437,26 @@ namespace ProjectRuntime.Actor
 
             _downedResolved = true;
 
-            if (health != null)
+            localManager?.ServerLoseLives(livesLost);
+
+            if (localManager != null && localManager.IsPermanentlyDead)
             {
-                health.ServerResetHealth();
+                // Out of lives: stay where they fell and spectate instead of respawning.
+                RpcEnterDeadState(transform.position);
+            }
+            else
+            {
+                if (health != null)
+                {
+                    health.ServerResetHealth();
+                }
+
+                Vector3 respawnPos = GameNetworkManager.Instance.GetStartPosition().position;
+                RpcEnterRespawnState(respawnPos);
             }
 
-            Vector3 respawnPos = GameNetworkManager.Instance.GetStartPosition().position;
-            RpcEnterRespawnState(respawnPos);
+            // A death may have emptied the survivor pool — re-check the DM win condition.
+            BattleManager.Instance?.ServerRefreshSurvivorDefeatState();
         }
 
         private void ClientTickRevive()
@@ -413,6 +577,21 @@ namespace ProjectRuntime.Actor
                 m_respawnPos = respawnPos
             };
             QueueState(respawnState);
+        }
+
+        [ClientRpc]
+        public void RpcEnterDeadState(Vector3 deathPos)
+        {
+            if (IsDungeonMaster)
+            {
+                return;
+            }
+
+            var deadState = new DeadState(this)
+            {
+                m_anchorPosition = deathPos
+            };
+            QueueState(deadState);
         }
 
         private void QueueRoleState(NetworkBaseState roleState)
