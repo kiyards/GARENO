@@ -19,8 +19,8 @@ namespace ProjectRuntime.Actor
         {
             "CARD_BASIC_ZOMBIE",
             "CARD_BASIC_ZOMBIE",
-            "CARD_BASIC_ZOMBIE",
-            "CARD_BASIC_ZOMBIE",
+            "CARD_BEAR_TRAP",
+            "CARD_TURRET",
         };
 
         [SerializeField] private float manaRegenRate = 1f;
@@ -185,7 +185,7 @@ namespace ProjectRuntime.Actor
             }
 
             var card = cardData.Value;
-            if (card.Effect != CardEffectType.SPAWN_BASIC_ZOMBIE || this.Mana < card.ManaCost)
+            if (this.Mana < card.ManaCost)
             {
                 return;
             }
@@ -395,6 +395,13 @@ namespace ProjectRuntime.Actor
                     return battleManager.ServerTrySpawnBasicZombie(
                         this.Player.localManager,
                         groundPosition);
+
+                case CardEffectType.PLACE_BEAR_TRAP:
+                    return this.Player.BearTrapController.ServerPlaceFromCard(groundPosition, Vector3.up);
+
+                case CardEffectType.DEPLOY_TURRET:
+                    return this.Player.Turret.ServerSpawnTurretForCard(groundPosition);
+
                 default:
                     Debug.LogWarning(
                         $"[DungeonMasterCardManager] Unhandled card effect '{card.Effect}'.");

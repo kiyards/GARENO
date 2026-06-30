@@ -134,25 +134,6 @@ namespace ProjectRuntime.Actor.PlayerStates
                 return;
             }
 
-            if (player.input.InteractPress)
-            {
-                Vector3 spawnPos = player.transform.position;
-                if (CursorPlacementUtility.TryGetPlacementFromCursor(500f, Physics.DefaultRaycastLayers, out Vector3 cursorPos, out _))
-                {
-                    spawnPos = cursorPos;
-                }
-
-                player.QueueState(new DungeonMasterTurretState(player)
-                {
-                    m_anchorPosition = spawnPos,
-                    m_hasAnchor = true
-                });
-            }
-
-            if (player.input.BearTrapPress)
-            {
-                player.BearTrapController.TryPlace();
-            }
         }
 
         public override void FixedUpdate()
@@ -256,9 +237,9 @@ namespace ProjectRuntime.Actor.PlayerStates
                 return;
             }
 
-            if (player.input.InteractPress)
+            if (player.input.TurretExitPress && !player.Turret.IsDisassembling)
             {
-                player.QueueState(new DungeonMasterMovementState(player));
+                player.CmdBeginTurretDisassemble();
                 return;
             }
 

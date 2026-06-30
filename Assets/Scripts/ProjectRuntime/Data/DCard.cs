@@ -162,6 +162,8 @@ public class DCard : ScriptableObject, IDataImport
 public enum CardEffectType
 {
     SPAWN_BASIC_ZOMBIE,
+    PLACE_BEAR_TRAP,
+    DEPLOY_TURRET,
 }
 
 [Serializable]

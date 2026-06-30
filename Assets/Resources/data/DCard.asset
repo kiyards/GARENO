@@ -17,3 +17,27 @@ MonoBehaviour:
     <DisplayName>k__BackingField: Basic Zombie
     <ManaCost>k__BackingField: 2
     <Effect>k__BackingField: 0
+  - <CardId>k__BackingField: CARD_GROUP_OF_DOGS
+    <DisplayName>k__BackingField: Group of Dogs
+    <ManaCost>k__BackingField: 3
+    <Effect>k__BackingField: 0
+  - <CardId>k__BackingField: CARD_TURRET
+    <DisplayName>k__BackingField: Turret
+    <ManaCost>k__BackingField: 2
+    <Effect>k__BackingField: 2
+  - <CardId>k__BackingField: CARD_SLOWING_DART_TURRET
+    <DisplayName>k__BackingField: Slowing Dart Turret
+    <ManaCost>k__BackingField: 1
+    <Effect>k__BackingField: 0
+  - <CardId>k__BackingField: CARD_BEAR_TRAP
+    <DisplayName>k__BackingField: Bear Trap
+    <ManaCost>k__BackingField: 2
+    <Effect>k__BackingField: 1
+  - <CardId>k__BackingField: CARD_C4
+    <DisplayName>k__BackingField: C4
+    <ManaCost>k__BackingField: 2
+    <Effect>k__BackingField: 0
+  - <CardId>k__BackingField: CARD_FLASHBANG
+    <DisplayName>k__BackingField: Flashbang
+    <ManaCost>k__BackingField: 2
+    <Effect>k__BackingField: 0

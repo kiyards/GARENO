@@ -509,6 +509,12 @@ namespace ProjectRuntime.Actor
         }
 
         [Command]
+        public void CmdBeginTurretDisassemble()
+        {
+            Turret.ServerBeginDisassemble();
+        }
+
+        [Command]
         public void CmdPlaceBearTrap(Vector3 position, Vector3 normal)
         {
             BearTrapController.ServerPlace(position, normal);

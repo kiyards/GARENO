@@ -75,7 +75,30 @@ namespace ProjectRuntime.Actor
             }
 
             _serverLastPlaceTime = NetworkTime.time;
+            ServerSpawnTrap(position, normal);
+        }
 
+        [Server]
+        public bool ServerPlaceFromCard(Vector3 requestedPosition, Vector3 requestedNormal)
+        {
+            var player = ResolvePlayer();
+            if (player == null || !player.IsDungeonMaster)
+            {
+                return false;
+            }
+
+            if (!TryValidatePlacement(requestedPosition, requestedNormal, out Vector3 position, out Vector3 normal))
+            {
+                return false;
+            }
+
+            ServerSpawnTrap(position, normal);
+            return true;
+        }
+
+        [Server]
+        private void ServerSpawnTrap(Vector3 position, Vector3 normal)
+        {
             GameObject trapPrefab = GameNetworkManager.Instance != null
                 ? GameNetworkManager.Instance.BearTrapPrefab
                 : null;

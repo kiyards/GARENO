@@ -9,15 +9,27 @@ namespace ProjectRuntime.Actor
     public class DungeonMasterTurretController : MonoBehaviour
     {
         [Header("Combat")]
-        [SerializeField] private float damage = 20f;
-        [SerializeField] private float maxRange = 80f;
-        [SerializeField] private float fireCooldown = 0.18f;
+        [SerializeField]
+        private float damage = 20f;
+
+        [SerializeField]
+        private float maxRange = 80f;
+
+        [SerializeField]
+        private float fireCooldown = 0.18f;
 
         [Header("Tracer")]
-        [SerializeField] private float tracerDuration = 0.08f;
-        [SerializeField] private float tracerWidth = 0.035f;
-        [SerializeField] private Color tracerColor = new(1f, 0.76f, 0.22f, 1f);
-        [SerializeField] private Material tracerMaterial;
+        [SerializeField]
+        private float tracerDuration = 0.08f;
+
+        [SerializeField]
+        private float tracerWidth = 0.035f;
+
+        [SerializeField]
+        private Color tracerColor = new(1f, 0.76f, 0.22f, 1f);
+
+        [SerializeField]
+        private Material tracerMaterial;
 
         private GameplayPlayer _player;
         private DungeonMasterTurret _activeTurret;
@@ -25,6 +37,7 @@ namespace ProjectRuntime.Actor
         private double _serverLastFireTime;
 
         public float MaxRange => maxRange;
+        public bool IsDisassembling => _activeTurret != null && _activeTurret.IsDisassembling;
 
         public void Initialize(GameplayPlayer owner)
         {
@@ -72,9 +85,8 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            Vector3 aimDirection = player.cam != null
-                ? player.cam.transform.forward
-                : player.transform.forward;
+            Vector3 aimDirection =
+                player.cam != null ? player.cam.transform.forward : player.transform.forward;
             UpdateAim(aimDirection);
         }
 
@@ -102,10 +114,17 @@ namespace ProjectRuntime.Actor
         public void TryFire()
         {
             var player = ResolvePlayer();
-            if (player == null ||
-                !player.isLocalPlayer ||
-                !player.IsDungeonMaster ||
-                !(player.currentState is DungeonMasterTurretState))
+            if (
+                player == null
+                || !player.isLocalPlayer
+                || !player.IsDungeonMaster
+                || !(player.currentState is DungeonMasterTurretState)
+            )
+            {
+                return;
+            }
+
+            if (_activeTurret == null || !_activeTurret.IsAssembled)
             {
                 return;
             }
@@ -134,9 +153,16 @@ namespace ProjectRuntime.Actor
         public void ServerFire(uint targetNetId, Vector3 hitPoint)
         {
             var player = ResolvePlayer();
-            if (player == null ||
-                !player.IsDungeonMaster ||
-                !(player.currentState is DungeonMasterTurretState))
+            if (
+                player == null
+                || !player.IsDungeonMaster
+                || !(player.currentState is DungeonMasterTurretState)
+            )
+            {
+                return;
+            }
+
+            if (_activeTurret == null || !_activeTurret.IsAssembled)
             {
                 return;
             }
@@ -154,8 +180,13 @@ namespace ProjectRuntime.Actor
             _serverLastFireTime = NetworkTime.time;
             player.RpcShowDungeonMasterTurretTracer(hitPoint);
 
-            if (targetNetId == 0 ||
-                !NetworkServer.spawned.TryGetValue(targetNetId, out NetworkIdentity targetIdentity))
+            if (
+                targetNetId == 0
+                || !NetworkServer.spawned.TryGetValue(
+                    targetNetId,
+                    out NetworkIdentity targetIdentity
+                )
+            )
             {
                 return;
             }
@@ -166,8 +197,9 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            var damageable = targetIdentity.GetComponentInParent<IDamageable>() ??
-                targetIdentity.GetComponentInChildren<IDamageable>();
+            var damageable =
+                targetIdentity.GetComponentInParent<IDamageable>()
+                ?? targetIdentity.GetComponentInChildren<IDamageable>();
             if (damageable == null || !damageable.IsAlive)
             {
                 return;
@@ -180,8 +212,16 @@ namespace ProjectRuntime.Actor
         {
             Vector3 muzzlePosition = GetMuzzlePosition();
             UpdateAim(hitPoint - muzzlePosition);
-            BulletTracer.Spawn(this, muzzlePosition, hitPoint, tracerDuration, tracerWidth,
-                tracerColor, tracerMaterial, "DungeonMasterTurretTracer");
+            BulletTracer.Spawn(
+                this,
+                muzzlePosition,
+                hitPoint,
+                tracerDuration,
+                tracerWidth,
+                tracerColor,
+                tracerMaterial,
+                "DungeonMasterTurretTracer"
+            );
         }
 
         private Vector3 GetMuzzlePosition()
@@ -217,10 +257,9 @@ namespace ProjectRuntime.Actor
                 ray,
                 out RaycastHit occlusionHit,
                 maxRange,
-                player.cam.aimOcclusionMask);
-            hitPoint = hasOcclusion
-                ? occlusionHit.point
-                : ray.origin + ray.direction * maxRange;
+                player.cam.aimOcclusionMask
+            );
+            hitPoint = hasOcclusion ? occlusionHit.point : ray.origin + ray.direction * maxRange;
 
             var hits = Physics.RaycastAll(ray, maxRange, player.cam.aimTargetMask);
             System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
@@ -270,6 +309,39 @@ namespace ProjectRuntime.Actor
             }
 
             _activeTurret = null;
+
+            var player = ResolvePlayer();
+            if (
+                player != null
+                && player.isLocalPlayer
+                && player.currentState is DungeonMasterTurretState
+            )
+            {
+                player.QueueState(new DungeonMasterMovementState(player));
+            }
+        }
+
+        public void ServerBeginDisassemble()
+        {
+            if (_activeTurret == null)
+            {
+                return;
+            }
+
+            _activeTurret.ServerBeginDisassemble();
+        }
+
+        [Server]
+        public bool ServerSpawnTurretForCard(Vector3 position)
+        {
+            var player = ResolvePlayer();
+            if (player == null || !player.IsDungeonMaster || _activeTurret != null)
+            {
+                return false;
+            }
+
+            ServerSpawnTurret(position);
+            return true;
         }
 
         [Server]
@@ -281,22 +353,32 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            GameObject turretPrefab = GameNetworkManager.Instance != null
-                ? GameNetworkManager.Instance.DungeonMasterTurretPrefab
-                : null;
+            GameObject turretPrefab =
+                GameNetworkManager.Instance != null
+                    ? GameNetworkManager.Instance.DungeonMasterTurretPrefab
+                    : null;
             if (turretPrefab == null)
             {
-                Debug.LogWarning("[DungeonMasterTurretController] Assign the dungeon master turret prefab on GameNetworkManager.");
+                Debug.LogWarning(
+                    "[DungeonMasterTurretController] Assign the dungeon master turret prefab on GameNetworkManager."
+                );
                 return;
             }
 
             if (!turretPrefab.TryGetComponent(out DungeonMasterTurret _))
             {
-                Debug.LogWarning("[DungeonMasterTurretController] Dungeon master turret prefab must have a DungeonMasterTurret component on its root.");
+                Debug.LogWarning(
+                    "[DungeonMasterTurretController] Dungeon master turret prefab must have a DungeonMasterTurret component on its root."
+                );
                 return;
             }
+            float heightOffset = 1f;
 
-            GameObject turretObject = Instantiate(turretPrefab, spawnPosition, Quaternion.identity);
+            GameObject turretObject = Instantiate(
+                turretPrefab,
+                spawnPosition + Vector3.up * heightOffset,
+                Quaternion.identity
+            );
             var turret = turretObject.GetComponent<DungeonMasterTurret>();
             turret.ServerInitialize(player);
             NetworkServer.Spawn(turretObject);

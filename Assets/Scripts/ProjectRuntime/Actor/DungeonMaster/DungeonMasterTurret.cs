@@ -1,30 +1,96 @@
+using System.Collections;
 using Mirror;
+using ProjectRuntime.Actor.PlayerStates;
+using ProjectRuntime.Combat;
 using UnityEngine;
 
 namespace ProjectRuntime.Actor
 {
+    public enum TurretStatus
+    {
+        Assembling,
+        Assembled,
+        Disassembling,
+    }
+
     [DisallowMultipleComponent]
     [RequireComponent(typeof(NetworkIdentity))]
+    [RequireComponent(typeof(Health))]
     public class DungeonMasterTurret : NetworkBehaviour
     {
         [Header("Visuals")]
-        [SerializeField] private Transform turretRoot;
-        [SerializeField] private Transform turretYawPivot;
-        [SerializeField] private Transform turretPitchPivot;
-        [SerializeField] private Transform turretMuzzle;
+        [SerializeField]
+        private Transform turretRoot;
+
+        [SerializeField]
+        private Transform turretYawPivot;
+
+        [SerializeField]
+        private Transform turretPitchPivot;
+
+        [SerializeField]
+        private Transform turretMuzzle;
+
+        [Header("Assembly")]
+        [SerializeField]
+        private float assemblyDuration = 2f;
+
+        [SerializeField]
+        private float disassemblyDuration = 1.5f;
 
         [SyncVar(hook = nameof(OnOwnerNetIdChanged))]
         private uint ownerNetId;
 
-        private GameplayPlayer _attachedOwner;
+        [SyncVar(hook = nameof(OnStatusChanged))]
+        private TurretStatus _status;
 
+        private GameplayPlayer _attachedOwner;
+        private Health _health;
+
+        public Health Health => _health != null ? _health : _health = GetComponent<Health>();
         public uint OwnerNetId => ownerNetId;
+        public bool IsAssembled => _status == TurretStatus.Assembled;
+        public bool IsDisassembling => _status == TurretStatus.Disassembling;
 
         [Server]
         public void ServerInitialize(GameplayPlayer owner)
         {
             ownerNetId = owner != null ? owner.netId : 0;
             RegisterWithOwner();
+            Health.OnDeathEvent += OnServerDeath;
+            _status = TurretStatus.Assembling;
+            Debug.Log("[Turret] Assembling...");
+            StartCoroutine(AssembleCoroutine());
+        }
+
+        [Server]
+        private IEnumerator AssembleCoroutine()
+        {
+            yield return new WaitForSeconds(assemblyDuration);
+            _status = TurretStatus.Assembled;
+            Debug.Log("[Turret] Assembled.");
+        }
+
+        [Server]
+        public void ServerBeginDisassemble()
+        {
+            if (_status == TurretStatus.Disassembling)
+            {
+                return;
+            }
+
+            StopAllCoroutines();
+            _status = TurretStatus.Disassembling;
+            Debug.Log("[Turret] Disassembling...");
+            StartCoroutine(DisassembleCoroutine());
+        }
+
+        [Server]
+        private IEnumerator DisassembleCoroutine()
+        {
+            yield return new WaitForSeconds(disassemblyDuration);
+            Debug.Log("[Turret] Disassembled.");
+            NetworkServer.Destroy(gameObject);
         }
 
         public override void OnStartClient()
@@ -42,8 +108,16 @@ namespace ProjectRuntime.Actor
 
         public override void OnStopServer()
         {
+            Health.OnDeathEvent -= OnServerDeath;
             DetachFromOwner();
             base.OnStopServer();
+        }
+
+        [Server]
+        private void OnServerDeath(uint killerNetId)
+        {
+            StopAllCoroutines();
+            NetworkServer.Destroy(gameObject);
         }
 
         private void Update()
@@ -84,12 +158,18 @@ namespace ProjectRuntime.Actor
             Vector3 flatDirection = Vector3.ProjectOnPlane(worldDirection, Vector3.up);
             if (turretYawPivot != null && flatDirection.sqrMagnitude > 0.0001f)
             {
-                turretYawPivot.rotation = Quaternion.LookRotation(flatDirection.normalized, Vector3.up);
+                turretYawPivot.rotation = Quaternion.LookRotation(
+                    flatDirection.normalized,
+                    Vector3.up
+                );
             }
 
             if (turretPitchPivot != null)
             {
-                turretPitchPivot.rotation = Quaternion.LookRotation(worldDirection.normalized, Vector3.up);
+                turretPitchPivot.rotation = Quaternion.LookRotation(
+                    worldDirection.normalized,
+                    Vector3.up
+                );
             }
         }
 
@@ -108,6 +188,25 @@ namespace ProjectRuntime.Actor
             }
 
             RegisterWithOwner();
+        }
+
+        private void OnStatusChanged(TurretStatus _, TurretStatus next)
+        {
+            if (_attachedOwner == null || !_attachedOwner.isLocalPlayer)
+            {
+                return;
+            }
+
+            if (next == TurretStatus.Assembled)
+            {
+                _attachedOwner.QueueState(
+                    new DungeonMasterTurretState(_attachedOwner)
+                    {
+                        m_anchorPosition = transform.position,
+                        m_hasAnchor = true,
+                    }
+                );
+            }
         }
 
         private void RegisterWithOwner()
@@ -140,16 +239,20 @@ namespace ProjectRuntime.Actor
 
         private GameplayPlayer ResolveOwner()
         {
-            if (NetworkClient.active &&
-                NetworkClient.spawned.TryGetValue(ownerNetId, out NetworkIdentity clientIdentity))
+            if (
+                NetworkClient.active
+                && NetworkClient.spawned.TryGetValue(ownerNetId, out NetworkIdentity clientIdentity)
+            )
             {
-                return clientIdentity.GetComponent<GameplayPlayer>();
+                return clientIdentity.GetComponentInChildren<GameplayPlayer>();
             }
 
-            if (NetworkServer.active &&
-                NetworkServer.spawned.TryGetValue(ownerNetId, out NetworkIdentity serverIdentity))
+            if (
+                NetworkServer.active
+                && NetworkServer.spawned.TryGetValue(ownerNetId, out NetworkIdentity serverIdentity)
+            )
             {
-                return serverIdentity.GetComponent<GameplayPlayer>();
+                return serverIdentity.GetComponentInChildren<GameplayPlayer>();
             }
 
             return null;
