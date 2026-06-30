@@ -50148,7 +50148,7 @@ MeshCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3549846040079898570}
-  m_Material: {fileID: 13400000, guid: 9703295a4f4f4ae43bad0059a11891ba, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -54668,7 +54668,7 @@ GameObject:
   - component: {fileID: 9093899229747095581}
   - component: {fileID: 895848763220191148}
   m_Layer: 3
-  m_Name: Stairs (1)
+  m_Name: Stairs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -56534,7 +56534,7 @@ MeshCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5057357344708970106}
-  m_Material: {fileID: 13400000, guid: 9703295a4f4f4ae43bad0059a11891ba, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -95559,7 +95559,7 @@ MeshCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6275570530216135290}
-  m_Material: {fileID: 13400000, guid: 9703295a4f4f4ae43bad0059a11891ba, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -102432,7 +102432,7 @@ MeshCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8416988572613515308}
-  m_Material: {fileID: 13400000, guid: 9703295a4f4f4ae43bad0059a11891ba, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
