@@ -181,7 +181,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  maxHealth: 100
+  maxHealth: 1000
 --- !u!195 &5278251644888205944
 NavMeshAgent:
   m_ObjectHideFlags: 0

@@ -146,6 +146,8 @@ MonoBehaviour:
   playerSteamId: 0
   playerIndex: 0
   playerRole: 0
+  maxLives: 3
+  lives: 3
   characterData:
     colid: 0
   dungeonMasterPlacementMask:
@@ -594,7 +596,6 @@ MonoBehaviour:
   interactHold: 0
   interactRelease: 0
   reloadPress: 0
-  bearTrapPress: 0
   moveInput:
     m_Name: Move Input
     m_Type: 0
@@ -1242,7 +1243,7 @@ MonoBehaviour:
   player: {fileID: 7578397109688941967}
   cam: {fileID: 5845632010730616114}
   input: {fileID: 3611815320372169542}
-  damage: 10
+  damage: 100
   magazineSize: 6
   maxRange: 100
   reloadDuration: 1.5
@@ -1269,6 +1270,9 @@ MonoBehaviour:
   syncInterval: 0
   manaRegenRate: 1
   maxMana: 10
+  placementRayDistance: 1000
+  placementIndicatorRadius: 1.5
+  placementIndicatorHeight: 0.03
   Mana: 0
 --- !u!1 &7463206360524112506
 GameObject:
@@ -1299,7 +1303,7 @@ Transform:
   m_GameObject: {fileID: 7463206360524112506}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: -5}
+  m_LocalPosition: {x: 0, y: 0.5, z: 0.0039982796}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

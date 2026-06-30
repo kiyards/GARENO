@@ -267,7 +267,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6961133263022311386}
   - component: {fileID: 6677501630455743427}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: ShootCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
