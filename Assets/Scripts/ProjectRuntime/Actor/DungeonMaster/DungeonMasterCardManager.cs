@@ -35,6 +35,30 @@ namespace ProjectRuntime.Actor
         public event Action<float, int> OnManaChangedEvent;
         public int MaxMana => this.maxMana;
 
+        [Header("Nemesis")]
+        [SerializeField] private float nemesisBaseCountdown = 120f;
+
+        // Server-authoritative network time at which the Nemesis becomes available. Shortened by
+        // BattleManager on crystal/downed/kill events via ServerShortenNemesisCountdown.
+        [SyncVar(hook = nameof(OnNemesisReadyTimeChanged))]
+        private double _nemesisReadyNetworkTime;
+
+        [SyncVar(hook = nameof(OnNemesisAvailableChanged))]
+        private bool _nemesisAvailable;
+
+        [SyncVar(hook = nameof(OnNemesisActiveChanged))]
+        private bool _nemesisActive;
+
+        // Raised on the owning Dungeon Master when availability/active state flips or the ready
+        // time is adjusted. The HUD also polls NemesisRemainingSeconds each frame for the live
+        // countdown (the ready-time SyncVar only changes on events, not per frame).
+        public event Action OnNemesisAvailabilityChangedEvent;
+
+        public bool NemesisAvailable => this._nemesisAvailable;
+        public bool NemesisActive => this._nemesisActive;
+        public float NemesisRemainingSeconds =>
+            (float)Math.Max(0d, this._nemesisReadyNetworkTime - NetworkTime.time);
+
         // Replicated mirror of the server-authoritative _hand so the owning Dungeon Master's HUD
         // can render the 4 cards. Server writes it; clients read it. A null/empty entry marks an
         // empty hand slot (the deck and used pile have run dry).
@@ -91,6 +115,9 @@ namespace ProjectRuntime.Actor
         {
             base.OnStartServer();
             this.ServerInitializeDeck();
+            this._nemesisReadyNetworkTime = NetworkTime.time + this.nemesisBaseCountdown;
+            this._nemesisAvailable = false;
+            this._nemesisActive = false;
         }
 
         private void Update()
@@ -98,6 +125,7 @@ namespace ProjectRuntime.Actor
             if (this.isServer)
             {
                 this.ServerTickMana();
+                this.ServerTickNemesisAvailability();
             }
 
             if (this.isLocalPlayer)
@@ -115,6 +143,57 @@ namespace ProjectRuntime.Actor
 
         private void OnManaChanged(float oldVal, float newVal)
             => this.OnManaChangedEvent?.Invoke(newVal, this.maxMana);
+
+        [Server]
+        private void ServerTickNemesisAvailability()
+        {
+            if (!this.Player.IsDungeonMaster) return;
+            if (this._nemesisAvailable || this._nemesisActive) return;
+            if (NetworkTime.time >= this._nemesisReadyNetworkTime)
+            {
+                this._nemesisAvailable = true;
+            }
+        }
+
+        // Called by BattleManager when a crystal is destroyed / survivor downed / survivor killed.
+        [Server]
+        public void ServerShortenNemesisCountdown(float seconds)
+        {
+            if (!this.Player.IsDungeonMaster) return;
+            if (this._nemesisAvailable || this._nemesisActive || seconds <= 0f) return;
+
+            double floor = NetworkTime.time;
+            double shortened = this._nemesisReadyNetworkTime - seconds;
+            this._nemesisReadyNetworkTime = shortened < floor ? floor : shortened;
+
+            if (NetworkTime.time >= this._nemesisReadyNetworkTime)
+            {
+                this._nemesisAvailable = true;
+            }
+        }
+
+        // Flips the Nemesis to "used" so the side-card locks out (placeholder until proper Nemesis enemy is implemented)
+        [Server]
+        public bool ServerTryActivateNemesis()
+        {
+            if (!this.Player.IsDungeonMaster) return false;
+            if (!this._nemesisAvailable || this._nemesisActive) return false;
+
+            this._nemesisActive = true;
+            this._nemesisAvailable = false;
+            Debug.Log(
+                "[DungeonMasterCardManager] Nemesis activated (Task 1 stub — entity spawn lands in Task 2).");
+            return true;
+        }
+
+        private void OnNemesisReadyTimeChanged(double oldVal, double newVal)
+            => this.OnNemesisAvailabilityChangedEvent?.Invoke();
+
+        private void OnNemesisAvailableChanged(bool oldVal, bool newVal)
+            => this.OnNemesisAvailabilityChangedEvent?.Invoke();
+
+        private void OnNemesisActiveChanged(bool oldVal, bool newVal)
+            => this.OnNemesisAvailabilityChangedEvent?.Invoke();
 
         [Server]
         public bool ServerTrySpendMana(int amount)

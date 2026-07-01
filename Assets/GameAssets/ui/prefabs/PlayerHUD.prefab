@@ -477,6 +477,9 @@ MonoBehaviour:
   <DungeonMasterHand>k__BackingField: {fileID: 71498284998745294}
   <ManaBarParent>k__BackingField: {fileID: 2950810506418172780}
   <CardDescription>k__BackingField: {fileID: 5645899791068076992}
+  <NemesisButton>k__BackingField: {fileID: 7400954654184054614}
+  <NemesisCountdownTMP>k__BackingField: {fileID: 1551330242231686719}
+  <NemesisDarkenOverlay>k__BackingField: {fileID: 0}
 --- !u!1 &1000000000001300000
 GameObject:
   m_ObjectHideFlags: 0

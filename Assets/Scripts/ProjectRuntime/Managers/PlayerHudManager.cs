@@ -88,9 +88,19 @@ namespace ProjectRuntime.Managers
         [field: SerializeField]
         private GameObject CardDescription { get; set; }
 
+        [field: SerializeField, Header("Nemesis")]
+        private Button NemesisButton { get; set; }
+
+        [field: SerializeField]
+        private TextMeshProUGUI NemesisCountdownTMP { get; set; }
+
+        [field: SerializeField]
+        private GameObject NemesisDarkenOverlay { get; set; }
+
         private Health BoundHealth { get; set; }
         private PistolWeapon BoundWeapon { get; set; }
         private DungeonMasterCardManager BoundCardManager { get; set; }
+        private GameplayPlayer BoundGameplayPlayer { get; set; }
         private BattleManager BoundBattleManager { get; set; }
 
         private PlayerManager LocalPlayer { get; set; }
@@ -148,6 +158,8 @@ namespace ProjectRuntime.Managers
             {
                 this.BindBattleManager(BattleManager.Instance);
             }
+
+            this.RefreshNemesisSideCard();
         }
 
         public void SetLocalPlayer(PlayerManager player)
@@ -164,6 +176,8 @@ namespace ProjectRuntime.Managers
             {
                 return;
             }
+
+            this.BoundGameplayPlayer = gameplayPlayer;
 
             this.BoundHealth = gameplayPlayer.health;
             if (this.BoundHealth != null)
@@ -186,6 +200,13 @@ namespace ProjectRuntime.Managers
                 this.OnManaChanged(this.BoundCardManager.Mana, this.BoundCardManager.MaxMana);
                 this.DungeonMasterHand?.Bind(this.BoundCardManager);
             }
+
+            if (this.NemesisButton != null)
+            {
+                this.NemesisButton.onClick.AddListener(this.OnNemesisButtonClicked);
+            }
+
+            this.RefreshNemesisSideCard();
         }
 
         private void UnbindCombat()
@@ -207,6 +228,57 @@ namespace ProjectRuntime.Managers
                 this.BoundCardManager.OnManaChangedEvent -= this.OnManaChanged;
                 this.DungeonMasterHand?.Unbind();
                 this.BoundCardManager = null;
+            }
+
+            if (this.NemesisButton != null)
+            {
+                this.NemesisButton.onClick.RemoveListener(this.OnNemesisButtonClicked);
+            }
+
+            this.BoundGameplayPlayer = null;
+        }
+
+        private void OnNemesisButtonClicked()
+        {
+            if (this.BoundGameplayPlayer != null)
+            {
+                this.BoundGameplayPlayer.CmdActivateNemesis();
+            }
+        }
+
+        private void RefreshNemesisSideCard()
+        {
+            if (this.NemesisButton == null || this.BoundCardManager == null
+                || this.CurrentRole != PlayerRole.DungeonMaster)
+            {
+                return;
+            }
+
+            bool available = this.BoundCardManager.NemesisAvailable;
+            bool active = this.BoundCardManager.NemesisActive;
+
+            this.NemesisButton.interactable = available && !active;
+
+            if (this.NemesisDarkenOverlay != null)
+            {
+                this.NemesisDarkenOverlay.SetActive(!available || active);
+            }
+
+            if (this.NemesisCountdownTMP != null)
+            {
+                if (active)
+                {
+                    this.NemesisCountdownTMP.text = "ACTIVE";
+                }
+                else if (available)
+                {
+                    this.NemesisCountdownTMP.text = "READY";
+                }
+                else
+                {
+                    int seconds = Mathf.CeilToInt(this.BoundCardManager.NemesisRemainingSeconds);
+                    this.NemesisCountdownTMP.text = $"{seconds / 60}:{seconds % 60:00}";
+                }
             }
         }
 

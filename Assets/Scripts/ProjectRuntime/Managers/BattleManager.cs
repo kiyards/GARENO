@@ -52,6 +52,12 @@ namespace ProjectRuntime.Managers
         [SerializeField] private int survivorDownedTimePenaltySeconds = 15;
         [SerializeField] private int survivorDeathTimePenaltySeconds = 30;
 
+        [Header("Nemesis Availability")]
+        // How much the Dungeon Master's Nemesis countdown is shortened by each event.
+        [SerializeField] private float nemesisCrystalShortenSeconds = 60f;
+        [SerializeField] private float nemesisDownedShortenSeconds = 15f;
+        [SerializeField] private float nemesisKilledShortenSeconds = 30f;
+
         [Header("Crystal Objective")]
         [SerializeField, SyncVar(hook = nameof(OnObjectiveStateSynced))]
         private int requiredCrystals = 3;
@@ -316,6 +322,7 @@ namespace ProjectRuntime.Managers
 
             this.ServerRefreshCrystalRegistry();
             this.destroyedCrystals = Mathf.Min(this.destroyedCrystals + 1, this.requiredCrystals);
+            this.ServerShortenNemesisCountdown(this.nemesisCrystalShortenSeconds);
 
             if (this.destroyedCrystals >= this.requiredCrystals)
             {
@@ -436,6 +443,7 @@ namespace ProjectRuntime.Managers
             }
 
             this.ServerAddRoundTime(-this.survivorDownedTimePenaltySeconds);
+            this.ServerShortenNemesisCountdown(this.nemesisDownedShortenSeconds);
         }
 
         [Server]
@@ -447,6 +455,28 @@ namespace ProjectRuntime.Managers
             }
 
             this.ServerAddRoundTime(-this.survivorDeathTimePenaltySeconds);
+            this.ServerShortenNemesisCountdown(this.nemesisKilledShortenSeconds);
+        }
+
+        // Forwards a Nemesis-countdown reduction to the Dungeon Master's card manager. The
+        // availability state lives on DungeonMasterCardManager (whose SyncVars replicate to the
+        // DM); BattleManager owns the event chokepoints and the per-event reduction amounts.
+        [Server]
+        public void ServerShortenNemesisCountdown(float seconds)
+        {
+            foreach (var player in this.Players)
+            {
+                if (player == null || player.playerRole != PlayerRole.DungeonMaster)
+                {
+                    continue;
+                }
+
+                var gameplayPlayer = player.player;
+                if (gameplayPlayer != null && gameplayPlayer.CardManager != null)
+                {
+                    gameplayPlayer.CardManager.ServerShortenNemesisCountdown(seconds);
+                }
+            }
         }
 
         [Server]
