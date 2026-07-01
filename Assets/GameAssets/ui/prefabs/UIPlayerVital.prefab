@@ -61,6 +61,7 @@ MonoBehaviour:
   PlayerStatusImage: {fileID: 3366053325836430073}
   DownedPlayerObject: {fileID: 3220746224244686908}
   DeadPlayerObject: {fileID: 3547985394750698441}
+  DungeonMasterObject: {fileID: 1115309708849493007}
   PlayerLivesIcons:
   - {fileID: 2703034962228786855}
   - {fileID: 4645248627075002868}
@@ -68,6 +69,7 @@ MonoBehaviour:
   HealthySurvivorColor: {r: 0.23954973, g: 1, b: 0.066037595, a: 1}
   WarningSurvivorColor: {r: 1, g: 0.9015107, b: 0.31760997, a: 1}
   DownedSurvivorColor: {r: 1, g: 0.122641385, b: 0.122641385, a: 1}
+  DungeonMasterColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!114 &4152055338748445894
 MonoBehaviour:
   m_ObjectHideFlags: 0

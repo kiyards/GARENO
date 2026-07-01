@@ -147,6 +147,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8416592947788306542}
   - component: {fileID: 1628117550281038932}
+  - component: {fileID: 1628117550281038933}
   m_Layer: 5
   m_Name: PlayerVitalsRT
   m_TagString: Untagged
@@ -199,6 +200,21 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &1628117550281038933
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 184194187940191563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e8f2cdbb1de4e1fbf96a3b95d377801, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rowsParent: {fileID: 8416592947788306542}
+  rowPrefab: {fileID: 4209911793590756298, guid: 2e465d29f7d630c43b9279749042beac, type: 3}
+  maxRows: 5
 --- !u!1 &204878694219185608
 GameObject:
   m_ObjectHideFlags: 0

@@ -46,13 +46,16 @@ namespace ProjectRuntime.Network
         [SyncVar(hook = nameof(OnPlayerRoleSynced))]
         public PlayerRole playerRole = PlayerRole.Unassigned;
         public Action<string> OnPlayerNameChanged;
+        public Action<PlayerRole> OnPlayerRoleChanged;
+        public Action<int> OnPlayerLivesChanged;
 
         [Header("Lives")]
         [SerializeField] private int maxLives = 3;
         // Server-authoritative remaining lives. A survivor is permanently dead at 0 (resolution lives
         // in GameplayPlayer.ServerResolveDowned).
-        [SyncVar] public int lives = 3;
+        [SyncVar(hook = nameof(OnLivesSynced))] public int lives = 3;
 
+        public int MaxLives => maxLives;
         public bool IsPermanentlyDead => lives <= 0;
 
         [Header("Variables")]
@@ -142,6 +145,12 @@ namespace ProjectRuntime.Network
             ApplyRole(newValue);
         }
 
+        void OnLivesSynced(int oldValue, int newValue)
+        {
+            lives = newValue;
+            OnPlayerLivesChanged?.Invoke(newValue);
+        }
+
         void OnCharacterDataSynced(CharacterData _, CharacterData newData)
         {
             characterData = newData;
@@ -163,6 +172,8 @@ namespace ProjectRuntime.Network
                 player?.input?.SetCursorLockedForRole(role);
                 PlayerHudManager.EnsureInstance()?.SetRole(role);
             }
+
+            OnPlayerRoleChanged?.Invoke(role);
         }
 
         private void RefreshPlayerCanvasVisibility()
