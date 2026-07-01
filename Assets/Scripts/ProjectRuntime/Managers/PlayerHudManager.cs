@@ -74,6 +74,12 @@ namespace ProjectRuntime.Managers
         private TextMeshProUGUI TurretLifetimeTMP { get; set; }
 
         [field: SerializeField]
+        private GameObject TurretDisassemblingParent { get; set; }
+
+        [field: SerializeField]
+        private Image TurretDisassemblingBarFill { get; set; }
+
+        [field: SerializeField]
         private UIDungeonMasterHand DungeonMasterHand { get; set; }
 
         [field: SerializeField]
@@ -255,6 +261,8 @@ namespace ProjectRuntime.Managers
                 TurretAmmoParent.SetActive(active);
             if (TurretLifetimeParent != null)
                 TurretLifetimeParent.SetActive(active);
+            if (TurretDisassemblingParent != null)
+                TurretDisassemblingParent.SetActive(false);
             if (DungeonMasterHand != null)
                 DungeonMasterHand.gameObject.SetActive(!active);
             if (ManaBarParent != null)
@@ -289,20 +297,22 @@ namespace ProjectRuntime.Managers
                 TurretLifetimeParent.SetActive(active);
         }
 
+        public void SetTurretDisassembling(float fill)
+        {
+            if (TurretDisassemblingBarFill != null)
+                TurretDisassemblingBarFill.fillAmount = fill;
+        }
+
+        public void SetTurretDisassemblingActive(bool active)
+        {
+            if (TurretDisassemblingParent != null)
+                TurretDisassemblingParent.SetActive(active);
+        }
+
         public void SetTurretReticleActive(bool active)
         {
             if (TurretReticle != null)
                 TurretReticle.SetActive(active);
-        }
-
-        public void SetTurretAssemblingActive(bool active)
-        {
-            if (DungeonMasterHand != null)
-                DungeonMasterHand.gameObject.SetActive(!active);
-            if (ManaBarParent != null)
-                ManaBarParent.SetActive(!active);
-            if (CardDescription != null)
-                CardDescription.SetActive(!active);
         }
 
         public void TogglePlayerUI(bool toggle)
