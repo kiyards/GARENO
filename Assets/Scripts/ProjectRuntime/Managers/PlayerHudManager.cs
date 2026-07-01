@@ -65,6 +65,15 @@ namespace ProjectRuntime.Managers
         private TextMeshProUGUI TurretCurrentAmmoTMP { get; set; }
 
         [field: SerializeField]
+        private GameObject TurretLifetimeParent { get; set; }
+
+        [field: SerializeField]
+        private Image TurretLifetimeBarFill { get; set; }
+
+        [field: SerializeField]
+        private TextMeshProUGUI TurretLifetimeTMP { get; set; }
+
+        [field: SerializeField]
         private UIDungeonMasterHand DungeonMasterHand { get; set; }
 
         [field: SerializeField]
@@ -244,6 +253,8 @@ namespace ProjectRuntime.Managers
                 TurretReticle.SetActive(active);
             if (TurretAmmoParent != null)
                 TurretAmmoParent.SetActive(active);
+            if (TurretLifetimeParent != null)
+                TurretLifetimeParent.SetActive(active);
             if (DungeonMasterHand != null)
                 DungeonMasterHand.gameObject.SetActive(!active);
             if (ManaBarParent != null)
@@ -262,6 +273,20 @@ namespace ProjectRuntime.Managers
         {
             if (TurretAmmoParent != null)
                 TurretAmmoParent.SetActive(active);
+        }
+
+        public void SetTurretLifetime(float remaining, float max)
+        {
+            if (TurretLifetimeBarFill != null && max > 0f)
+                TurretLifetimeBarFill.fillAmount = remaining / max;
+            if (TurretLifetimeTMP != null)
+                TurretLifetimeTMP.text = Mathf.CeilToInt(remaining).ToString();
+        }
+
+        public void SetTurretLifetimeActive(bool active)
+        {
+            if (TurretLifetimeParent != null)
+                TurretLifetimeParent.SetActive(active);
         }
 
         public void SetTurretReticleActive(bool active)

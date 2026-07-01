@@ -225,6 +225,10 @@ namespace ProjectRuntime.Actor.PlayerStates
                 m_anchorPosition = player.transform.position;
                 m_hasAnchor = true;
             }
+            else if (player.isLocalPlayer)
+            {
+                player.Turret.ClientStartTurretLifetime();
+            }
 
             m_anchorPosition = player.ClampDungeonMasterPosition(m_anchorPosition);
             StopMovement();

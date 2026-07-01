@@ -337,6 +337,28 @@ namespace ProjectRuntime.Actor
         }
 
         [Server]
+        public void ServerStartTurretLifetime()
+        {
+            if (_activeTurret == null)
+            {
+                return;
+            }
+
+            _activeTurret.ServerStartLifetime();
+        }
+
+        public void ClientStartTurretLifetime()
+        {
+            var player = ResolvePlayer();
+            if (player == null || !player.isLocalPlayer || _activeTurret == null || !_activeTurret.IsAssembled)
+            {
+                return;
+            }
+
+            player.CmdStartTurretLifetime();
+        }
+
+        [Server]
         public bool ServerSpawnTurretForCard(Vector3 position)
         {
             var player = ResolvePlayer();

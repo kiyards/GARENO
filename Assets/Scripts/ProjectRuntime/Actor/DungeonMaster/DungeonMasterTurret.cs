@@ -45,6 +45,10 @@ namespace ProjectRuntime.Actor
         [SerializeField]
         private int maxAmmo = 50;
 
+        [Header("Lifetime")]
+        [SerializeField]
+        private float lifetime = 20f;
+
         [Header("Assembly")]
         [SerializeField]
         private float assemblyDuration = 2f;
@@ -60,6 +64,9 @@ namespace ProjectRuntime.Actor
 
         [SyncVar(hook = nameof(OnAmmoSynced))]
         private int _currentAmmo;
+
+        [SyncVar]
+        private double _lifetimeEndNetworkTime;
 
         private GameplayPlayer _attachedOwner;
         private Health _health;
@@ -103,6 +110,23 @@ namespace ProjectRuntime.Actor
             yield return new WaitForSeconds(assemblyDuration);
             _status = TurretStatus.Assembled;
             Debug.Log("[Turret] Assembled.");
+        }
+
+        [Server]
+        public void ServerStartLifetime()
+        {
+            if (_status != TurretStatus.Assembled)
+                return;
+
+            _lifetimeEndNetworkTime = NetworkTime.time + lifetime;
+            StartCoroutine(LifetimeCoroutine());
+        }
+
+        [Server]
+        private IEnumerator LifetimeCoroutine()
+        {
+            yield return new WaitForSeconds(lifetime);
+            ServerBeginDisassemble();
         }
 
         [Server]
@@ -157,8 +181,12 @@ namespace ProjectRuntime.Actor
         private void Update()
         {
             if (_attachedOwner == null)
-            {
                 RegisterWithOwner();
+
+            if (_attachedOwner != null && _attachedOwner.isLocalPlayer && _status == TurretStatus.Assembled && PlayerHudManager.Instance != null)
+            {
+                float remaining = Mathf.Max(0f, (float)(_lifetimeEndNetworkTime - NetworkTime.time));
+                PlayerHudManager.Instance.SetTurretLifetime(remaining, lifetime);
             }
         }
 
@@ -266,6 +294,7 @@ namespace ProjectRuntime.Actor
                 {
                     PlayerHudManager.Instance.SetTurretReticleActive(false);
                     PlayerHudManager.Instance.SetTurretAmmoActive(false);
+                    PlayerHudManager.Instance.SetTurretLifetimeActive(false);
                 }
             }
         }

@@ -499,6 +499,12 @@ namespace ProjectRuntime.Actor
         }
 
         [Command]
+        public void CmdStartTurretLifetime()
+        {
+            Turret.ServerStartTurretLifetime();
+        }
+
+        [Command]
         public void CmdPlaceBearTrap(Vector3 position, Vector3 normal)
         {
             BearTrapController.ServerPlace(position, normal);
