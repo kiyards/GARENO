@@ -34,6 +34,8 @@ namespace ProjectRuntime.Managers
         [SerializeField] private GameObject creeperZombiePrefab;
         // A single dog. The Group of Dogs card spawns dogPackCount copies of this prefab.
         [SerializeField] private GameObject dogPrefab;
+        // Looks like a survivor with a randomized player name; AI is identical to the basic zombie.
+        [SerializeField] private GameObject mimicZombiePrefab;
         // Max distance the requested point is snapped onto the navmesh. Kept large so a click
         // that lands off the navmesh (on an obstacle, a wall, or past an edge) still spawns at
         // the nearest valid point instead of silently failing.
@@ -151,6 +153,12 @@ namespace ProjectRuntime.Managers
         public bool ServerTrySpawnCreeperZombie(PlayerManager caster, Vector3 requestedPosition)
         {
             return this.ServerTrySpawnEnemy(caster, requestedPosition, this.creeperZombiePrefab, "Creeper Zombie");
+        }
+
+        [Server]
+        public bool ServerTrySpawnMimicZombie(PlayerManager caster, Vector3 requestedPosition)
+        {
+            return this.ServerTrySpawnEnemy(caster, requestedPosition, this.mimicZombiePrefab, "Mimic Zombie");
         }
 
         [Server]

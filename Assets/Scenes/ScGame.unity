@@ -336,6 +336,7 @@ MonoBehaviour:
   basicZombiePrefab: {fileID: 4025126144443318060, guid: 099da0aa85ce2524cb2a561233e0141f, type: 3}
   creeperZombiePrefab: {fileID: 4025126144443318060, guid: b93a1496fcca4984aa8df766b3784379, type: 3}
   dogPrefab: {fileID: 4025126144443318060, guid: 171c2672783f4d746b7366987f686c73, type: 3}
+  mimicZombiePrefab: {fileID: 4025126144443318060, guid: 1f7bc19a08214d0ea28b1c0f4c32689a, type: 3}
   basicZombieSpawnSampleRadius: 2
   dogPackCount: 3
   dogPackSpawnSpread: 2
@@ -8210,11 +8211,13 @@ MonoBehaviour:
   - {fileID: 6627681469765497537, guid: d894832f3a952524890b61a97d451726, type: 3}
   - {fileID: 4025126144443318060, guid: b93a1496fcca4984aa8df766b3784379, type: 3}
   - {fileID: 760105130100000001, guid: d2e99e79846f47a8a8a414c021925b73, type: 3}
+  - {fileID: 4025126144443318060, guid: 171c2672783f4d746b7366987f686c73, type: 3}
   - {fileID: 3351196883818551983, guid: eecfb830b7426144199c16d726524f52, type: 3}
   - {fileID: 1557000337860514814, guid: f2731096b6dea1747afb433b3285d364, type: 3}
+  - {fileID: 4025126144443318060, guid: 1f7bc19a08214d0ea28b1c0f4c32689a, type: 3}
+  - {fileID: 321343715389516220, guid: 3e0230eeb2c66d840be3b13d7019a117, type: 3}
   - {fileID: 7487658207218452854, guid: 50462a344c15d8346855aaa878e75bfe, type: 3}
   - {fileID: 4025126144443318060, guid: 099da0aa85ce2524cb2a561233e0141f, type: 3}
-  - {fileID: 4025126144443318060, guid: 171c2672783f4d746b7366987f686c73, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2

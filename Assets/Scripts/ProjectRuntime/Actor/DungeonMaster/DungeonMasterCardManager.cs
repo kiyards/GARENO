@@ -620,6 +620,17 @@ namespace ProjectRuntime.Actor
                         this.Player.localManager,
                         groundPosition);
 
+                case CardEffectType.SPAWN_MIMIC_ZOMBIE:
+                    var mimicBattleManager = BattleManager.Instance;
+                    if (mimicBattleManager == null)
+                    {
+                        return false;
+                    }
+
+                    return mimicBattleManager.ServerTrySpawnMimicZombie(
+                        this.Player.localManager,
+                        groundPosition);
+
                 case CardEffectType.PLACE_BEAR_TRAP:
                     return this.Player.BearTrapController.ServerPlaceFromCard(groundPosition, Vector3.up);
 
