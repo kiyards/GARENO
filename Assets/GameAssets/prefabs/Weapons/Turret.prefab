@@ -243,6 +243,12 @@ MonoBehaviour:
   turretYawPivot: {fileID: 0}
   turretPitchPivot: {fileID: 0}
   turretMuzzle: {fileID: 0}
+  damage: 20
+  maxRange: 80
+  fireCooldown: 0.18
+  maxAmmo: 50
+  damagePopupPrefab: {fileID: 8824996141537536103, guid: 8f299d7398d8b7c48917932052b6b2f6, type: 3}
+  lifetime: 20
   assemblyDuration: 2
   disassemblyDuration: 1.5
 --- !u!114 &8553186631549262459
@@ -260,4 +266,4 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  maxHealth: 100
+  maxHealth: 1500

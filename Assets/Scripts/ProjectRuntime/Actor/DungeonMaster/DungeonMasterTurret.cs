@@ -3,6 +3,7 @@ using Mirror;
 using ProjectRuntime.Actor.PlayerStates;
 using ProjectRuntime.Combat;
 using ProjectRuntime.Managers;
+using ProjectRuntime.UI;
 using UnityEngine;
 
 namespace ProjectRuntime.Actor
@@ -44,6 +45,10 @@ namespace ProjectRuntime.Actor
 
         [SerializeField]
         private int maxAmmo = 50;
+
+        [Header("FX")]
+        [SerializeField]
+        private DamagePopup damagePopupPrefab;
 
         [Header("Lifetime")]
         [SerializeField]
@@ -144,6 +149,12 @@ namespace ProjectRuntime.Actor
             yield return new WaitForSeconds(disassemblyDuration);
             Debug.Log("[Turret] Disassembled.");
             NetworkServer.Destroy(gameObject);
+        }
+
+        [ClientRpc]
+        public void RpcShowDamageNumber(Vector3 worldPos, float amount)
+        {
+            DamagePopup.Spawn(damagePopupPrefab, worldPos, amount);
         }
 
         public override void OnStartClient()

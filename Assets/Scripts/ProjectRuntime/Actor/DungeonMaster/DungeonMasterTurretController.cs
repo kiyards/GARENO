@@ -15,19 +15,6 @@ namespace ProjectRuntime.Actor
         [SerializeField]
         private LayerMask aimTargetMask;
 
-        [Header("Tracer")]
-        [SerializeField]
-        private float tracerDuration = 0.08f;
-
-        [SerializeField]
-        private float tracerWidth = 0.035f;
-
-        [SerializeField]
-        private Color tracerColor = new(1f, 0.76f, 0.22f, 1f);
-
-        [SerializeField]
-        private Material tracerMaterial;
-
         private GameplayPlayer _player;
         private DungeonMasterTurret _activeTurret;
         private double _clientLastFireTime;
@@ -182,7 +169,6 @@ namespace ProjectRuntime.Actor
 
             _serverLastFireTime = NetworkTime.time;
             _activeTurret.ServerConsumeAmmo();
-            player.RpcShowDungeonMasterTurretTracer(hitPoint);
 
             if (
                 targetNetId == 0
@@ -210,22 +196,7 @@ namespace ProjectRuntime.Actor
             }
 
             damageable.ServerTakeDamage(_activeTurret.Damage, player.netId, hitPoint);
-        }
-
-        public void ShowTracer(Vector3 hitPoint)
-        {
-            Vector3 muzzlePosition = GetMuzzlePosition();
-            UpdateAim(hitPoint - muzzlePosition);
-            BulletTracer.Spawn(
-                this,
-                muzzlePosition,
-                hitPoint,
-                tracerDuration,
-                tracerWidth,
-                tracerColor,
-                tracerMaterial,
-                "DungeonMasterTurretTracer"
-            );
+            _activeTurret.RpcShowDamageNumber(hitPoint, _activeTurret.Damage);
         }
 
         private Vector3 GetMuzzlePosition()

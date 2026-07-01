@@ -555,12 +555,6 @@ namespace ProjectRuntime.Actor
         }
 
         [ClientRpc]
-        public void RpcShowDungeonMasterTurretTracer(Vector3 hitPoint)
-        {
-            Turret.ShowTracer(hitPoint);
-        }
-
-        [ClientRpc]
         public void RpcEnterRespawnState(Vector3 respawnPos)
         {
             if (IsDungeonMaster)

@@ -45,18 +45,6 @@ namespace ProjectRuntime.Combat
         [SerializeField]
         private DamagePopup damagePopupPrefab;
 
-        [SerializeField]
-        private float tracerDuration = 0.08f;
-
-        [SerializeField]
-        private float tracerWidth = 0.025f;
-
-        [SerializeField]
-        private Color tracerColor = new(1f, 0.76f, 0.22f, 1f);
-
-        [SerializeField]
-        private Material tracerMaterial;
-
         [SyncVar(hook = nameof(OnAmmoSynced))]
         private int currentAmmo;
 
@@ -127,7 +115,7 @@ namespace ProjectRuntime.Combat
                     targetNetId = identity.netId;
             }
 
-            CmdFire(targetNetId, hitPoint, origin);
+            CmdFire(targetNetId, hitPoint);
         }
 
         private void TryReload()
@@ -138,7 +126,7 @@ namespace ProjectRuntime.Combat
         }
 
         [Command]
-        private void CmdFire(uint targetNetId, Vector3 hitPoint, Vector3 tracerStart)
+        private void CmdFire(uint targetNetId, Vector3 hitPoint)
         {
             if (player != null && (player.IsDungeonMaster || player.IsBearTrapped))
                 return;
@@ -154,7 +142,6 @@ namespace ProjectRuntime.Combat
                 return;
 
             currentAmmo--;
-            RpcShowBulletTracer(tracerStart, hitPoint);
 
             if (
                 targetNetId != 0
@@ -215,21 +202,6 @@ namespace ProjectRuntime.Combat
         private void RpcShowDamageNumber(Vector3 worldPos, float amount)
         {
             DamagePopup.Spawn(damagePopupPrefab, worldPos, amount);
-        }
-
-        [ClientRpc]
-        private void RpcShowBulletTracer(Vector3 start, Vector3 end)
-        {
-            BulletTracer.Spawn(
-                this,
-                start,
-                end,
-                tracerDuration,
-                tracerWidth,
-                tracerColor,
-                tracerMaterial,
-                "PistolBulletTracer"
-            );
         }
 
         private void OnAmmoSynced(int oldValue, int newValue)
