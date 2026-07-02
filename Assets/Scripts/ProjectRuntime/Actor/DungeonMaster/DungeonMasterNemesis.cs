@@ -148,6 +148,13 @@ namespace ProjectRuntime.Actor
         private GameplayPlayer _attachedOwner;
         private Rigidbody _rb;
 
+        // Owner-side lunge dash: the lunge drives the Nemesis forward locally (the owner is authoritative
+        // over its NetworkTransform), so the forward motion replicates to every peer like ordinary
+        // movement. Direction is locked to the facing at trigger time to match the corridor the server
+        // sweeps for damage in ServerApplyLunge.
+        private float _lungeDashTimeRemaining;
+        private Vector3 _lungeDashDirection;
+
         public uint OwnerNetId => ownerNetId;
         public NemesisStatus Status => _status;
         public bool IsActive => _status == NemesisStatus.Active;
@@ -249,8 +256,13 @@ namespace ProjectRuntime.Actor
         [Server]
         private IEnumerator ServerLungeRoutine()
         {
+            // Capture the corridor at the start: the owner dashes the Nemesis forward across the action
+            // window, so by the time damage resolves its transform has moved ~lungeDistance ahead.
+            // Sweeping from the pre-dash origin keeps the hit region on the path actually travelled.
+            Vector3 origin = transform.position;
+            Vector3 forward = NemesisRoot.forward;
             yield return new WaitForSeconds(lungeActionDuration);
-            ServerApplyLunge();
+            ServerApplyLunge(origin, forward);
             ServerFinishAttack(NemesisAttackType.Lunge);
         }
 
@@ -318,14 +330,12 @@ namespace ProjectRuntime.Actor
             }
         }
 
-        // Damage-checks a capsule swept along the Nemesis's current facing. The actual forward motion is
-        // left to the owner's client-authoritative movement (OwnerMove) rather than server-repositioning
-        // the Nemesis, so this doesn't fight that ownership model.
+        // Damage-checks a capsule swept along the lunge corridor. origin/forward are captured before the
+        // owner-driven forward dash (see ServerLungeRoutine and OwnerBeginLunge) so the swept region
+        // matches the path travelled instead of shooting forward from the Nemesis's post-dash position.
         [Server]
-        private void ServerApplyLunge()
+        private void ServerApplyLunge(Vector3 origin, Vector3 forward)
         {
-            Vector3 origin = transform.position;
-            Vector3 forward = NemesisRoot.forward;
             Vector3 end = origin + forward * lungeDistance;
             var hitPlayers = new HashSet<GameplayPlayer>();
 
@@ -443,6 +453,14 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
+            // A lunge in progress overrides steering input: dash straight along the locked lunge
+            // direction for the remainder of the action window.
+            if (_lungeDashTimeRemaining > 0f)
+            {
+                OwnerTickLungeDash();
+                return;
+            }
+
             Vector3 flat = Vector3.ProjectOnPlane(groundDir, Vector3.up);
             if (flat.sqrMagnitude > 1f)
             {
@@ -469,6 +487,44 @@ namespace ProjectRuntime.Actor
                     target,
                     turnSpeed * Time.fixedDeltaTime
                 );
+            }
+        }
+
+        // Called on the owning client the moment it fires a Lunge, kicking off the forward dash across
+        // the lunge's action window. Direction locks to the current facing so it lines up with the
+        // damage corridor the server sweeps (see ServerLungeRoutine).
+        public void OwnerBeginLunge()
+        {
+            if (!isOwned || _status != NemesisStatus.Active)
+            {
+                return;
+            }
+
+            Vector3 forward = Vector3.ProjectOnPlane(NemesisRoot.forward, Vector3.up);
+            if (forward.sqrMagnitude < 0.0001f)
+            {
+                return;
+            }
+
+            _lungeDashDirection = forward.normalized;
+            _lungeDashTimeRemaining = lungeActionDuration;
+        }
+
+        // Advances the forward dash one fixed step. Speed is sized so the dash covers lungeDistance over
+        // lungeActionDuration, ending roughly where the server's swept damage corridor ends.
+        private void OwnerTickLungeDash()
+        {
+            _lungeDashTimeRemaining -= Time.fixedDeltaTime;
+
+            float dashSpeed = lungeActionDuration > 0f ? lungeDistance / lungeActionDuration : 0f;
+            Vector3 delta = dashSpeed * Time.fixedDeltaTime * _lungeDashDirection;
+            if (Body != null)
+            {
+                Body.MovePosition(Body.position + delta);
+            }
+            else
+            {
+                transform.position += delta;
             }
         }
 

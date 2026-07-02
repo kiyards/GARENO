@@ -592,6 +592,7 @@ MonoBehaviour:
   clickPress: 0
   clickHold: 0
   clickRelease: 0
+  rightClickPress: 0
   interactPress: 0
   interactHold: 0
   interactRelease: 0

@@ -399,6 +399,15 @@ namespace ProjectRuntime.Actor.PlayerStates
                 return;
             }
 
+            // Drive the forward lunge dash locally: the owner is authoritative over the Nemesis's
+            // NetworkTransform, so kicking it off here (rather than waiting on server confirmation)
+            // keeps the motion in step with the client-authoritative movement model. The same
+            // IsAttackAvailable gate the server re-checks guards against firing without a real lunge.
+            if (type == NemesisAttackType.Lunge)
+            {
+                nemesis.OwnerBeginLunge();
+            }
+
             player.CmdNemesisAttack((int)type);
         }
 
