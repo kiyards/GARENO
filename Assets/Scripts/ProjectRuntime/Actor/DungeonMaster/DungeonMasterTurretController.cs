@@ -399,10 +399,14 @@ namespace ProjectRuntime.Actor
             }
 
             float heightOffset = 1f;
+            Vector3 flatForward = Vector3.ProjectOnPlane(player.transform.forward, Vector3.up);
+            Quaternion spawnRotation = flatForward.sqrMagnitude > 0.001f
+                ? Quaternion.LookRotation(flatForward, Vector3.up)
+                : Quaternion.identity;
             GameObject turretObject = Instantiate(
                 turretPrefab,
                 spawnPosition + Vector3.up * heightOffset,
-                Quaternion.identity
+                spawnRotation
             );
             var turret = turretObject.GetComponent<DungeonMasterTurret>();
             turret.ServerInitialize(player);

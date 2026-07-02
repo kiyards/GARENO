@@ -97,6 +97,17 @@ namespace ProjectRuntime.Actor
         }
         public void SetSpectateTarget(Transform target) => spectateTarget = target;
         public void ClearSpectateTarget() => spectateTarget = null;
+
+        public void LookTowards(Vector3 worldPosition)
+        {
+            if (!isLocalPlayer) return;
+            Vector3 origin = player != null ? player.transform.position : transform.position;
+            Vector3 dir = (worldPosition - origin).normalized;
+            if (dir.sqrMagnitude < 0.001f) return;
+            _yaw = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
+            _pitch = Mathf.Clamp(-Mathf.Asin(dir.y) * Mathf.Rad2Deg, pitchMin, pitchMax);
+        }
+
         public void SetCam(CharacterMode mode)
         {
             if (!isLocalPlayer) return;

@@ -255,6 +255,11 @@ namespace ProjectRuntime.Actor.PlayerStates
             if (player.cam != null)
             {
                 player.cam.SetCam(CharacterMode.AIM);
+                GameplayPlayer closest = FindClosestSurvivor(player.transform.position);
+                if (closest != null)
+                    player.cam.LookTowards(closest.transform.position);
+                else
+                    player.cam.LookTowards(player.transform.position + player.transform.forward);
                 player.Turret.UpdateAimFromCursor();
             }
         }
@@ -325,6 +330,24 @@ namespace ProjectRuntime.Actor.PlayerStates
             }
 
             player.transform.position = m_anchorPosition;
+        }
+
+        private GameplayPlayer FindClosestSurvivor(Vector3 from)
+        {
+            GameplayPlayer closest = null;
+            float closestSqDist = float.MaxValue;
+            foreach (var gp in UnityEngine.Object.FindObjectsByType<GameplayPlayer>(FindObjectsSortMode.None))
+            {
+                if (gp == player || gp.IsDungeonMaster || gp.IsGhost || gp.IsInactive)
+                    continue;
+                float sqDist = (gp.transform.position - from).sqrMagnitude;
+                if (sqDist < closestSqDist)
+                {
+                    closestSqDist = sqDist;
+                    closest = gp;
+                }
+            }
+            return closest;
         }
     }
 
