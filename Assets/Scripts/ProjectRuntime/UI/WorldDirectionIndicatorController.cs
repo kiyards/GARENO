@@ -154,7 +154,7 @@ namespace ProjectRuntime.UI
             {
                 foreach (var crystal in FindObjectsByType<CrystalObjective>(FindObjectsSortMode.None))
                 {
-                    if (crystal != null && !crystal.IsDespawned)
+                    if (crystal != null && !crystal.IsDespawned && crystal.IsGuidanceRevealed)
                     {
                         AddTarget(crystal.transform, "CRYSTAL", crystalColor, 200);
                     }

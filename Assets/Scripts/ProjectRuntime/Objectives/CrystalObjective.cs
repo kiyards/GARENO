@@ -16,10 +16,13 @@ namespace ProjectRuntime.Objectives
         [SyncVar(hook = nameof(OnDespawnedSynced))]
         private bool isDespawned;
 
+        [SyncVar]
+        private bool isGuidanceRevealed;
+
         private bool _reportedDestroyed;
-        private bool _reportedDamaged;
 
         public bool IsDespawned => isDespawned;
+        public bool IsGuidanceRevealed => isGuidanceRevealed;
 
         private void Awake()
         {
@@ -31,7 +34,7 @@ namespace ProjectRuntime.Objectives
             base.OnStartServer();
             CacheComponents();
             this._reportedDestroyed = false;
-            this._reportedDamaged = false;
+            this.isGuidanceRevealed = false;
 
             if (this.health != null)
             {
@@ -83,12 +86,12 @@ namespace ProjectRuntime.Objectives
         [Server]
         private void OnDamaged(float amount, uint sourceNetId, Vector3 hitPoint)
         {
-            if (this._reportedDamaged)
+            if (this.isGuidanceRevealed)
             {
                 return;
             }
 
-            this._reportedDamaged = true;
+            this.isGuidanceRevealed = true;
             BattleManager.Instance?.ServerReportCrystalDamaged(this);
         }
 
