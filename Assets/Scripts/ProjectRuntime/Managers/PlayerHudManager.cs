@@ -56,6 +56,9 @@ namespace ProjectRuntime.Managers
         private TextMeshProUGUI ManaTMP { get; set; }
 
         [field: SerializeField]
+        private TextMeshProUGUI DungeonMasterObjectiveTMP { get; set; }
+
+        [field: SerializeField]
         private GameObject TurretReticle { get; set; }
 
         [field: SerializeField]
@@ -547,6 +550,8 @@ namespace ProjectRuntime.Managers
 
         private void RefreshObjectiveText()
         {
+            this.RefreshDungeonMasterObjectiveText();
+
             if (this.ObjectiveTMP == null)
             {
                 return;
@@ -579,6 +584,24 @@ namespace ProjectRuntime.Managers
             };
 
             this.ObjectiveTMP.text = this.ComposeObjectiveText(objectiveText);
+        }
+
+        private void RefreshDungeonMasterObjectiveText()
+        {
+            if (this.DungeonMasterObjectiveTMP == null)
+            {
+                return;
+            }
+
+            var battleManager =
+                this.BoundBattleManager != null ? this.BoundBattleManager : BattleManager.Instance;
+
+            int required = battleManager != null ? battleManager.RequiredCrystals : 3;
+            int remaining = battleManager != null
+                ? Mathf.Max(0, required - battleManager.DestroyedCrystals)
+                : required;
+
+            this.DungeonMasterObjectiveTMP.text = $"Protect the Crystals ({remaining}/{required})";
         }
 
         private void RefreshTimerText()
