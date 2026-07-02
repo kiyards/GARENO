@@ -46,7 +46,7 @@ namespace ProjectRuntime.Actor
         public int MaxMana => this.maxMana;
 
         [Header("Nemesis")]
-        [SerializeField] private float nemesisBaseCountdown = 120f;
+        [SerializeField] private float nemesisBaseCountdown = 10f;
 
         // Server-authoritative network time at which the Nemesis becomes available. Shortened by
         // BattleManager on crystal/downed/kill events via ServerShortenNemesisCountdown.

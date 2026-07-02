@@ -15,22 +15,36 @@ namespace ProjectRuntime.Actor
         SHOULDER,
         AIM,
         SPECTATE,
-        TOP_DOWN
+        TOP_DOWN,
     }
 
     public class GameplayPlayer : NetworkStateMachine
     {
         [Header("Components")]
-        [field: SerializeField] public PlayerManager localManager { get; private set; }
-        [field: SerializeField] public PlayerInput input { get; private set; }
-        [field: SerializeField] public CameraController cam { get; private set; }
-        [field: SerializeField] public SphereGroundCheck groundCheck { get; private set; }
-        [field: SerializeField] public Rigidbody rb { get; private set; }
-        [field: SerializeField] public Collider col { get; private set; }
-        [field: SerializeField] public Health health { get; private set; }
+        [field: SerializeField]
+        public PlayerManager localManager { get; private set; }
+
+        [field: SerializeField]
+        public PlayerInput input { get; private set; }
+
+        [field: SerializeField]
+        public CameraController cam { get; private set; }
+
+        [field: SerializeField]
+        public SphereGroundCheck groundCheck { get; private set; }
+
+        [field: SerializeField]
+        public Rigidbody rb { get; private set; }
+
+        [field: SerializeField]
+        public Collider col { get; private set; }
+
+        [field: SerializeField]
+        public Health health { get; private set; }
 
         [Header("Anchors")]
-        [field: SerializeField] public Transform aimRig { get; private set; }
+        [field: SerializeField]
+        public Transform aimRig { get; private set; }
 
         [Header("Stats")]
         public float jumpForce = 2.5f;
@@ -43,35 +57,50 @@ namespace ProjectRuntime.Actor
         [SerializeField, FormerlySerializedAs("mastermindVerticalSpeed")]
         private float dungeonMasterVerticalSpeed = 12f;
 
-        [SerializeField] private float dungeonMasterMinY = 0f;
-        [SerializeField] private float dungeonMasterMaxY = 40f;
+        [SerializeField]
+        private float dungeonMasterMinY = 0f;
+
+        [SerializeField]
+        private float dungeonMasterMaxY = 40f;
 
         [Header("Effects")]
         private FlashEffect _flashEffect;
-        public void SetFlashEffect(FlashEffect effect) { _flashEffect = effect; }
+
+        public void SetFlashEffect(FlashEffect effect)
+        {
+            _flashEffect = effect;
+        }
 
         [Header("Revive")]
         // How long a downed survivor waits before auto-resolving if no teammate revives them.
-        [SerializeField] private float reviveWindow = 30f;
+        [SerializeField]
+        private float reviveWindow = 30f;
+
         // How long a teammate must hold Interact in range to revive a downed survivor.
-        [SerializeField] private float reviveHoldTime = 2f;
+        [SerializeField]
+        private float reviveHoldTime = 2f;
+
         // How close a teammate must be to revive a downed survivor.
-        [SerializeField] private float reviveRange = 2.5f;
+        [SerializeField]
+        private float reviveRange = 2.5f;
 
         // If no revive contact arrives for this long, the hold streak is considered broken (the
         // reviver left range or stopped holding Interact) and the next contact starts a fresh hold.
         private const float ReviveContactGrace = 0.25f;
 
         private double _downedStartTime;
+
         // Server time (NetworkTime.time) when the current continuous revive-hold streak began, and
         // the last time a valid revive contact arrived. Hold duration is measured in real time so it
         // can't be outrun by command batching/frame-rate.
         private double _reviveContactStartTime;
         private double _lastReviveContactTime;
         private uint _downedSourceNetId;
+
         // Guards against re-resolving while the downed→respawn state transition round-trips back from
         // the owning client (the state authority), which would otherwise re-fire every physics frame.
         private bool _downedResolved;
+
         // True once this survivor has permanently died and become a ghost. Set when the ghost body is
         // configured — which happens inside DeadState.OnEnter, before the state machine assigns
         // currentState — so ghost visibility can be applied without depending on that timing.
@@ -82,19 +111,19 @@ namespace ProjectRuntime.Actor
 
         private PlayerRole _currentRole = PlayerRole.Unassigned;
         private DungeonMasterCardManager _cardManager;
-        public DungeonMasterCardManager CardManager
-            => this._cardManager ??= this.GetComponent<DungeonMasterCardManager>();
+        public DungeonMasterCardManager CardManager =>
+            this._cardManager ??= this.GetComponent<DungeonMasterCardManager>();
         private DungeonMasterTurretController _turret;
-        public DungeonMasterTurretController Turret
-            => this._turret != null ? this._turret : this._turret = this.EnsureTurretController();
+        public DungeonMasterTurretController Turret =>
+            this._turret != null ? this._turret : this._turret = this.EnsureTurretController();
         private DungeonMasterTrapController _trapController;
-        public DungeonMasterTrapController TrapController
-            => this._trapController != null
+        public DungeonMasterTrapController TrapController =>
+            this._trapController != null
                 ? this._trapController
                 : this._trapController = this.EnsureTrapController();
         private DungeonMasterNemesisController _nemesis;
-        public DungeonMasterNemesisController Nemesis
-            => this._nemesis != null ? this._nemesis : this._nemesis = this.EnsureNemesisController();
+        public DungeonMasterNemesisController Nemesis =>
+            this._nemesis != null ? this._nemesis : this._nemesis = this.EnsureNemesisController();
         private Renderer[] _roleRenderers;
         private bool[] _roleRendererInitialEnabled;
         private bool _initialColliderEnabled;
@@ -107,18 +136,17 @@ namespace ProjectRuntime.Actor
         public bool IsBearTrapped => currentState is BearTrappedState;
         public bool IsDowned => currentState is DownedState;
         public bool IsDead => currentState is DeadState;
+
         // Set the moment a survivor becomes a ghost (before currentState flips), so it stays reliable
         // even mid-transition. Used to keep ghosts from blocking shots and to drive ghost visibility.
         public bool IsGhost => _isGhost;
         public bool IsDungeonMaster => _currentRole == PlayerRole.DungeonMaster;
         public float DungeonMasterHorizontalSpeed => dungeonMasterHorizontalSpeed;
         public float DungeonMasterVerticalSpeed => dungeonMasterVerticalSpeed;
-        public override NetworkBaseState StartState => IsDungeonMaster
-            ? new DungeonMasterMovementState(this)
-            : new BaseMovementState(this);
-        public override NetworkBaseState DefaultState => IsDungeonMaster
-            ? new DungeonMasterMovementState(this)
-            : new BaseMovementState(this);
+        public override NetworkBaseState StartState =>
+            IsDungeonMaster ? new DungeonMasterMovementState(this) : new BaseMovementState(this);
+        public override NetworkBaseState DefaultState =>
+            IsDungeonMaster ? new DungeonMasterMovementState(this) : new BaseMovementState(this);
 
         protected override void Awake()
         {
@@ -323,10 +351,7 @@ namespace ProjectRuntime.Actor
             _reviveContactStartTime = 0d;
             _downedResolved = false;
 
-            ServerForceState(new DownedState(this)
-            {
-                m_anchorPosition = transform.position
-            });
+            ServerForceState(new DownedState(this) { m_anchorPosition = transform.position });
 
             BattleManager.Instance?.ServerReportSurvivorDowned(localManager, sourceNetId);
             BattleManager.Instance?.ServerRefreshSurvivorDefeatState();
@@ -351,8 +376,10 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            if (BattleManager.Instance != null &&
-                BattleManager.Instance.CurrentRoundPhase == RoundPhase.RoundComplete)
+            if (
+                BattleManager.Instance != null
+                && BattleManager.Instance.CurrentRoundPhase == RoundPhase.RoundComplete
+            )
             {
                 return;
             }
@@ -387,8 +414,10 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            if ((target.transform.position - transform.position).sqrMagnitude >
-                reviveRange * reviveRange)
+            if (
+                (target.transform.position - transform.position).sqrMagnitude
+                > reviveRange * reviveRange
+            )
             {
                 return;
             }
@@ -547,8 +576,9 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            var door = doorIdentity.GetComponent<LockableDoor>()
-                       ?? doorIdentity.GetComponentInChildren<LockableDoor>();
+            var door =
+                doorIdentity.GetComponent<LockableDoor>()
+                ?? doorIdentity.GetComponentInChildren<LockableDoor>();
             door?.ServerTryLock(localManager);
         }
 
@@ -635,20 +665,28 @@ namespace ProjectRuntime.Actor
         }
 
         [TargetRpc]
-        private void TargetApplyFlash(NetworkConnectionToClient conn, Vector3 flashPosition, float maxDuration)
+        private void TargetApplyFlash(
+            NetworkConnectionToClient conn,
+            Vector3 flashPosition,
+            float maxDuration
+        )
         {
-            if (_flashEffect == null) return;
+            if (_flashEffect == null)
+                return;
             // Camera.main is valid here — TargetRpc only runs on the owning client.
-            Vector3 eyePos = Camera.main != null
-                ? Camera.main.transform.position
-                : transform.position + Vector3.up * 1.6f;
-            Vector3 camFwd = Camera.main != null ? Camera.main.transform.forward : transform.forward;
+            Vector3 eyePos =
+                Camera.main != null
+                    ? Camera.main.transform.position
+                    : transform.position + Vector3.up * 1.6f;
+            Vector3 camFwd =
+                Camera.main != null ? Camera.main.transform.forward : transform.forward;
             Vector3 dirToFlash = (flashPosition - eyePos).normalized;
             // dot=1: looking directly at flash (full blind). dot<=0: looking away (no effect).
             float dot = Vector3.Dot(camFwd, dirToFlash);
             float intensity = Mathf.Clamp01(Mathf.InverseLerp(0f, 1f, dot));
             float duration = maxDuration * intensity;
-            if (duration > 0.05f) _flashEffect.StartFlash(duration, intensity);
+            if (duration > 0.05f)
+                _flashEffect.StartFlash(duration, intensity);
         }
 
         [Server]
@@ -659,18 +697,22 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            ServerForceState(new BearTrappedState(this)
-            {
-                m_trapNetId = trap.netId,
-                m_anchorPosition = anchorPosition
-            });
+            ServerForceState(
+                new BearTrappedState(this)
+                {
+                    m_trapNetId = trap.netId,
+                    m_anchorPosition = anchorPosition,
+                }
+            );
         }
 
         [Server]
         public void ServerExitBearTrap(uint trapNetId)
         {
-            if (!(currentState is BearTrappedState trappedState) ||
-                trappedState.m_trapNetId != trapNetId)
+            if (
+                !(currentState is BearTrappedState trappedState)
+                || trappedState.m_trapNetId != trapNetId
+            )
             {
                 return;
             }
@@ -686,10 +728,7 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            var respawnState = new RespawnState(this)
-            {
-                m_respawnPos = respawnPos
-            };
+            var respawnState = new RespawnState(this) { m_respawnPos = respawnPos };
             QueueState(respawnState);
         }
 
@@ -701,10 +740,7 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            var deadState = new DeadState(this)
-            {
-                m_anchorPosition = deathPos
-            };
+            var deadState = new DeadState(this) { m_anchorPosition = deathPos };
             QueueState(deadState);
         }
 
@@ -744,7 +780,8 @@ namespace ProjectRuntime.Actor
             _roleRendererInitialEnabled = new bool[_roleRenderers.Length];
             for (var i = 0; i < _roleRenderers.Length; i++)
             {
-                _roleRendererInitialEnabled[i] = _roleRenderers[i] != null && _roleRenderers[i].enabled;
+                _roleRendererInitialEnabled[i] =
+                    _roleRenderers[i] != null && _roleRenderers[i].enabled;
             }
 
             _initialColliderEnabled = col == null || col.enabled;

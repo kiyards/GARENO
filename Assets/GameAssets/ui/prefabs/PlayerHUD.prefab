@@ -931,12 +931,14 @@ MonoBehaviour:
   <TurretLifetimeTMP>k__BackingField: {fileID: 1580651877865630344}
   <TurretDisassemblingParent>k__BackingField: {fileID: 689506935923600999}
   <TurretDisassemblingBarFill>k__BackingField: {fileID: 2018379331219658935}
+  <TurretEarlyCancelTMP>k__BackingField: {fileID: 1880683627421757950}
   <BearTrapEscapeParent>k__BackingField: {fileID: 8355326838281014552}
   <BearTrapEscapeBarFill>k__BackingField: {fileID: 3872115099947649167}
   <BearTrapEscapeBarTransform>k__BackingField: {fileID: 2258716839187056776}
   <BearTrapShakeMaxPixels>k__BackingField: 12
   <Minimap>k__BackingField: {fileID: 1000000000000000006}
   <DirectionIndicators>k__BackingField: {fileID: 0}
+  <NemesisParent>k__BackingField: {fileID: 4417047215418572654}
   <NemesisButton>k__BackingField: {fileID: 9183370530588096216}
   <NemesisCountdownTMP>k__BackingField: {fileID: 4274924874879692153}
   <NemesisDarkenOverlay>k__BackingField: {fileID: 4965362633045601533}
@@ -948,6 +950,7 @@ MonoBehaviour:
   - {fileID: 8579037645062150244}
   <NemesisControlCountdownTMP>k__BackingField: {fileID: 3578586233398444917}
   <NemesisControlLifetimeFill>k__BackingField: {fileID: 2270923340604708656}
+  <NemesisEarlyCancelTMP>k__BackingField: {fileID: 3210909324873958371}
   <FlashEffect>k__BackingField: {fileID: 971552068320990604}
 --- !u!114 &1000000000000000006
 MonoBehaviour:
@@ -2170,7 +2173,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6816078895063062011
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4950,7 +4953,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1903322390488965158
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4998,7 +5001,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Press 'Z' to end early
+  m_text: Press 'Q' to end early
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 66bb47530c0d2484296c3a82278cba78, type: 2}
   m_sharedMaterial: {fileID: -5945294357579237592, guid: 66bb47530c0d2484296c3a82278cba78, type: 2}
@@ -5805,8 +5808,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.8616352, g: 0.60059404, b: 0.0081285, a: 1}
   m_RaycastTarget: 1

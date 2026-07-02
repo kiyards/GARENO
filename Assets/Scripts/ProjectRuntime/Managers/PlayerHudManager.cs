@@ -92,6 +92,9 @@ namespace ProjectRuntime.Managers
         [field: SerializeField]
         private Image TurretDisassemblingBarFill { get; set; }
 
+        [field: SerializeField]
+        private TextMeshProUGUI TurretEarlyCancelTMP { get; set; }
+
         [field: SerializeField, Header("Bear Trap Escape")]
         private GameObject BearTrapEscapeParent { get; set; }
 
@@ -111,6 +114,9 @@ namespace ProjectRuntime.Managers
         private WorldDirectionIndicatorController DirectionIndicators { get; set; }
 
         [field: SerializeField, Header("Nemesis")]
+        private GameObject NemesisParent { get; set; }
+
+        [field: SerializeField]
         private Button NemesisButton { get; set; }
 
         [field: SerializeField]
@@ -137,6 +143,9 @@ namespace ProjectRuntime.Managers
 
         [field: SerializeField]
         private Image NemesisControlLifetimeFill { get; set; }
+
+        [field: SerializeField]
+        private TextMeshProUGUI NemesisEarlyCancelTMP { get; set; }
 
         [field: SerializeField, Header("Effects")]
         private FlashEffect FlashEffect { get; set; }
@@ -472,6 +481,10 @@ namespace ProjectRuntime.Managers
                 ManaBarParent.SetActive(!active);
             if (CardDescription != null)
                 CardDescription.SetActive(!active);
+            if (NemesisParent != null)
+                NemesisParent.SetActive(!active);
+            if (TurretEarlyCancelTMP != null)
+                TurretEarlyCancelTMP.gameObject.SetActive(active);
         }
 
         public void SetTurretAmmo(int current, int max)
@@ -605,6 +618,13 @@ namespace ProjectRuntime.Managers
                         && this.IsControllingNemesis
                 );
             }
+
+            if (this.NemesisEarlyCancelTMP != null)
+                this.NemesisEarlyCancelTMP.gameObject.SetActive(
+                    this.IsPlayerUiVisible
+                        && this.CurrentRole == PlayerRole.DungeonMaster
+                        && this.IsControllingNemesis
+                );
         }
 
         private void BindBattleManager(BattleManager battleManager)
