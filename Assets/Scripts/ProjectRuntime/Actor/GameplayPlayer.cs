@@ -126,6 +126,7 @@ namespace ProjectRuntime.Actor
             CacheRoleDefaults();
             Turret.SetVisible(false);
             TrapController.Initialize(this);
+            EnsureDoorInteractor();
         }
 
         public override void NetworkStart()
@@ -539,6 +540,19 @@ namespace ProjectRuntime.Actor
         }
 
         [Command]
+        public void CmdTryLockDoor(uint doorNetId)
+        {
+            if (!NetworkServer.spawned.TryGetValue(doorNetId, out NetworkIdentity doorIdentity))
+            {
+                return;
+            }
+
+            var door = doorIdentity.GetComponent<LockableDoor>()
+                       ?? doorIdentity.GetComponentInChildren<LockableDoor>();
+            door?.ServerTryLock(localManager);
+        }
+
+        [Command]
         public void CmdPlaceTrap(TrapType trapType, Vector3 position, Vector3 normal)
         {
             TrapController.ServerPlace(trapType, position, normal);
@@ -819,6 +833,17 @@ namespace ProjectRuntime.Actor
             var nemesisController = GetComponent<DungeonMasterNemesisController>();
             nemesisController.Initialize(this);
             return nemesisController;
+        }
+
+        private void EnsureDoorInteractor()
+        {
+            var doorInteractor = GetComponent<DungeonMasterDoorInteractor>();
+            if (doorInteractor == null)
+            {
+                doorInteractor = gameObject.AddComponent<DungeonMasterDoorInteractor>();
+            }
+
+            doorInteractor.Initialize(this);
         }
     }
 }

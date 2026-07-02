@@ -867,7 +867,7 @@ MonoBehaviour:
   firstPersonCam: {fileID: 3755640324832242681}
   aimOcclusionMask:
     serializedVersion: 2
-    m_Bits: 520
+    m_Bits: 1544
   aimTargetMask:
     serializedVersion: 2
     m_Bits: 64
@@ -1291,7 +1291,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   aimOcclusionMask:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 1544
   aimTargetMask:
     serializedVersion: 2
     m_Bits: 64
@@ -1459,7 +1459,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AimCollisionFilter:
     serializedVersion: 2
-    m_Bits: 521
+    m_Bits: 1545
   IgnoreTag: 
   AimDistance: 100
   NoiseCancellation: 1

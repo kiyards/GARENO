@@ -15,6 +15,7 @@ TagManager:
   - CameraCull
   - Ghost
   - Wall
+  - Door
   - 
   - 
   - 
