@@ -147,6 +147,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8416592947788306542}
   - component: {fileID: 1628117550281038932}
+  - component: {fileID: 1628117550281038933}
   m_Layer: 5
   m_Name: PlayerVitalsRT
   m_TagString: Untagged
@@ -476,6 +477,7 @@ GameObject:
   - component: {fileID: 1000000000000000003}
   - component: {fileID: 1000000000000000004}
   - component: {fileID: 1000000000000000005}
+  - component: {fileID: 1000000000000000006}
   m_Layer: 5
   m_Name: PlayerHUD
   m_TagString: Untagged
@@ -604,9 +606,46 @@ MonoBehaviour:
   <DungeonMasterHand>k__BackingField: {fileID: 71498284998745294}
   <ManaBarParent>k__BackingField: {fileID: 2950810506418172780}
   <CardDescription>k__BackingField: {fileID: 5645899791068076992}
+  <Minimap>k__BackingField: {fileID: 1000000000000000006}
   <NemesisButton>k__BackingField: {fileID: 7400954654184054614}
   <NemesisCountdownTMP>k__BackingField: {fileID: 1551330242231686719}
   <NemesisDarkenOverlay>k__BackingField: {fileID: 0}
+--- !u!114 &1000000000000000006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1000000000000000000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f8e9d0c1b2a4f6e8d0c2b4a6f8e0d1c, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  minimapRoot: {fileID: 0}
+  mapImage: {fileID: 0}
+  blipRoot: {fileID: 0}
+  minimapSize: {x: 220, y: 220}
+  minimapOffset: {x: 24, y: -24}
+  minimapCamera: {fileID: 0}
+  minimapCameraPrefab: {fileID: 910300000000000003, guid: 11b67b93d0d94f1ca53f785923dc9304, type: 3}
+  renderTextureSize: 512
+  cameraHeight: 120
+  boundsPadding: 1.08
+  fallbackBoundsCenter: {x: 0, y: 0, z: 0}
+  fallbackBoundsSize: {x: 140, y: 40, z: 140}
+  defaultBlipSize: 8
+  localPlayerBlipSize: 13
+  objectiveBlipSize: 10
+  localPlayerColor: {r: 0.35, g: 1, b: 0.45, a: 1}
+  survivorColor: {r: 0.35, g: 0.8, b: 1, a: 1}
+  dungeonMasterColor: {r: 1, g: 0.2, b: 0.22, a: 1}
+  crystalColor: {r: 0.7, g: 0.35, b: 1, a: 1}
+  extractionColor: {r: 0.1, g: 1, b: 0.25, a: 1}
+  enemyColor: {r: 1, g: 0.78, b: 0.16, a: 1}
+  trapColor: {r: 1, g: 0.95, b: 0.15, a: 1}
+  turretColor: {r: 1, g: 0.55, b: 0.1, a: 1}
+  targetRefreshInterval: 0.5
 --- !u!1 &1000000000001300000
 GameObject:
   m_ObjectHideFlags: 0

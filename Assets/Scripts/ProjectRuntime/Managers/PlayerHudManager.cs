@@ -88,6 +88,9 @@ namespace ProjectRuntime.Managers
         [field: SerializeField]
         private GameObject CardDescription { get; set; }
 
+        [field: SerializeField, Header("Minimap")]
+        private MinimapController Minimap { get; set; }
+
         [field: SerializeField, Header("Nemesis")]
         private Button NemesisButton { get; set; }
 
@@ -139,6 +142,7 @@ namespace ProjectRuntime.Managers
             }
 
             Instance = this;
+            this.EnsureMinimap();
             this.SetRole(PlayerRole.Unassigned);
         }
 
@@ -165,6 +169,7 @@ namespace ProjectRuntime.Managers
         public void SetLocalPlayer(PlayerManager player)
         {
             this.LocalPlayer = player;
+            this.EnsureMinimap()?.BindLocalPlayer(player);
             this.SetRole(player != null ? player.playerRole : PlayerRole.Unassigned);
             this.BindCombat(player != null ? player.player : null);
         }
@@ -317,6 +322,7 @@ namespace ProjectRuntime.Managers
         public void SetRole(PlayerRole role)
         {
             this.CurrentRole = role;
+            this.EnsureMinimap()?.SetRole(role);
 
             this.ApplyHudVisibility();
             this.BindBattleManager(BattleManager.Instance);
@@ -395,6 +401,8 @@ namespace ProjectRuntime.Managers
 
         private void ApplyHudVisibility()
         {
+            this.EnsureMinimap()?.SetHudVisible(this.IsPlayerUiVisible);
+
             if (
                 this.SharedUIParent == null
                 || this.SurvivorOnlyUIParent == null
@@ -424,12 +432,14 @@ namespace ProjectRuntime.Managers
 
             if (battleManager == null)
             {
+                this.EnsureMinimap()?.SetBattleManager(null);
                 this.RefreshTimerText();
                 this.RefreshObjectiveText();
                 return;
             }
 
             this.BoundBattleManager = battleManager;
+            this.EnsureMinimap()?.SetBattleManager(battleManager);
             this.BoundBattleManager.OnRoundStateChanged += this.OnRoundStateChanged;
             this.RefreshTimerText();
             this.RefreshObjectiveText();
@@ -579,6 +589,22 @@ namespace ProjectRuntime.Managers
         private static string GetRoleDisplayName(PlayerRole role)
         {
             return role == PlayerRole.DungeonMaster ? "Dungeon Master" : role.ToString();
+        }
+
+        private MinimapController EnsureMinimap()
+        {
+            if (this.Minimap != null)
+            {
+                return this.Minimap;
+            }
+
+            this.Minimap = GetComponentInChildren<MinimapController>(true);
+            if (this.Minimap == null)
+            {
+                this.Minimap = gameObject.AddComponent<MinimapController>();
+            }
+
+            return this.Minimap;
         }
     }
 }
