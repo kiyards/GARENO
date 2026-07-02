@@ -463,7 +463,7 @@ MonoBehaviour:
   fireCooldown: 0.18
   maxAmmo: 3
   slowOnHit: 1
-  slowAmount: 0.2
+  slowAmount: 0.4
   slowDuration: 5
   damagePopupPrefab: {fileID: 8824996141537536103, guid: 8f299d7398d8b7c48917932052b6b2f6, type: 3}
   lifetime: 20
