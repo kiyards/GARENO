@@ -87,6 +87,25 @@ namespace ProjectRuntime.Actor
             _activeNemesis.ServerBeginDisassemble();
         }
 
+        // Re-validates the request server-side before delegating to the entity — mirrors
+        // DungeonMasterTurretController.ServerFire's guard block.
+        [Server]
+        public void ServerExecuteAttack(NemesisAttackType type)
+        {
+            var player = ResolvePlayer();
+            if (
+                player == null
+                || !player.IsDungeonMaster
+                || !(player.currentState is DungeonMasterNemesisState)
+                || _activeNemesis == null
+            )
+            {
+                return;
+            }
+
+            _activeNemesis.ServerTryExecuteAttack(type);
+        }
+
         public void AttachSpawnedNemesis(DungeonMasterNemesis nemesis)
         {
             var player = ResolvePlayer();

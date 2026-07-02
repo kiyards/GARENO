@@ -255,9 +255,19 @@ namespace ProjectRuntime.UI
 
             if (screenPosition.z < 0f)
             {
-                Vector2 awayFromCenter = (Vector2)screenPosition - screenCenter;
-                Vector2 correctedPosition = screenCenter - awayFromCenter;
-                screenPosition = new Vector3(correctedPosition.x, correctedPosition.y, 0f);
+                Vector3 toTarget = worldPosition - worldCamera.transform.position;
+                Vector2 cameraPlaneDirection = new(
+                    Vector3.Dot(worldCamera.transform.right, toTarget),
+                    Vector3.Dot(worldCamera.transform.up, toTarget));
+
+                if (cameraPlaneDirection.sqrMagnitude < 0.0001f)
+                {
+                    cameraPlaneDirection = Vector2.down;
+                }
+
+                Vector2 edgePosition = screenCenter +
+                    cameraPlaneDirection.normalized * Mathf.Max(Screen.width, Screen.height);
+                screenPosition = new Vector3(edgePosition.x, edgePosition.y, 0f);
             }
 
             float padding = Mathf.Max(0f, edgePadding);

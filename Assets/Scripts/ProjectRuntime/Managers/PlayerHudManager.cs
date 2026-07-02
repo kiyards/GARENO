@@ -112,6 +112,11 @@ namespace ProjectRuntime.Managers
         [field: SerializeField]
         private GameObject NemesisControlUI { get; set; }
 
+        // Fixed 3-ability set (Punch/Lunge/Ground Slam), placed under NemesisControlUI. Each instance
+        // self-identifies via UIAttackDisplay.Type, so no dynamic slot-assignment is needed.
+        [field: SerializeField]
+        private UIAttackDisplay[] NemesisAttackDisplays { get; set; }
+
         private Health BoundHealth { get; set; }
         private PistolWeapon BoundWeapon { get; set; }
         private DungeonMasterCardManager BoundCardManager { get; set; }
@@ -177,6 +182,7 @@ namespace ProjectRuntime.Managers
             }
 
             this.RefreshNemesisSideCard();
+            this.RefreshNemesisAttackDisplays();
         }
 
         public void SetLocalPlayer(PlayerManager player)
@@ -344,6 +350,36 @@ namespace ProjectRuntime.Managers
             {
                 this._wasControllingNemesis = controlling;
                 this.ApplyHudVisibility();
+            }
+        }
+
+        private void RefreshNemesisAttackDisplays()
+        {
+            if (this.NemesisAttackDisplays == null || this.NemesisAttackDisplays.Length == 0)
+            {
+                return;
+            }
+
+            var nemesisController =
+                this.BoundGameplayPlayer != null ? this.BoundGameplayPlayer.Nemesis : null;
+            var nemesis = nemesisController != null ? nemesisController.ActiveNemesis : null;
+
+            foreach (var display in this.NemesisAttackDisplays)
+            {
+                if (display == null)
+                {
+                    continue;
+                }
+
+                if (nemesis == null)
+                {
+                    display.SetAvailable(false);
+                    display.SetCooldownFill(0f);
+                    continue;
+                }
+
+                display.SetCooldownFill(nemesis.GetAttackCooldownFraction(display.Type));
+                display.SetAvailable(nemesis.IsAttackAvailable(display.Type));
             }
         }
 

@@ -367,7 +367,39 @@ namespace ProjectRuntime.Actor.PlayerStates
             if (player.input.TurretExitPress && !player.Nemesis.IsDisassembling)
             {
                 player.CmdEndNemesisEarly();
+                return;
             }
+
+            var nemesis = player.Nemesis.ActiveNemesis;
+            if (nemesis == null)
+            {
+                return;
+            }
+
+            // Punch = left click, Lunge = right click, Ground Slam = E. Availability is checked against
+            // the already-replicated cooldown SyncVars — no client clock needed (see IsAttackAvailable).
+            if (player.input.ClickPress)
+            {
+                TryAttack(nemesis, NemesisAttackType.Punch);
+            }
+            else if (player.input.RightClickPress)
+            {
+                TryAttack(nemesis, NemesisAttackType.Lunge);
+            }
+            else if (player.input.InteractPress)
+            {
+                TryAttack(nemesis, NemesisAttackType.GroundSlam);
+            }
+        }
+
+        private void TryAttack(DungeonMasterNemesis nemesis, NemesisAttackType type)
+        {
+            if (!nemesis.IsAttackAvailable(type))
+            {
+                return;
+            }
+
+            player.CmdNemesisAttack((int)type);
         }
 
         public override void FixedUpdate()

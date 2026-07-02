@@ -1,6 +1,9 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using Mirror;
 using ProjectRuntime.Actor.PlayerStates;
+using ProjectRuntime.Network;
 using UnityEngine;
 
 namespace ProjectRuntime.Actor
@@ -9,6 +12,13 @@ namespace ProjectRuntime.Actor
     {
         Active,
         Disassembling,
+    }
+
+    public enum NemesisAttackType
+    {
+        Punch,
+        Lunge,
+        GroundSlam,
     }
 
     // The controllable Nemesis entity. Spawned by DungeonMasterNemesisController with the Dungeon
@@ -27,7 +37,7 @@ namespace ProjectRuntime.Actor
         private Transform nemesisRoot;
 
         [Header("Movement")]
-        // Speed as a multiple of the possessing player's survivor moveSpeed (GDD: 1.1x survivor).
+        // Speed as a multiple of the possessing player's survivor moveSpeed.
         // Resolved from the owner at runtime so it tracks the real survivor speed rather than a
         // hardcoded value that drifts when the designer retunes movement.
         [SerializeField]
@@ -47,6 +57,63 @@ namespace ProjectRuntime.Actor
         [SerializeField]
         private float disassemblyDuration = 0.5f;
 
+        [Header("Punch")]
+        [SerializeField]
+        private float punchDamage = 80f;
+
+        [SerializeField]
+        private float punchRadius = 2.5f;
+
+        [SerializeField]
+        private float punchCooldown = 1f;
+
+        [SerializeField]
+        private float punchActionDuration = 0.3f;
+
+        [Header("Lunge")]
+        [SerializeField]
+        private float lungeDamage = 50f;
+
+        [SerializeField]
+        private float lungeDistance = 6f;
+
+        [SerializeField]
+        private float lungeRadius = 1.5f;
+
+        [SerializeField]
+        private float lungeKnockbackForce = 8f;
+
+        [SerializeField]
+        private float lungeCooldown = 3f;
+
+        [SerializeField]
+        private float lungeActionDuration = 0.4f;
+
+        [Header("Ground Slam")]
+        [SerializeField]
+        private float groundSlamDamage = 50f;
+
+        [SerializeField]
+        private float groundSlamRadius = 5f;
+
+        [SerializeField]
+        private float groundSlamSlowAmount = 0.3f;
+
+        [SerializeField]
+        private float groundSlamSlowDuration = 2f;
+
+        [SerializeField]
+        private float groundSlamCooldown = 5f;
+
+        [SerializeField]
+        private float groundSlamActionDuration = 0.5f;
+
+        // Shared post-attack lock: briefly blocks every ability, regardless
+        // of which one was just used, before each ability's own longer cooldown takes over.
+        [Header("Attack Shared")]
+        [SerializeField]
+        private float characterCooldownDuration = 0.5f;
+
         [SyncVar(hook = nameof(OnOwnerNetIdChanged))]
         private uint ownerNetId;
 
@@ -56,6 +123,27 @@ namespace ProjectRuntime.Actor
         // Server time when the 60s lifetime expires. Exposed for the (later) Nemesis HUD lifetime bar.
         [SyncVar]
         private double _lifetimeEndNetworkTime;
+
+        // True for the brief window an attack's effect/action is resolving — all abilities are locked
+        // out while true.
+        [SyncVar]
+        private bool _isAttacking;
+
+        [SyncVar]
+        private double _characterCooldownEndNetworkTime;
+
+        [SyncVar]
+        private double _punchReadyNetworkTime;
+
+        [SyncVar]
+        private double _lungeReadyNetworkTime;
+
+        [SyncVar]
+        private double _groundSlamReadyNetworkTime;
+
+        // Fired on every peer after an attack resolves. No animator/VFX exists yet — this is the hook
+        // future art/audio work subscribes to; the HUD also uses it to refresh cooldown displays.
+        public event Action<NemesisAttackType> OnAttackPerformedEvent;
 
         private GameplayPlayer _attachedOwner;
         private Rigidbody _rb;
@@ -73,6 +161,239 @@ namespace ProjectRuntime.Actor
         // Seconds left on the 60s lifetime while active (0 once disassembling). Drives the HUD countdown.
         public float LifetimeRemainingSeconds =>
             IsActive ? Mathf.Max(0f, (float)(_lifetimeEndNetworkTime - NetworkTime.time)) : 0f;
+
+        public bool IsAttacking => _isAttacking;
+        public bool IsCharacterCoolingDown => NetworkTime.time < _characterCooldownEndNetworkTime;
+
+        // Every peer already has these SyncVars replicated (no client-side prediction clock needed,
+        // unlike the Turret's high-frequency fire cooldown), so the owner can gate input locally with
+        // the same check the server re-validates.
+        public bool IsAttackAvailable(NemesisAttackType type)
+        {
+            if (_status != NemesisStatus.Active || _isAttacking || IsCharacterCoolingDown)
+            {
+                return false;
+            }
+
+            return NetworkTime.time >= GetAttackReadyTime(type);
+        }
+
+        // 0 = just used (full cooldown remaining) → 1 = ready. Drives the HUD's per-ability radial fill.
+        public float GetAttackCooldownFraction(NemesisAttackType type)
+        {
+            float duration = GetAttackCooldownDuration(type);
+            if (duration <= 0f)
+            {
+                return 1f;
+            }
+
+            double remaining = GetAttackReadyTime(type) - NetworkTime.time;
+            return 1f - Mathf.Clamp01((float)(remaining / duration));
+        }
+
+        public float GetAttackCooldownDuration(NemesisAttackType type)
+        {
+            return type switch
+            {
+                NemesisAttackType.Punch => punchCooldown,
+                NemesisAttackType.Lunge => lungeCooldown,
+                NemesisAttackType.GroundSlam => groundSlamCooldown,
+                _ => 0f,
+            };
+        }
+
+        private double GetAttackReadyTime(NemesisAttackType type)
+        {
+            return type switch
+            {
+                NemesisAttackType.Punch => _punchReadyNetworkTime,
+                NemesisAttackType.Lunge => _lungeReadyNetworkTime,
+                NemesisAttackType.GroundSlam => _groundSlamReadyNetworkTime,
+                _ => 0d,
+            };
+        }
+
+        [Server]
+        public bool ServerTryExecuteAttack(NemesisAttackType type)
+        {
+            if (!IsAttackAvailable(type))
+            {
+                return false;
+            }
+
+            _isAttacking = true;
+            switch (type)
+            {
+                case NemesisAttackType.Punch:
+                    StartCoroutine(ServerPunchRoutine());
+                    break;
+                case NemesisAttackType.Lunge:
+                    StartCoroutine(ServerLungeRoutine());
+                    break;
+                case NemesisAttackType.GroundSlam:
+                    StartCoroutine(ServerGroundSlamRoutine());
+                    break;
+            }
+
+            return true;
+        }
+
+        [Server]
+        private IEnumerator ServerPunchRoutine()
+        {
+            yield return new WaitForSeconds(punchActionDuration);
+            ServerApplyPunch();
+            ServerFinishAttack(NemesisAttackType.Punch);
+        }
+
+        [Server]
+        private IEnumerator ServerLungeRoutine()
+        {
+            yield return new WaitForSeconds(lungeActionDuration);
+            ServerApplyLunge();
+            ServerFinishAttack(NemesisAttackType.Lunge);
+        }
+
+        [Server]
+        private IEnumerator ServerGroundSlamRoutine()
+        {
+            yield return new WaitForSeconds(groundSlamActionDuration);
+            ServerApplyGroundSlam();
+            ServerFinishAttack(NemesisAttackType.GroundSlam);
+        }
+
+        [Server]
+        private void ServerFinishAttack(NemesisAttackType type)
+        {
+            _isAttacking = false;
+            _characterCooldownEndNetworkTime = NetworkTime.time + characterCooldownDuration;
+
+            double readyTime = NetworkTime.time + GetAttackCooldownDuration(type);
+            switch (type)
+            {
+                case NemesisAttackType.Punch:
+                    _punchReadyNetworkTime = readyTime;
+                    break;
+                case NemesisAttackType.Lunge:
+                    _lungeReadyNetworkTime = readyTime;
+                    break;
+                case NemesisAttackType.GroundSlam:
+                    _groundSlamReadyNetworkTime = readyTime;
+                    break;
+            }
+
+            RpcAttackPerformed((int)type);
+        }
+
+        [ClientRpc]
+        private void RpcAttackPerformed(int attackType)
+        {
+            OnAttackPerformedEvent?.Invoke((NemesisAttackType)attackType);
+        }
+
+        // Close-range AOE centered on the Nemesis.
+        [Server]
+        private void ServerApplyPunch()
+        {
+            Vector3 center = transform.position;
+            var hitPlayers = new HashSet<GameplayPlayer>();
+
+            foreach (
+                Collider col in Physics.OverlapSphere(
+                    center,
+                    punchRadius,
+                    Physics.AllLayers,
+                    QueryTriggerInteraction.Ignore
+                )
+            )
+            {
+                GameplayPlayer target = col.GetComponentInParent<GameplayPlayer>();
+                if (target == null || hitPlayers.Contains(target) || !IsValidSurvivorTarget(target))
+                {
+                    continue;
+                }
+
+                hitPlayers.Add(target);
+                target.health.ServerTakeDamage(punchDamage, netId, center);
+            }
+        }
+
+        // Damage-checks a capsule swept along the Nemesis's current facing. The actual forward motion is
+        // left to the owner's client-authoritative movement (OwnerMove) rather than server-repositioning
+        // the Nemesis, so this doesn't fight that ownership model.
+        [Server]
+        private void ServerApplyLunge()
+        {
+            Vector3 origin = transform.position;
+            Vector3 forward = NemesisRoot.forward;
+            Vector3 end = origin + forward * lungeDistance;
+            var hitPlayers = new HashSet<GameplayPlayer>();
+
+            foreach (
+                Collider col in Physics.OverlapCapsule(
+                    origin,
+                    end,
+                    lungeRadius,
+                    Physics.AllLayers,
+                    QueryTriggerInteraction.Ignore
+                )
+            )
+            {
+                GameplayPlayer target = col.GetComponentInParent<GameplayPlayer>();
+                if (target == null || hitPlayers.Contains(target) || !IsValidSurvivorTarget(target))
+                {
+                    continue;
+                }
+
+                hitPlayers.Add(target);
+                target.health.ServerTakeDamage(lungeDamage, netId, target.transform.position);
+                target.ServerApplyKnockback(forward * lungeKnockbackForce);
+            }
+        }
+
+        // AOE centered on the Nemesis.
+        [Server]
+        private void ServerApplyGroundSlam()
+        {
+            Vector3 center = transform.position;
+            var hitPlayers = new HashSet<GameplayPlayer>();
+
+            foreach (
+                Collider col in Physics.OverlapSphere(
+                    center,
+                    groundSlamRadius,
+                    Physics.AllLayers,
+                    QueryTriggerInteraction.Ignore
+                )
+            )
+            {
+                GameplayPlayer target = col.GetComponentInParent<GameplayPlayer>();
+                if (target == null || hitPlayers.Contains(target) || !IsValidSurvivorTarget(target))
+                {
+                    continue;
+                }
+
+                hitPlayers.Add(target);
+                target.health.ServerTakeDamage(groundSlamDamage, netId, center);
+                target.ServerApplySlow(groundSlamSlowAmount, groundSlamSlowDuration);
+            }
+        }
+
+        // Mirrors C4Trap.IsValidSurvivor — the Nemesis only ever damages living Survivors.
+        private static bool IsValidSurvivorTarget(GameplayPlayer player)
+        {
+            if (player == null || player.IsDungeonMaster || player.IsInactive)
+            {
+                return false;
+            }
+
+            if (player.localManager == null || player.localManager.playerRole != PlayerRole.Survivor)
+            {
+                return false;
+            }
+
+            return player.health != null && player.health.IsAlive;
+        }
 
         private Rigidbody Body => _rb != null ? _rb : _rb = GetComponent<Rigidbody>();
 

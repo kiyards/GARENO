@@ -42,6 +42,11 @@ namespace ProjectRuntime.Actor
         [SyncVar]
         public bool clickRelease;
 
+        // Right mouse button, synced (unlike the card-placement-cancel right-click read, which is
+        // local-only and doesn't need server validation). Currently used to trigger Nemesis Lunge.
+        [SyncVar]
+        public bool rightClickPress;
+
         [SyncVar]
         public bool interactPress;
 
@@ -63,6 +68,7 @@ namespace ProjectRuntime.Actor
         public bool ClickPress => clickPress;
         public bool ClickHold => clickHold;
         public bool ClickRelease => clickRelease;
+        public bool RightClickPress => rightClickPress;
         public bool InteractPress => interactPress;
         public bool InteractHold => interactHold;
         public bool InteractRelease => interactRelease;
@@ -118,6 +124,7 @@ namespace ProjectRuntime.Actor
             clickPress = clickInput != null && clickInput.WasPressedThisFrame();
             clickHold = clickInput != null && clickInput.IsPressed();
             clickRelease = clickInput != null && clickInput.WasReleasedThisFrame();
+            rightClickPress = Mouse.current != null && Mouse.current.rightButton.wasPressedThisFrame;
 
             interactPress = interactInput != null && interactInput.WasPressedThisFrame();
             interactHold = interactInput != null && interactInput.IsPressed();
@@ -154,6 +161,7 @@ namespace ProjectRuntime.Actor
             clickPress = false;
             clickHold = false;
             clickRelease = false;
+            rightClickPress = false;
             interactPress = false;
             interactHold = false;
             interactRelease = false;

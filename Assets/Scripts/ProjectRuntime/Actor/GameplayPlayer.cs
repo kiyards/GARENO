@@ -528,6 +528,12 @@ namespace ProjectRuntime.Actor
         }
 
         [Command]
+        public void CmdNemesisAttack(int attackType)
+        {
+            Nemesis.ServerExecuteAttack((NemesisAttackType)attackType);
+        }
+
+        [Command]
         public void CmdPlaceTrap(TrapType trapType, Vector3 position, Vector3 normal)
         {
             TrapController.ServerPlace(trapType, position, normal);
