@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 880105130100000002}
   - component: {fileID: 880105130100000003}
   - component: {fileID: 880105130100000004}
+  - component: {fileID: 880105130100000005}
   m_Layer: 0
   m_Name: ExtractionZone
   m_TagString: Untagged
@@ -64,7 +65,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2e5b0f9c18f94f03a8f5cde6907b514a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   extractionCollider: {fileID: 880105130100000003}
   visualRoot: {fileID: 0}
+--- !u!114 &880105130100000005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 880105130100000001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9ad93541e43c4a409e6bb7bff3f60dd, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  unavailableWallColor: {r: 2, g: 0, b: 0, a: 1}
+  availableWallColor: {r: 0, g: 2, b: 0, a: 1}
+  wallHeight: 1
+  bottomAlpha: 0.6
+  topAlpha: 0
+  fadePower: 4
+  verticalSegments: 10
