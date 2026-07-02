@@ -78,6 +78,10 @@ namespace ProjectRuntime.Actor
         public event Action OnHandChangedEvent;
         public event Action OnPlacementStateChangedEvent;
 
+        [Header("Debug")]
+        [SerializeField] private bool _debugForceCard;
+        [SerializeField] private string _debugForcedCardId;
+
         // Server-only deck state. Stores card ids; null/empty marks an empty hand slot.
         private readonly List<string> _hand = new();
         private readonly Queue<string> _deck = new();
@@ -825,6 +829,11 @@ namespace ProjectRuntime.Actor
         [Server]
         private string ServerDrawCardId()
         {
+            if (this._debugForceCard && !string.IsNullOrEmpty(this._debugForcedCardId))
+            {
+                return this._debugForcedCardId;
+            }
+
             if (this._deck.Count == 0)
             {
                 this.ServerReshuffleUsedIntoDeck();
