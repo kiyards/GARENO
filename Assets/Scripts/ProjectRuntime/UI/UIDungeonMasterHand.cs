@@ -1,6 +1,7 @@
 using ProjectRuntime.Actor;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace ProjectRuntime.UI
 {
@@ -16,6 +17,8 @@ namespace ProjectRuntime.UI
         [SerializeField] private UICardSlot[] slots;
         [SerializeField] private GameObject handRoot;
         [SerializeField] private TextMeshProUGUI selectedCardNameText;
+        [SerializeField] private GameObject placementChargeBarParent;
+        [SerializeField] private Image placementChargeFill;
         [SerializeField] private GameObject cardDescriptionParent;
 
         private DungeonMasterCardManager _cardManager;
@@ -64,6 +67,7 @@ namespace ProjectRuntime.UI
             this._cardManager = null;
             this._hoveredSlotIndex = -1;
             this.SetSelectedCardName(null);
+            this.SetPlacementChargeBar(false, 0f);
             this.SetDescription(null);
         }
 
@@ -125,6 +129,7 @@ namespace ProjectRuntime.UI
             if (this._cardManager == null)
             {
                 this.SetSelectedCardName(null);
+                this.SetPlacementChargeBar(false, 0f);
                 this.SetHoverCardInfo(null, null);
                 return;
             }
@@ -132,6 +137,7 @@ namespace ProjectRuntime.UI
             if (!this._cardManager.IsPlacementModeActive)
             {
                 this.SetSelectedCardName(null);
+                this.SetPlacementChargeBar(false, 0f);
                 this.RefreshHoverDescription();
                 return;
             }
@@ -139,10 +145,10 @@ namespace ProjectRuntime.UI
             // The Nemesis side-card has no hand-card id, so label it directly.
             if (this._cardManager.IsNemesisPlacementActive)
             {
-                string nemesisText = this._cardManager.IsPlacementCharging
-                    ? $"Nemesis {Mathf.RoundToInt(this._cardManager.PlacementChargeProgress * 100f)}%"
-                    : "Nemesis";
-                this.SetSelectedCardName(nemesisText);
+                this.SetSelectedCardName("Nemesis");
+                this.SetPlacementChargeBar(
+                    this._cardManager.IsPlacementCharging,
+                    this._cardManager.PlacementChargeProgress);
                 this.SetHoverCardInfo(null, null);
                 return;
             }
@@ -151,15 +157,16 @@ namespace ProjectRuntime.UI
             if (data == null)
             {
                 this.SetSelectedCardName(null);
+                this.SetPlacementChargeBar(false, 0f);
                 this.SetHoverCardInfo(null, null);
                 return;
             }
 
             var card = data.Value;
-            string selectedText = this._cardManager.IsPlacementCharging
-                ? $"{card.DisplayName} {Mathf.RoundToInt(this._cardManager.PlacementChargeProgress * 100f)}%"
-                : card.DisplayName;
-            this.SetSelectedCardName(selectedText);
+            this.SetSelectedCardName(card.DisplayName);
+            this.SetPlacementChargeBar(
+                this._cardManager.IsPlacementCharging,
+                this._cardManager.PlacementChargeProgress);
             this.SetHoverCardInfo(null, null);
         }
 
@@ -270,6 +277,12 @@ namespace ProjectRuntime.UI
 
             this.selectedCardNameText.text = text ?? string.Empty;
             this.selectedCardNameText.gameObject.SetActive(!string.IsNullOrEmpty(text));
+        }
+
+        private void SetPlacementChargeBar(bool isVisible, float fillAmount)
+        {
+            this.placementChargeBarParent.SetActive(isVisible);
+            this.placementChargeFill.fillAmount = Mathf.Clamp01(fillAmount);
         }
 
         private void SetDescription(string text)
