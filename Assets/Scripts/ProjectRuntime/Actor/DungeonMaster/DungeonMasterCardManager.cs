@@ -68,6 +68,12 @@ namespace ProjectRuntime.Actor
         public bool NemesisActive => this._nemesisActive;
         public float NemesisRemainingSeconds =>
             (float)Math.Max(0d, this._nemesisReadyNetworkTime - NetworkTime.time);
+        // 0 when the cooldown just started → 1 at READY. Approximated against the base countdown, so
+        // event-driven shortening reads as the meter jumping forward. Drives the HUD charge fill.
+        public float NemesisReadyProgress =>
+            this.nemesisBaseCountdown <= 0f
+                ? 1f
+                : Mathf.Clamp01(1f - this.NemesisRemainingSeconds / this.nemesisBaseCountdown);
 
         // Replicated mirror of the server-authoritative _hand so the owning Dungeon Master's HUD
         // can render the 4 cards. Server writes it; clients read it. A null/empty entry marks an
@@ -103,6 +109,9 @@ namespace ProjectRuntime.Actor
         private int _placementStartedFrame = -1;
         private int _committedHandSlot = -1;
         private string _committedCardId;
+        // True while the current placement targeting is for the Nemesis side-card (free, no hand slot)
+        // rather than a hand card. Distinguishes the two paths in the shared placement flow.
+        private bool _nemesisPlacementPending;
 
         public DungeonMasterCardPlacementState PlacementState => this._placementState;
         public bool IsPlacementModeActive =>
@@ -110,6 +119,9 @@ namespace ProjectRuntime.Actor
         public bool IsPlacementCharging =>
             this._placementState == DungeonMasterCardPlacementState.ChargingPlacement;
         public string SelectedCardId => this._selectedCardId;
+        // True while the active placement targeting is for the Nemesis side-card (no hand card, so
+        // SelectedCardId is null). Lets the hand UI label the placement "Nemesis".
+        public bool IsNemesisPlacementActive => this._nemesisPlacementPending;
         public float PlacementChargeProgress =>
             this.IsPlacementCharging && this.placementChargeDuration > 0f
                 ? Mathf.Clamp01(
@@ -193,18 +205,50 @@ namespace ProjectRuntime.Actor
             }
         }
 
-        // Flips the Nemesis to "used" so the side-card locks out (placeholder until proper Nemesis enemy is implemented)
+        // Spawns the Nemesis at the placement-confirmed position and locks out the side-card for the
+        // rest of the match. Only flips to "active" once the entity actually spawns.
         [Server]
-        public bool ServerTryActivateNemesis()
+        public bool ServerTryActivateNemesis(Vector3 position)
         {
             if (!this.Player.IsDungeonMaster) return false;
             if (!this._nemesisAvailable || this._nemesisActive) return false;
 
+            if (!this.Player.Nemesis.ServerSpawnNemesis(position))
+            {
+                return false;
+            }
+
             this._nemesisActive = true;
             this._nemesisAvailable = false;
-            Debug.Log(
-                "[DungeonMasterCardManager] Nemesis activated (Task 1 stub — entity spawn lands in Task 2).");
             return true;
+        }
+
+        // Begins placement targeting for the Nemesis side-card. Reuses the card placement flow (green
+        // indicator, 1s charge, right-click cancel), but the Nemesis costs no mana and has no hand slot.
+        // Called by the HUD when the (available) Nemesis button is clicked.
+        public void TryBeginNemesisPlacement()
+        {
+            if (!this.isLocalPlayer || !this.CanUseLocalPlacement())
+            {
+                return;
+            }
+
+            if (!this._nemesisAvailable || this._nemesisActive)
+            {
+                return;
+            }
+
+            this.CancelPlacement();
+
+            this._nemesisPlacementPending = true;
+            this._selectedHandSlot = -1;
+            this._selectedCardId = null;
+            this._placementState = DungeonMasterCardPlacementState.SelectingPlacement;
+            this._placementStartedFrame = Time.frameCount;
+            this._hasPlacementPoint = false;
+            this.EnsurePlacementIndicator();
+            this.SetPlacementIndicatorVisible(false);
+            this.NotifyPlacementStateChanged();
         }
 
         private void OnNemesisReadyTimeChanged(double oldVal, double newVal)
@@ -383,7 +427,12 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            this.CmdCommitCardCharge(this._selectedHandSlot, this._selectedCardId);
+            // The Nemesis is free, so there's no mana to commit — only hand cards commit a charge.
+            if (!this._nemesisPlacementPending)
+            {
+                this.CmdCommitCardCharge(this._selectedHandSlot, this._selectedCardId);
+            }
+
             this._placementState = DungeonMasterCardPlacementState.ChargingPlacement;
             this._placementChargeStartTime = Time.time;
             this.UpdateChargingIndicator();
@@ -425,6 +474,14 @@ namespace ProjectRuntime.Actor
 
         private void PlayChargedCardAtPlacementPoint()
         {
+            if (this._nemesisPlacementPending)
+            {
+                Vector3 nemesisPosition = this._placementPosition;
+                this.CancelPlacement();
+                this.Player.CmdActivateNemesisAt(nemesisPosition);
+                return;
+            }
+
             int handSlot = this._selectedHandSlot;
             string cardId = this._selectedCardId;
             Vector3 groundPosition = this._placementPosition;
@@ -438,11 +495,13 @@ namespace ProjectRuntime.Actor
                 this._placementState == DungeonMasterCardPlacementState.Idle
                 && this._selectedHandSlot < 0
                 && string.IsNullOrEmpty(this._selectedCardId)
+                && !this._nemesisPlacementPending
             )
             {
                 return;
             }
 
+            this._nemesisPlacementPending = false;
             this._selectedHandSlot = -1;
             this._selectedCardId = null;
             this._placementState = DungeonMasterCardPlacementState.Idle;

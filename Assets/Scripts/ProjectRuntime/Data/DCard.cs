@@ -21,6 +21,13 @@ public class DCard : ScriptableObject, IDataImport
 
     public static CardData? GetDataById(string id)
     {
+        // A null/empty id is a valid "no card" query (empty hand slots and the Nemesis side-card,
+        // which has no hand-card id, both pass null) — the dictionary would throw on a null key.
+        if (string.IsNullOrEmpty(id))
+        {
+            return null;
+        }
+
         EnsureLoaded();
         return s_cachedDataDict.TryGetValue(id, out var result) ? result : null;
     }

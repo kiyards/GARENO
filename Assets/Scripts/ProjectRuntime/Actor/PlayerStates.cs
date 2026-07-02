@@ -328,6 +328,92 @@ namespace ProjectRuntime.Actor.PlayerStates
         }
     }
 
+    // The Dungeon Master possessing the Nemesis. Mirrors DungeonMasterTurretState's control-handover
+    // shape, but the possessed entity moves: this state drives the (client-owned) Nemesis from the DM's
+    // camera-relative input and frames it in a 3rd-person (SHOULDER) camera via the spectate target.
+    // The state has no duration — the Nemesis entity's own 60s lifetime (or an early end) destroys it,
+    // and DungeonMasterNemesisController.DetachSpawnedNemesis queues the return to placement.
+    public class DungeonMasterNemesisState : PlayerState
+    {
+        public DungeonMasterNemesisState(GameplayPlayer sm)
+            : base(sm) { }
+
+        public override void OnEnter()
+        {
+            base.OnEnter();
+            if (!player.isLocalPlayer || player.cam == null)
+            {
+                return;
+            }
+
+            var nemesis = player.Nemesis.ActiveNemesis;
+            if (nemesis != null)
+            {
+                player.cam.SetSpectateTarget(nemesis.NemesisRoot);
+            }
+
+            player.cam.SetCam(CharacterMode.SHOULDER);
+        }
+
+        public override void Update()
+        {
+            base.Update();
+            if (!player.isLocalPlayer || player.input == null)
+            {
+                return;
+            }
+
+            // Early end reuses the turret's exit key (T).
+            if (player.input.TurretExitPress && !player.Nemesis.IsDisassembling)
+            {
+                player.CmdEndNemesisEarly();
+            }
+        }
+
+        public override void FixedUpdate()
+        {
+            base.FixedUpdate();
+            if (!player.isLocalPlayer)
+            {
+                return;
+            }
+
+            var nemesis = player.Nemesis.ActiveNemesis;
+            if (nemesis == null)
+            {
+                return;
+            }
+
+            Vector3 input = player.input != null ? player.input.moveVec : Vector3.zero;
+            nemesis.OwnerMove(GetCameraRelativeMoveDir(input));
+        }
+
+        public override void OnExit()
+        {
+            base.OnExit();
+            if (!player.isLocalPlayer || player.cam == null)
+            {
+                return;
+            }
+
+            player.cam.ClearSpectateTarget();
+            player.cam.SetCam(CharacterMode.TOP_DOWN);
+        }
+
+        private Vector3 GetCameraRelativeMoveDir(Vector3 inputVec)
+        {
+            if (player.cam == null)
+            {
+                return new Vector3(inputVec.x, 0f, inputVec.z);
+            }
+
+            Vector3 forward =
+                Quaternion.Euler(0f, player.cam.transform.eulerAngles.y, 0f) * Vector3.forward;
+            Vector3 right = Vector3.Cross(Vector3.up, forward).normalized;
+            return Vector3.ClampMagnitude(right * inputVec.x + forward * inputVec.z, 1f);
+        }
+    }
+
     public abstract class BaseInactiveState : PlayerState
     {
         protected BaseInactiveState(GameplayPlayer sm)

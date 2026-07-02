@@ -100,6 +100,12 @@ namespace ProjectRuntime.Managers
         [field: SerializeField]
         private GameObject NemesisDarkenOverlay { get; set; }
 
+        [field: SerializeField]
+        private Image NemesisChargeFill { get; set; }
+
+        [field: SerializeField]
+        private GameObject NemesisControlUI { get; set; }
+
         private Health BoundHealth { get; set; }
         private PistolWeapon BoundWeapon { get; set; }
         private DungeonMasterCardManager BoundCardManager { get; set; }
@@ -245,9 +251,11 @@ namespace ProjectRuntime.Managers
 
         private void OnNemesisButtonClicked()
         {
-            if (this.BoundGameplayPlayer != null)
+            // Clicking the side-card begins client-side placement targeting; the Nemesis spawns once the
+            // Dungeon Master confirms a ground position (see DungeonMasterCardManager.TryBeginNemesisPlacement).
+            if (this.BoundCardManager != null)
             {
-                this.BoundGameplayPlayer.CmdActivateNemesis();
+                this.BoundCardManager.TryBeginNemesisPlacement();
             }
         }
 
@@ -262,6 +270,12 @@ namespace ProjectRuntime.Managers
             bool available = this.BoundCardManager.NemesisAvailable;
             bool active = this.BoundCardManager.NemesisActive;
 
+            // While the Nemesis entity exists the DM is actively controlling it; once it's gone
+            // (lifetime expired or ended early) the one-use side-card is spent.
+            var nemesisController =
+                this.BoundGameplayPlayer != null ? this.BoundGameplayPlayer.Nemesis : null;
+            bool controlling = nemesisController != null && nemesisController.HasActiveNemesis;
+
             this.NemesisButton.interactable = available && !active;
 
             if (this.NemesisDarkenOverlay != null)
@@ -271,9 +285,14 @@ namespace ProjectRuntime.Managers
 
             if (this.NemesisCountdownTMP != null)
             {
-                if (active)
+                if (controlling)
                 {
-                    this.NemesisCountdownTMP.text = "ACTIVE";
+                    int lifeSeconds = Mathf.CeilToInt(nemesisController.ActiveLifetimeRemaining);
+                    this.NemesisCountdownTMP.text = $"{lifeSeconds / 60}:{lifeSeconds % 60:00}";
+                }
+                else if (active)
+                {
+                    this.NemesisCountdownTMP.text = "USED";
                 }
                 else if (available)
                 {
@@ -284,6 +303,39 @@ namespace ProjectRuntime.Managers
                     int seconds = Mathf.CeilToInt(this.BoundCardManager.NemesisRemainingSeconds);
                     this.NemesisCountdownTMP.text = $"{seconds / 60}:{seconds % 60:00}";
                 }
+            }
+
+            // Charge fill: fills toward READY while charging, sits full when READY, drains over the
+            // lifetime while controlling, and empties once spent.
+            if (this.NemesisChargeFill != null)
+            {
+                float fill;
+                if (controlling)
+                {
+                    fill = nemesisController.ActiveLifetimeFraction;
+                }
+                else if (active)
+                {
+                    fill = 0f;
+                }
+                else if (available)
+                {
+                    fill = 1f;
+                }
+                else
+                {
+                    fill = this.BoundCardManager.NemesisReadyProgress;
+                }
+
+                this.NemesisChargeFill.fillAmount = fill;
+            }
+
+            // Entering/leaving Nemesis control flips whether the normal DM HUD is shown. Re-apply HUD
+            // visibility only on the transition so it isn't fought every frame.
+            if (controlling != this._wasControllingNemesis)
+            {
+                this._wasControllingNemesis = controlling;
+                this.ApplyHudVisibility();
             }
         }
 
@@ -399,6 +451,13 @@ namespace ProjectRuntime.Managers
             this.ApplyHudVisibility();
         }
 
+        // True while the local Dungeon Master is actively controlling the Nemesis. The normal DM HUD
+        // is hidden in this state so only the in-control overlay (NemesisControlUI) shows.
+        private bool IsControllingNemesis =>
+            this.BoundGameplayPlayer != null && this.BoundGameplayPlayer.Nemesis.HasActiveNemesis;
+
+        private bool _wasControllingNemesis;
+
         private void ApplyHudVisibility()
         {
             this.EnsureMinimap()?.SetHudVisible(this.IsPlayerUiVisible);
@@ -417,8 +476,22 @@ namespace ProjectRuntime.Managers
                 this.IsPlayerUiVisible && this.CurrentRole == PlayerRole.Survivor
             );
             this.DungeonMasterOnlyUIParent.SetActive(
-                this.IsPlayerUiVisible && this.CurrentRole == PlayerRole.DungeonMaster
+                this.IsPlayerUiVisible
+                && this.CurrentRole == PlayerRole.DungeonMaster
+                && !this.IsControllingNemesis
             );
+
+            // The in-control overlay sits on the always-active canvas root (not a role parent), so it
+            // must be explicitly hidden for everyone except the Dungeon Master while controlling —
+            // otherwise it would show on survivors' screens (its prefab default is active).
+            if (this.NemesisControlUI != null)
+            {
+                this.NemesisControlUI.SetActive(
+                    this.IsPlayerUiVisible
+                    && this.CurrentRole == PlayerRole.DungeonMaster
+                    && this.IsControllingNemesis
+                );
+            }
         }
 
         private void BindBattleManager(BattleManager battleManager)

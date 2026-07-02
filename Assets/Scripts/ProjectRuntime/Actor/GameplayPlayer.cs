@@ -87,6 +87,9 @@ namespace ProjectRuntime.Actor
             => this._trapController != null
                 ? this._trapController
                 : this._trapController = this.EnsureTrapController();
+        private DungeonMasterNemesisController _nemesis;
+        public DungeonMasterNemesisController Nemesis
+            => this._nemesis != null ? this._nemesis : this._nemesis = this.EnsureNemesisController();
         private Renderer[] _roleRenderers;
         private bool[] _roleRendererInitialEnabled;
         private bool _initialColliderEnabled;
@@ -509,10 +512,19 @@ namespace ProjectRuntime.Actor
             Turret.ServerStartTurretLifetime();
         }
 
+        // Sent when the Dungeon Master confirms Nemesis placement (green indicator + charge). The card
+        // manager validates availability and spawns the Nemesis at the chosen ground position.
         [Command]
-        public void CmdActivateNemesis()
+        public void CmdActivateNemesisAt(Vector3 groundPosition)
         {
-            CardManager.ServerTryActivateNemesis();
+            CardManager.ServerTryActivateNemesis(groundPosition);
+        }
+
+        // Ends the Nemesis before its lifetime expires, returning the DM to top-down placement.
+        [Command]
+        public void CmdEndNemesisEarly()
+        {
+            Nemesis.ServerBeginDisassemble();
         }
 
         [Command]
@@ -764,6 +776,13 @@ namespace ProjectRuntime.Actor
             var trapController = GetComponent<DungeonMasterTrapController>();
             trapController.Initialize(this);
             return trapController;
+        }
+
+        private DungeonMasterNemesisController EnsureNemesisController()
+        {
+            var nemesisController = GetComponent<DungeonMasterNemesisController>();
+            nemesisController.Initialize(this);
+            return nemesisController;
         }
     }
 }

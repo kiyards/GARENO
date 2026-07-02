@@ -744,9 +744,11 @@ MonoBehaviour:
   <ManaBarParent>k__BackingField: {fileID: 2950810506418172780}
   <CardDescription>k__BackingField: {fileID: 5645899791068076992}
   <Minimap>k__BackingField: {fileID: 1000000000000000006}
-  <NemesisButton>k__BackingField: {fileID: 0}
-  <NemesisCountdownTMP>k__BackingField: {fileID: 0}
+  <NemesisButton>k__BackingField: {fileID: 9183370530588096216}
+  <NemesisCountdownTMP>k__BackingField: {fileID: 4274924874879692153}
   <NemesisDarkenOverlay>k__BackingField: {fileID: 0}
+  <NemesisChargeFill>k__BackingField: {fileID: 8061117248593847914}
+  <NemesisControlUI>k__BackingField: {fileID: 6014495538719099306}
 --- !u!114 &1000000000000000006
 MonoBehaviour:
   m_ObjectHideFlags: 0

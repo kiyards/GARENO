@@ -136,6 +136,17 @@ namespace ProjectRuntime.UI
                 return;
             }
 
+            // The Nemesis side-card has no hand-card id, so label it directly.
+            if (this._cardManager.IsNemesisPlacementActive)
+            {
+                string nemesisText = this._cardManager.IsPlacementCharging
+                    ? $"Nemesis {Mathf.RoundToInt(this._cardManager.PlacementChargeProgress * 100f)}%"
+                    : "Nemesis";
+                this.SetSelectedCardName(nemesisText);
+                this.SetHoverCardInfo(null, null);
+                return;
+            }
+
             var data = DCard.GetDataById(this._cardManager.SelectedCardId);
             if (data == null)
             {
