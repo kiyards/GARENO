@@ -1,0 +1,3445 @@
+fileFormatVersion: 2
+guid: f443190d36c478240b971fd996263ef1
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 8827256380874700083
+    second: zombie_boomer_b01_d_p3dm.ru_0
+  - first:
+      213: -3757034394617134019
+    second: zombie_boomer_b01_d_p3dm.ru_1
+  - first:
+      213: -1463789311158969702
+    second: zombie_boomer_b01_d_p3dm.ru_2
+  - first:
+      213: -2986418539973387091
+    second: zombie_boomer_b01_d_p3dm.ru_3
+  - first:
+      213: 5230609965525305959
+    second: zombie_boomer_b01_d_p3dm.ru_4
+  - first:
+      213: -6573702960040000507
+    second: zombie_boomer_b01_d_p3dm.ru_5
+  - first:
+      213: -8690264094308880346
+    second: zombie_boomer_b01_d_p3dm.ru_6
+  - first:
+      213: 4404442000156040401
+    second: zombie_boomer_b01_d_p3dm.ru_7
+  - first:
+      213: 3439568972317839815
+    second: zombie_boomer_b01_d_p3dm.ru_8
+  - first:
+      213: -2592227218770449729
+    second: zombie_boomer_b01_d_p3dm.ru_9
+  - first:
+      213: -3946895946513558842
+    second: zombie_boomer_b01_d_p3dm.ru_10
+  - first:
+      213: 8084559382917743917
+    second: zombie_boomer_b01_d_p3dm.ru_11
+  - first:
+      213: 6009935496686868584
+    second: zombie_boomer_b01_d_p3dm.ru_12
+  - first:
+      213: 4220886345149081828
+    second: zombie_boomer_b01_d_p3dm.ru_13
+  - first:
+      213: 7379515945501053286
+    second: zombie_boomer_b01_d_p3dm.ru_14
+  - first:
+      213: -6417552999652780384
+    second: zombie_boomer_b01_d_p3dm.ru_15
+  - first:
+      213: -313786508252391815
+    second: zombie_boomer_b01_d_p3dm.ru_16
+  - first:
+      213: 2026440177206895490
+    second: zombie_boomer_b01_d_p3dm.ru_17
+  - first:
+      213: 6880874410962104097
+    second: zombie_boomer_b01_d_p3dm.ru_18
+  - first:
+      213: 5465317686764071020
+    second: zombie_boomer_b01_d_p3dm.ru_19
+  - first:
+      213: 6783141343546348246
+    second: zombie_boomer_b01_d_p3dm.ru_20
+  - first:
+      213: -7583312356992908421
+    second: zombie_boomer_b01_d_p3dm.ru_21
+  - first:
+      213: 7077586532402052168
+    second: zombie_boomer_b01_d_p3dm.ru_22
+  - first:
+      213: 7972865309592179205
+    second: zombie_boomer_b01_d_p3dm.ru_23
+  - first:
+      213: -2148627334114334062
+    second: zombie_boomer_b01_d_p3dm.ru_24
+  - first:
+      213: 5690493692161288414
+    second: zombie_boomer_b01_d_p3dm.ru_25
+  - first:
+      213: 8475900597366174045
+    second: zombie_boomer_b01_d_p3dm.ru_26
+  - first:
+      213: 7842704578712796840
+    second: zombie_boomer_b01_d_p3dm.ru_27
+  - first:
+      213: 7118580716408535737
+    second: zombie_boomer_b01_d_p3dm.ru_28
+  - first:
+      213: 826917246550111305
+    second: zombie_boomer_b01_d_p3dm.ru_29
+  - first:
+      213: 5858693727687490502
+    second: zombie_boomer_b01_d_p3dm.ru_30
+  - first:
+      213: -1461719647822849056
+    second: zombie_boomer_b01_d_p3dm.ru_31
+  - first:
+      213: -4240561102488115656
+    second: zombie_boomer_b01_d_p3dm.ru_32
+  - first:
+      213: 1491487245453526855
+    second: zombie_boomer_b01_d_p3dm.ru_33
+  - first:
+      213: -114466622248088259
+    second: zombie_boomer_b01_d_p3dm.ru_34
+  - first:
+      213: 3771955069632756164
+    second: zombie_boomer_b01_d_p3dm.ru_35
+  - first:
+      213: 6504906188314946700
+    second: zombie_boomer_b01_d_p3dm.ru_36
+  - first:
+      213: 1168666401598815053
+    second: zombie_boomer_b01_d_p3dm.ru_37
+  - first:
+      213: 8631956611373119876
+    second: zombie_boomer_b01_d_p3dm.ru_38
+  - first:
+      213: 2114885667391834809
+    second: zombie_boomer_b01_d_p3dm.ru_39
+  - first:
+      213: 4448879018272243791
+    second: zombie_boomer_b01_d_p3dm.ru_40
+  - first:
+      213: -1133016951160231861
+    second: zombie_boomer_b01_d_p3dm.ru_41
+  - first:
+      213: -3132382354079500003
+    second: zombie_boomer_b01_d_p3dm.ru_42
+  - first:
+      213: -3955211301329717009
+    second: zombie_boomer_b01_d_p3dm.ru_43
+  - first:
+      213: -2721206738161195954
+    second: zombie_boomer_b01_d_p3dm.ru_44
+  - first:
+      213: -1303667482106140817
+    second: zombie_boomer_b01_d_p3dm.ru_45
+  - first:
+      213: -1269732624419970740
+    second: zombie_boomer_b01_d_p3dm.ru_46
+  - first:
+      213: -6128761109195361930
+    second: zombie_boomer_b01_d_p3dm.ru_47
+  - first:
+      213: -4345308690331935661
+    second: zombie_boomer_b01_d_p3dm.ru_48
+  - first:
+      213: -6137486374080223093
+    second: zombie_boomer_b01_d_p3dm.ru_49
+  - first:
+      213: -1247860503244980099
+    second: zombie_boomer_b01_d_p3dm.ru_50
+  - first:
+      213: 26086102782835569
+    second: zombie_boomer_b01_d_p3dm.ru_51
+  - first:
+      213: -8633906456108427623
+    second: zombie_boomer_b01_d_p3dm.ru_52
+  - first:
+      213: 7840285840459386899
+    second: zombie_boomer_b01_d_p3dm.ru_53
+  - first:
+      213: -8673482713127226845
+    second: zombie_boomer_b01_d_p3dm.ru_54
+  - first:
+      213: 2503210848591683572
+    second: zombie_boomer_b01_d_p3dm.ru_55
+  - first:
+      213: 7948336907707169762
+    second: zombie_boomer_b01_d_p3dm.ru_56
+  - first:
+      213: -8403652328686156115
+    second: zombie_boomer_b01_d_p3dm.ru_57
+  - first:
+      213: -5630117077589442857
+    second: zombie_boomer_b01_d_p3dm.ru_58
+  - first:
+      213: -3623296485614031948
+    second: zombie_boomer_b01_d_p3dm.ru_59
+  - first:
+      213: 3990112782472364569
+    second: zombie_boomer_b01_d_p3dm.ru_60
+  - first:
+      213: -2632104232934790357
+    second: zombie_boomer_b01_d_p3dm.ru_61
+  - first:
+      213: 2096064508172602087
+    second: zombie_boomer_b01_d_p3dm.ru_62
+  - first:
+      213: -5726705662950932848
+    second: zombie_boomer_b01_d_p3dm.ru_63
+  - first:
+      213: -5786032218379535752
+    second: zombie_boomer_b01_d_p3dm.ru_64
+  - first:
+      213: 3239807321417531045
+    second: zombie_boomer_b01_d_p3dm.ru_65
+  - first:
+      213: -923708291259235703
+    second: zombie_boomer_b01_d_p3dm.ru_66
+  - first:
+      213: -5913843880618410961
+    second: zombie_boomer_b01_d_p3dm.ru_67
+  - first:
+      213: 8571362660918750870
+    second: zombie_boomer_b01_d_p3dm.ru_68
+  - first:
+      213: 4332804621019017566
+    second: zombie_boomer_b01_d_p3dm.ru_69
+  - first:
+      213: 7104183254291637534
+    second: zombie_boomer_b01_d_p3dm.ru_70
+  - first:
+      213: 1833978158390396800
+    second: zombie_boomer_b01_d_p3dm.ru_71
+  - first:
+      213: -6601246545046657178
+    second: zombie_boomer_b01_d_p3dm.ru_72
+  - first:
+      213: -6486656798313288545
+    second: zombie_boomer_b01_d_p3dm.ru_73
+  - first:
+      213: 556073997814098075
+    second: zombie_boomer_b01_d_p3dm.ru_74
+  - first:
+      213: 7776206988341910543
+    second: zombie_boomer_b01_d_p3dm.ru_75
+  - first:
+      213: -5176732121371483900
+    second: zombie_boomer_b01_d_p3dm.ru_76
+  - first:
+      213: 5292592986708906163
+    second: zombie_boomer_b01_d_p3dm.ru_77
+  - first:
+      213: -8913817795052597456
+    second: zombie_boomer_b01_d_p3dm.ru_78
+  - first:
+      213: 8002333761026947738
+    second: zombie_boomer_b01_d_p3dm.ru_79
+  - first:
+      213: 1845212359416572575
+    second: zombie_boomer_b01_d_p3dm.ru_80
+  - first:
+      213: -4062361406012846346
+    second: zombie_boomer_b01_d_p3dm.ru_81
+  - first:
+      213: 3142156122055676738
+    second: zombie_boomer_b01_d_p3dm.ru_82
+  - first:
+      213: 1795139757545257270
+    second: zombie_boomer_b01_d_p3dm.ru_83
+  - first:
+      213: -4349518627742139318
+    second: zombie_boomer_b01_d_p3dm.ru_84
+  - first:
+      213: 4163261470241991404
+    second: zombie_boomer_b01_d_p3dm.ru_85
+  - first:
+      213: 3051142562743845653
+    second: zombie_boomer_b01_d_p3dm.ru_86
+  - first:
+      213: -6830404540243655414
+    second: zombie_boomer_b01_d_p3dm.ru_87
+  - first:
+      213: 1082618313555811645
+    second: zombie_boomer_b01_d_p3dm.ru_88
+  - first:
+      213: -700686648052317012
+    second: zombie_boomer_b01_d_p3dm.ru_89
+  - first:
+      213: 1319228672794448167
+    second: zombie_boomer_b01_d_p3dm.ru_90
+  - first:
+      213: -1419309106604395019
+    second: zombie_boomer_b01_d_p3dm.ru_91
+  - first:
+      213: 3247663170467068353
+    second: zombie_boomer_b01_d_p3dm.ru_92
+  - first:
+      213: -9137120001912392876
+    second: zombie_boomer_b01_d_p3dm.ru_93
+  - first:
+      213: -7084496406803415803
+    second: zombie_boomer_b01_d_p3dm.ru_94
+  - first:
+      213: 61316323672965095
+    second: zombie_boomer_b01_d_p3dm.ru_95
+  - first:
+      213: -1225235184261716309
+    second: zombie_boomer_b01_d_p3dm.ru_96
+  - first:
+      213: -7091675149585216686
+    second: zombie_boomer_b01_d_p3dm.ru_97
+  - first:
+      213: -1606899551291648495
+    second: zombie_boomer_b01_d_p3dm.ru_98
+  - first:
+      213: -780702454008945619
+    second: zombie_boomer_b01_d_p3dm.ru_99
+  - first:
+      213: 4404272673725058195
+    second: zombie_boomer_b01_d_p3dm.ru_100
+  - first:
+      213: 2628436090638867528
+    second: zombie_boomer_b01_d_p3dm.ru_101
+  - first:
+      213: 3349933796911910979
+    second: zombie_boomer_b01_d_p3dm.ru_102
+  - first:
+      213: -4907483507044675362
+    second: zombie_boomer_b01_d_p3dm.ru_103
+  - first:
+      213: 8336389040973927218
+    second: zombie_boomer_b01_d_p3dm.ru_104
+  - first:
+      213: 180940412247362345
+    second: zombie_boomer_b01_d_p3dm.ru_105
+  - first:
+      213: 7299344884905659849
+    second: zombie_boomer_b01_d_p3dm.ru_106
+  - first:
+      213: -215164512256525548
+    second: zombie_boomer_b01_d_p3dm.ru_107
+  - first:
+      213: 6015510202065026700
+    second: zombie_boomer_b01_d_p3dm.ru_108
+  - first:
+      213: -2671699506430962337
+    second: zombie_boomer_b01_d_p3dm.ru_109
+  - first:
+      213: 4257193309329689814
+    second: zombie_boomer_b01_d_p3dm.ru_110
+  - first:
+      213: -3807874696954870154
+    second: zombie_boomer_b01_d_p3dm.ru_111
+  - first:
+      213: -5926293178572849261
+    second: zombie_boomer_b01_d_p3dm.ru_112
+  - first:
+      213: -7784932881267026940
+    second: zombie_boomer_b01_d_p3dm.ru_113
+  - first:
+      213: 5890968443743339196
+    second: zombie_boomer_b01_d_p3dm.ru_114
+  - first:
+      213: 5341704376790631811
+    second: zombie_boomer_b01_d_p3dm.ru_115
+  - first:
+      213: -7562679965840634612
+    second: zombie_boomer_b01_d_p3dm.ru_116
+  - first:
+      213: -7354508601207636249
+    second: zombie_boomer_b01_d_p3dm.ru_117
+  - first:
+      213: -2410266704871539919
+    second: zombie_boomer_b01_d_p3dm.ru_118
+  - first:
+      213: -8374227126081946737
+    second: zombie_boomer_b01_d_p3dm.ru_119
+  - first:
+      213: 5781360651590034056
+    second: zombie_boomer_b01_d_p3dm.ru_120
+  - first:
+      213: 8672465410974475881
+    second: zombie_boomer_b01_d_p3dm.ru_121
+  - first:
+      213: -7760859969500583816
+    second: zombie_boomer_b01_d_p3dm.ru_122
+  - first:
+      213: -7568502941479591247
+    second: zombie_boomer_b01_d_p3dm.ru_123
+  - first:
+      213: -2624215178132119292
+    second: zombie_boomer_b01_d_p3dm.ru_124
+  - first:
+      213: 509179667041339288
+    second: zombie_boomer_b01_d_p3dm.ru_125
+  - first:
+      213: 5230733834720953331
+    second: zombie_boomer_b01_d_p3dm.ru_126
+  - first:
+      213: 4641966557336754752
+    second: zombie_boomer_b01_d_p3dm.ru_127
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_0
+      rect:
+        serializedVersion: 2
+        x: 607
+        y: 1007
+        width: 18
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 335365bd8e6b08a70800000000000000
+      internalID: 8827256380874700083
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_1
+      rect:
+        serializedVersion: 2
+        x: 631
+        y: 1015
+        width: 18
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d34cbebaf155cdbc0800000000000000
+      internalID: -3757034394617134019
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_2
+      rect:
+        serializedVersion: 2
+        x: 727
+        y: 983
+        width: 78
+        height: 41
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9a1b5280639fabe0800000000000000
+      internalID: -1463789311158969702
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_3
+      rect:
+        serializedVersion: 2
+        x: 793
+        y: 967
+        width: 24
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dacde3e192c1e86d0800000000000000
+      internalID: -2986418539973387091
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_4
+      rect:
+        serializedVersion: 2
+        x: 951
+        y: 1015
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76a01c9fc0cd69840800000000000000
+      internalID: 5230609965525305959
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_5
+      rect:
+        serializedVersion: 2
+        x: 559
+        y: 967
+        width: 34
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 504c1ef9cf385c4a0800000000000000
+      internalID: -6573702960040000507
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_6
+      rect:
+        serializedVersion: 2
+        x: 671
+        y: 999
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 620336669daf56780800000000000000
+      internalID: -8690264094308880346
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_7
+      rect:
+        serializedVersion: 2
+        x: 647
+        y: 967
+        width: 18
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1dc9c15d9a8bf1d30800000000000000
+      internalID: 4404442000156040401
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_8
+      rect:
+        serializedVersion: 2
+        x: 663
+        y: 975
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c1d577b1cdcbbf20800000000000000
+      internalID: 3439568972317839815
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_9
+      rect:
+        serializedVersion: 2
+        x: 703
+        y: 975
+        width: 16
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fbaa618241f860cd0800000000000000
+      internalID: -2592227218770449729
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_10
+      rect:
+        serializedVersion: 2
+        x: 717
+        y: 981
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c251a65c0fc939c0800000000000000
+      internalID: -3946895946513558842
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_11
+      rect:
+        serializedVersion: 2
+        x: 863
+        y: 983
+        width: 26
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d250d58ccef123070800000000000000
+      internalID: 8084559382917743917
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_12
+      rect:
+        serializedVersion: 2
+        x: 991
+        y: 983
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 86818030e74976350800000000000000
+      internalID: 6009935496686868584
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_13
+      rect:
+        serializedVersion: 2
+        x: 679
+        y: 959
+        width: 17
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e868e784c9939a30800000000000000
+      internalID: 4220886345149081828
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_14
+      rect:
+        serializedVersion: 2
+        x: 695
+        y: 967
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 661dbe177ae496660800000000000000
+      internalID: 7379515945501053286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_15
+      rect:
+        serializedVersion: 2
+        x: 999
+        y: 967
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a614786c8540f6a0800000000000000
+      internalID: -6417552999652780384
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_16
+      rect:
+        serializedVersion: 2
+        x: 575
+        y: 951
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9765e4055d435abf0800000000000000
+      internalID: -313786508252391815
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_17
+      rect:
+        serializedVersion: 2
+        x: 591
+        y: 927
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2832ff8ca9c5f1c10800000000000000
+      internalID: 2026440177206895490
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_18
+      rect:
+        serializedVersion: 2
+        x: 271
+        y: 879
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12fa87102d6cd7f50800000000000000
+      internalID: 6880874410962104097
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_19
+      rect:
+        serializedVersion: 2
+        x: 591
+        y: 871
+        width: 10
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c686b38ca75b8db40800000000000000
+      internalID: 5465317686764071020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_20
+      rect:
+        serializedVersion: 2
+        x: 879
+        y: 855
+        width: 18
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d298530d1f822e50800000000000000
+      internalID: 6783141343546348246
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_21
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 823
+        width: 81
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b738b94e699a2c690800000000000000
+      internalID: -7583312356992908421
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_22
+      rect:
+        serializedVersion: 2
+        x: 799
+        y: 863
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84cb9ead373a83260800000000000000
+      internalID: 7077586532402052168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_23
+      rect:
+        serializedVersion: 2
+        x: 839
+        y: 783
+        width: 90
+        height: 90
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 502d64cc1ce45ae60800000000000000
+      internalID: 7972865309592179205
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_24
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 799
+        width: 10
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 29aab63d2da8e22e0800000000000000
+      internalID: -2148627334114334062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_25
+      rect:
+        serializedVersion: 2
+        x: 287
+        y: 791
+        width: 50
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed8efdd0dd1b8fe40800000000000000
+      internalID: 5690493692161288414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_26
+      rect:
+        serializedVersion: 2
+        x: 455
+        y: 823
+        width: 18
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d513881afa270a570800000000000000
+      internalID: 8475900597366174045
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_27
+      rect:
+        serializedVersion: 2
+        x: 543
+        y: 807
+        width: 90
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ae718c0342e6dc60800000000000000
+      internalID: 7842704578712796840
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_28
+      rect:
+        serializedVersion: 2
+        x: 631
+        y: 743
+        width: 114
+        height: 106
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9baf97a12774ac260800000000000000
+      internalID: 7118580716408535737
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_29
+      rect:
+        serializedVersion: 2
+        x: 775
+        y: 824
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9447343cadcc97b00800000000000000
+      internalID: 826917246550111305
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_30
+      rect:
+        serializedVersion: 2
+        x: 783
+        y: 810
+        width: 18
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6cb3f9697e24e4150800000000000000
+      internalID: 5858693727687490502
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_31
+      rect:
+        serializedVersion: 2
+        x: 17
+        y: 783
+        width: 63
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0eb5f4e89bde6bbe0800000000000000
+      internalID: -1461719647822849056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_32
+      rect:
+        serializedVersion: 2
+        x: 807
+        y: 808
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8366bdd05208625c0800000000000000
+      internalID: -4240561102488115656
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_33
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 767
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 747884c5fb3d2b410800000000000000
+      internalID: 1491487245453526855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_34
+      rect:
+        serializedVersion: 2
+        x: 151
+        y: 767
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3d834aa635596ef0800000000000000
+      internalID: -114466622248088259
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_35
+      rect:
+        serializedVersion: 2
+        x: 367
+        y: 727
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4c9b132b62da85430800000000000000
+      internalID: 3771955069632756164
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_36
+      rect:
+        serializedVersion: 2
+        x: 383
+        y: 735
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8ca0cbb6b1164a50800000000000000
+      internalID: 6504906188314946700
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_37
+      rect:
+        serializedVersion: 2
+        x: 255
+        y: 703
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4b3b3086efe73010800000000000000
+      internalID: 1168666401598815053
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_38
+      rect:
+        serializedVersion: 2
+        x: 311
+        y: 679
+        width: 66
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 489ba71ddcedac770800000000000000
+      internalID: 8631956611373119876
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_39
+      rect:
+        serializedVersion: 2
+        x: 407
+        y: 583
+        width: 90
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ba84713f45995d10800000000000000
+      internalID: 2114885667391834809
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_40
+      rect:
+        serializedVersion: 2
+        x: 447
+        y: 713
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f404ecc55e79dbd30800000000000000
+      internalID: 4448879018272243791
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_41
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 568
+        width: 13
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b48299df517b640f0800000000000000
+      internalID: -1133016951160231861
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_42
+      rect:
+        serializedVersion: 2
+        x: 471
+        y: 567
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d19b36458da8784d0800000000000000
+      internalID: -3132382354079500003
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_43
+      rect:
+        serializedVersion: 2
+        x: 880
+        y: 576
+        width: 17
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe8b1ace6444c19c0800000000000000
+      internalID: -3955211301329717009
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_44
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 527
+        width: 41
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e44a083a3e45c3ad0800000000000000
+      internalID: -2721206738161195954
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_45
+      rect:
+        serializedVersion: 2
+        x: 463
+        y: 559
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f67e5d7055178ede0800000000000000
+      internalID: -1303667482106140817
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_46
+      rect:
+        serializedVersion: 2
+        x: 895
+        y: 535
+        width: 10
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c4129b9c7e0016ee0800000000000000
+      internalID: -1269732624419970740
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_47
+      rect:
+        serializedVersion: 2
+        x: 455
+        y: 551
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6717e252e3442faa0800000000000000
+      internalID: -6128761109195361930
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_48
+      rect:
+        serializedVersion: 2
+        x: 462
+        y: 535
+        width: 11
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35cd851c4cc52b3c0800000000000000
+      internalID: -4345308690331935661
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_49
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 295
+        width: 65
+        height: 218
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b88e52b19a443daa0800000000000000
+      internalID: -6137486374080223093
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_50
+      rect:
+        serializedVersion: 2
+        x: 415
+        y: 303
+        width: 178
+        height: 194
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d70c7d6db75beaee0800000000000000
+      internalID: -1247860503244980099
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_51
+      rect:
+        serializedVersion: 2
+        x: 823
+        y: 387
+        width: 82
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17bf1f91c2dac5000800000000000000
+      internalID: 26086102782835569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_52
+      rect:
+        serializedVersion: 2
+        x: 831
+        y: 383
+        width: 17
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99694b392d33e2880800000000000000
+      internalID: -8633906456108427623
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_53
+      rect:
+        serializedVersion: 2
+        x: 791
+        y: 367
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3105b1aae6a4ecc60800000000000000
+      internalID: 7840285840459386899
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_54
+      rect:
+        serializedVersion: 2
+        x: 847
+        y: 375
+        width: 36
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3227f8e2d6991a780800000000000000
+      internalID: -8673482713127226845
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_55
+      rect:
+        serializedVersion: 2
+        x: 883
+        y: 367
+        width: 22
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ff163411013db220800000000000000
+      internalID: 2503210848591683572
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_56
+      rect:
+        serializedVersion: 2
+        x: 599
+        y: 343
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2eb33033e4a2e4e60800000000000000
+      internalID: 7948336907707169762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_57
+      rect:
+        serializedVersion: 2
+        x: 623
+        y: 335
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da607c44bba306b80800000000000000
+      internalID: -8403652328686156115
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_58
+      rect:
+        serializedVersion: 2
+        x: 735
+        y: 343
+        width: 26
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7debb6af85ecdd1b0800000000000000
+      internalID: -5630117077589442857
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_59
+      rect:
+        serializedVersion: 2
+        x: 418
+        y: 319
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4bbed0b1b0777bdc0800000000000000
+      internalID: -3623296485614031948
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_60
+      rect:
+        serializedVersion: 2
+        x: 671
+        y: 319
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 912c2056f6abf5730800000000000000
+      internalID: 3990112782472364569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_61
+      rect:
+        serializedVersion: 2
+        x: 703
+        y: 319
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2bae184523e87bd0800000000000000
+      internalID: -2632104232934790357
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_62
+      rect:
+        serializedVersion: 2
+        x: 759
+        y: 319
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ea8ee39097b61d10800000000000000
+      internalID: 2096064508172602087
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_63
+      rect:
+        serializedVersion: 2
+        x: 783
+        y: 312
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09e779a7a87a680b0800000000000000
+      internalID: -5726705662950932848
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_64
+      rect:
+        serializedVersion: 2
+        x: 807
+        y: 309
+        width: 34
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87ab5846a52e3bfa0800000000000000
+      internalID: -5786032218379535752
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_65
+      rect:
+        serializedVersion: 2
+        x: 959
+        y: 312
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ae3dc5f79b16fc20800000000000000
+      internalID: 3239807321417531045
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_66
+      rect:
+        serializedVersion: 2
+        x: 983
+        y: 319
+        width: 18
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 982096ff3345e23f0800000000000000
+      internalID: -923708291259235703
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_67
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 287
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2c3f9ec25ecdeda0800000000000000
+      internalID: -5913843880618410961
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_68
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 263
+        width: 127
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 69eeb155de893f670800000000000000
+      internalID: 8571362660918750870
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_69
+      rect:
+        serializedVersion: 2
+        x: 187
+        y: 263
+        width: 38
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e51720db8d6312c30800000000000000
+      internalID: 4332804621019017566
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_70
+      rect:
+        serializedVersion: 2
+        x: 255
+        y: 271
+        width: 30
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e15e45bb701279260800000000000000
+      internalID: 7104183254291637534
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_71
+      rect:
+        serializedVersion: 2
+        x: 271
+        y: 275
+        width: 49
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0874fa01b69937910800000000000000
+      internalID: 1833978158390396800
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_72
+      rect:
+        serializedVersion: 2
+        x: 311
+        y: 279
+        width: 66
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66728bffd39a364a0800000000000000
+      internalID: -6601246545046657178
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_73
+      rect:
+        serializedVersion: 2
+        x: 463
+        y: 295
+        width: 18
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9ce9ac7204caf5a0800000000000000
+      internalID: -6486656798313288545
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_74
+      rect:
+        serializedVersion: 2
+        x: 495
+        y: 287
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b986a84da5297b700800000000000000
+      internalID: 556073997814098075
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_75
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 255
+        width: 9
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f0c97084e03aaeb60800000000000000
+      internalID: 7776206988341910543
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_76
+      rect:
+        serializedVersion: 2
+        x: 299
+        y: 271
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4016c48209d8828b0800000000000000
+      internalID: -5176732121371483900
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_77
+      rect:
+        serializedVersion: 2
+        x: 511
+        y: 279
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b01281b741137940800000000000000
+      internalID: 5292592986708906163
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_78
+      rect:
+        serializedVersion: 2
+        x: 535
+        y: 271
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03f855d51f1cb4480800000000000000
+      internalID: -8913817795052597456
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_79
+      rect:
+        serializedVersion: 2
+        x: 607
+        y: 271
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9a702058200e0f60800000000000000
+      internalID: 8002333761026947738
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_80
+      rect:
+        serializedVersion: 2
+        x: 607
+        y: 263
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9a6f225dd28b9910800000000000000
+      internalID: 1845212359416572575
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_81
+      rect:
+        serializedVersion: 2
+        x: 639
+        y: 271
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6fe095513d79f97c0800000000000000
+      internalID: -4062361406012846346
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_82
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 247
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24392fb585e2b9b20800000000000000
+      internalID: 3142156122055676738
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_83
+      rect:
+        serializedVersion: 2
+        x: 408
+        y: 223
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6397aa2391e99e810800000000000000
+      internalID: 1795139757545257270
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_84
+      rect:
+        serializedVersion: 2
+        x: 967
+        y: 223
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4c3c715ad763a3c0800000000000000
+      internalID: -4349518627742139318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_85
+      rect:
+        serializedVersion: 2
+        x: 399
+        y: 183
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cea28d0df30e6c930800000000000000
+      internalID: 4163261470241991404
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_86
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 119
+        width: 25
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5130c63cef5d75a20800000000000000
+      internalID: 3051142562743845653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_87
+      rect:
+        serializedVersion: 2
+        x: 175
+        y: 103
+        width: 58
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a05cf8a72478531a0800000000000000
+      internalID: -6830404540243655414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_88
+      rect:
+        serializedVersion: 2
+        x: 255
+        y: 135
+        width: 42
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3d93d6ce9b360f00800000000000000
+      internalID: 1082618313555811645
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_89
+      rect:
+        serializedVersion: 2
+        x: 303
+        y: 143
+        width: 34
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca48bfbb439a646f0800000000000000
+      internalID: -700686648052317012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_90
+      rect:
+        serializedVersion: 2
+        x: 383
+        y: 111
+        width: 42
+        height: 42
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7215c630d77de4210800000000000000
+      internalID: 1319228672794448167
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_91
+      rect:
+        serializedVersion: 2
+        x: 567
+        y: 111
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f53e5a23e99d4ce0800000000000000
+      internalID: -1419309106604395019
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_92
+      rect:
+        serializedVersion: 2
+        x: 583
+        y: 111
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c9fec95274021d20800000000000000
+      internalID: 3247663170467068353
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_93
+      rect:
+        serializedVersion: 2
+        x: 735
+        y: 119
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45335efc4cd623180800000000000000
+      internalID: -9137120001912392876
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_94
+      rect:
+        serializedVersion: 2
+        x: 879
+        y: 119
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50d73f3ad00dead90800000000000000
+      internalID: -7084496406803415803
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_95
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 103
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7efb57b1fd6d9d000800000000000000
+      internalID: 61316323672965095
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_96
+      rect:
+        serializedVersion: 2
+        x: 383
+        y: 95
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba625cb67171ffee0800000000000000
+      internalID: -1225235184261716309
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_97
+      rect:
+        serializedVersion: 2
+        x: 567
+        y: 95
+        width: 18
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25b0286560f459d90800000000000000
+      internalID: -7091675149585216686
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_98
+      rect:
+        serializedVersion: 2
+        x: 591
+        y: 103
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 116d68f2f5523b9e0800000000000000
+      internalID: -1606899551291648495
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_99
+      rect:
+        serializedVersion: 2
+        x: 895
+        y: 103
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d24658121436a25f0800000000000000
+      internalID: -780702454008945619
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_100
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 79
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39c875379ae1f1d30800000000000000
+      internalID: 4404272673725058195
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_101
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 71
+        width: 10
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84c9859c2b41a7420800000000000000
+      internalID: 2628436090638867528
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_102
+      rect:
+        serializedVersion: 2
+        x: 591
+        y: 87
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34092022a0b5d7e20800000000000000
+      internalID: 3349933796911910979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_103
+      rect:
+        serializedVersion: 2
+        x: 597
+        y: 79
+        width: 12
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed0938550cd15ebb0800000000000000
+      internalID: -4907483507044675362
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_104
+      rect:
+        serializedVersion: 2
+        x: 903
+        y: 79
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 233d5b82aadc0b370800000000000000
+      internalID: 8336389040973927218
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_105
+      rect:
+        serializedVersion: 2
+        x: 23
+        y: 63
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92b4485a854d28200800000000000000
+      internalID: 180940412247362345
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_106
+      rect:
+        serializedVersion: 2
+        x: 383
+        y: 71
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9cdcdddcf7b7c4560800000000000000
+      internalID: 7299344884905659849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_107
+      rect:
+        serializedVersion: 2
+        x: 552
+        y: 47
+        width: 33
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41bfdae1405930df0800000000000000
+      internalID: -215164512256525548
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_108
+      rect:
+        serializedVersion: 2
+        x: 591
+        y: 58
+        width: 10
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8ef2d048a26b7350800000000000000
+      internalID: 6015510202065026700
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_109
+      rect:
+        serializedVersion: 2
+        x: 712
+        y: 71
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f55989444773cead0800000000000000
+      internalID: -2671699506430962337
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_110
+      rect:
+        serializedVersion: 2
+        x: 871
+        y: 55
+        width: 42
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6dc04ce52c6941b30800000000000000
+      internalID: 4257193309329689814
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_111
+      rect:
+        serializedVersion: 2
+        x: 55
+        y: 55
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6768eca5326b72bc0800000000000000
+      internalID: -3807874696954870154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_112
+      rect:
+        serializedVersion: 2
+        x: 71
+        y: 55
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39f3850c0c391cda0800000000000000
+      internalID: -5926293178572849261
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_113
+      rect:
+        serializedVersion: 2
+        x: 559
+        y: 23
+        width: 27
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40412d37acc56f390800000000000000
+      internalID: -7784932881267026940
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_114
+      rect:
+        serializedVersion: 2
+        x: 583
+        y: 36
+        width: 6
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb28b50869ce0c150800000000000000
+      internalID: 5890968443743339196
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_115
+      rect:
+        serializedVersion: 2
+        x: 584
+        y: 31
+        width: 17
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38541c144db812a40800000000000000
+      internalID: 5341704376790631811
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_116
+      rect:
+        serializedVersion: 2
+        x: 855
+        y: 15
+        width: 34
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0d0b1ec3a6fb0790800000000000000
+      internalID: -7562679965840634612
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_117
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 23
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7eeb67f94698fe990800000000000000
+      internalID: -7354508601207636249
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_118
+      rect:
+        serializedVersion: 2
+        x: 167
+        y: 15
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13b3e2ab3330d8ed0800000000000000
+      internalID: -2410266704871539919
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_119
+      rect:
+        serializedVersion: 2
+        x: 471
+        y: 15
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8bf1712cc4c8cb80800000000000000
+      internalID: -8374227126081946737
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_120
+      rect:
+        serializedVersion: 2
+        x: 679
+        y: 15
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 882e174b1e48b3050800000000000000
+      internalID: 5781360651590034056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_121
+      rect:
+        serializedVersion: 2
+        x: 775
+        y: 15
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 966eef3b759ca5870800000000000000
+      internalID: 8672465410974475881
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_122
+      rect:
+        serializedVersion: 2
+        x: 791
+        y: 15
+        width: 18
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8786e5ef9f2eb4490800000000000000
+      internalID: -7760859969500583816
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_123
+      rect:
+        serializedVersion: 2
+        x: 815
+        y: 15
+        width: 18
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b22c93aca647f690800000000000000
+      internalID: -7568502941479591247
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_124
+      rect:
+        serializedVersion: 2
+        x: 903
+        y: 15
+        width: 18
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4012f3df23ae49bd0800000000000000
+      internalID: -2624215178132119292
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_125
+      rect:
+        serializedVersion: 2
+        x: 943
+        y: 15
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 897c9dc9538f01700800000000000000
+      internalID: 509179667041339288
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_126
+      rect:
+        serializedVersion: 2
+        x: 967
+        y: 15
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f3c82585bc479840800000000000000
+      internalID: 5230733834720953331
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zombie_boomer_b01_d_p3dm.ru_127
+      rect:
+        serializedVersion: 2
+        x: 983
+        y: 15
+        width: 26
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04adc4d5df39b6040800000000000000
+      internalID: 4641966557336754752
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      zombie_boomer_b01_d_p3dm.ru_0: 8827256380874700083
+      zombie_boomer_b01_d_p3dm.ru_1: -3757034394617134019
+      zombie_boomer_b01_d_p3dm.ru_10: -3946895946513558842
+      zombie_boomer_b01_d_p3dm.ru_100: 4404272673725058195
+      zombie_boomer_b01_d_p3dm.ru_101: 2628436090638867528
+      zombie_boomer_b01_d_p3dm.ru_102: 3349933796911910979
+      zombie_boomer_b01_d_p3dm.ru_103: -4907483507044675362
+      zombie_boomer_b01_d_p3dm.ru_104: 8336389040973927218
+      zombie_boomer_b01_d_p3dm.ru_105: 180940412247362345
+      zombie_boomer_b01_d_p3dm.ru_106: 7299344884905659849
+      zombie_boomer_b01_d_p3dm.ru_107: -215164512256525548
+      zombie_boomer_b01_d_p3dm.ru_108: 6015510202065026700
+      zombie_boomer_b01_d_p3dm.ru_109: -2671699506430962337
+      zombie_boomer_b01_d_p3dm.ru_11: 8084559382917743917
+      zombie_boomer_b01_d_p3dm.ru_110: 4257193309329689814
+      zombie_boomer_b01_d_p3dm.ru_111: -3807874696954870154
+      zombie_boomer_b01_d_p3dm.ru_112: -5926293178572849261
+      zombie_boomer_b01_d_p3dm.ru_113: -7784932881267026940
+      zombie_boomer_b01_d_p3dm.ru_114: 5890968443743339196
+      zombie_boomer_b01_d_p3dm.ru_115: 5341704376790631811
+      zombie_boomer_b01_d_p3dm.ru_116: -7562679965840634612
+      zombie_boomer_b01_d_p3dm.ru_117: -7354508601207636249
+      zombie_boomer_b01_d_p3dm.ru_118: -2410266704871539919
+      zombie_boomer_b01_d_p3dm.ru_119: -8374227126081946737
+      zombie_boomer_b01_d_p3dm.ru_12: 6009935496686868584
+      zombie_boomer_b01_d_p3dm.ru_120: 5781360651590034056
+      zombie_boomer_b01_d_p3dm.ru_121: 8672465410974475881
+      zombie_boomer_b01_d_p3dm.ru_122: -7760859969500583816
+      zombie_boomer_b01_d_p3dm.ru_123: -7568502941479591247
+      zombie_boomer_b01_d_p3dm.ru_124: -2624215178132119292
+      zombie_boomer_b01_d_p3dm.ru_125: 509179667041339288
+      zombie_boomer_b01_d_p3dm.ru_126: 5230733834720953331
+      zombie_boomer_b01_d_p3dm.ru_127: 4641966557336754752
+      zombie_boomer_b01_d_p3dm.ru_13: 4220886345149081828
+      zombie_boomer_b01_d_p3dm.ru_14: 7379515945501053286
+      zombie_boomer_b01_d_p3dm.ru_15: -6417552999652780384
+      zombie_boomer_b01_d_p3dm.ru_16: -313786508252391815
+      zombie_boomer_b01_d_p3dm.ru_17: 2026440177206895490
+      zombie_boomer_b01_d_p3dm.ru_18: 6880874410962104097
+      zombie_boomer_b01_d_p3dm.ru_19: 5465317686764071020
+      zombie_boomer_b01_d_p3dm.ru_2: -1463789311158969702
+      zombie_boomer_b01_d_p3dm.ru_20: 6783141343546348246
+      zombie_boomer_b01_d_p3dm.ru_21: -7583312356992908421
+      zombie_boomer_b01_d_p3dm.ru_22: 7077586532402052168
+      zombie_boomer_b01_d_p3dm.ru_23: 7972865309592179205
+      zombie_boomer_b01_d_p3dm.ru_24: -2148627334114334062
+      zombie_boomer_b01_d_p3dm.ru_25: 5690493692161288414
+      zombie_boomer_b01_d_p3dm.ru_26: 8475900597366174045
+      zombie_boomer_b01_d_p3dm.ru_27: 7842704578712796840
+      zombie_boomer_b01_d_p3dm.ru_28: 7118580716408535737
+      zombie_boomer_b01_d_p3dm.ru_29: 826917246550111305
+      zombie_boomer_b01_d_p3dm.ru_3: -2986418539973387091
+      zombie_boomer_b01_d_p3dm.ru_30: 5858693727687490502
+      zombie_boomer_b01_d_p3dm.ru_31: -1461719647822849056
+      zombie_boomer_b01_d_p3dm.ru_32: -4240561102488115656
+      zombie_boomer_b01_d_p3dm.ru_33: 1491487245453526855
+      zombie_boomer_b01_d_p3dm.ru_34: -114466622248088259
+      zombie_boomer_b01_d_p3dm.ru_35: 3771955069632756164
+      zombie_boomer_b01_d_p3dm.ru_36: 6504906188314946700
+      zombie_boomer_b01_d_p3dm.ru_37: 1168666401598815053
+      zombie_boomer_b01_d_p3dm.ru_38: 8631956611373119876
+      zombie_boomer_b01_d_p3dm.ru_39: 2114885667391834809
+      zombie_boomer_b01_d_p3dm.ru_4: 5230609965525305959
+      zombie_boomer_b01_d_p3dm.ru_40: 4448879018272243791
+      zombie_boomer_b01_d_p3dm.ru_41: -1133016951160231861
+      zombie_boomer_b01_d_p3dm.ru_42: -3132382354079500003
+      zombie_boomer_b01_d_p3dm.ru_43: -3955211301329717009
+      zombie_boomer_b01_d_p3dm.ru_44: -2721206738161195954
+      zombie_boomer_b01_d_p3dm.ru_45: -1303667482106140817
+      zombie_boomer_b01_d_p3dm.ru_46: -1269732624419970740
+      zombie_boomer_b01_d_p3dm.ru_47: -6128761109195361930
+      zombie_boomer_b01_d_p3dm.ru_48: -4345308690331935661
+      zombie_boomer_b01_d_p3dm.ru_49: -6137486374080223093
+      zombie_boomer_b01_d_p3dm.ru_5: -6573702960040000507
+      zombie_boomer_b01_d_p3dm.ru_50: -1247860503244980099
+      zombie_boomer_b01_d_p3dm.ru_51: 26086102782835569
+      zombie_boomer_b01_d_p3dm.ru_52: -8633906456108427623
+      zombie_boomer_b01_d_p3dm.ru_53: 7840285840459386899
+      zombie_boomer_b01_d_p3dm.ru_54: -8673482713127226845
+      zombie_boomer_b01_d_p3dm.ru_55: 2503210848591683572
+      zombie_boomer_b01_d_p3dm.ru_56: 7948336907707169762
+      zombie_boomer_b01_d_p3dm.ru_57: -8403652328686156115
+      zombie_boomer_b01_d_p3dm.ru_58: -5630117077589442857
+      zombie_boomer_b01_d_p3dm.ru_59: -3623296485614031948
+      zombie_boomer_b01_d_p3dm.ru_6: -8690264094308880346
+      zombie_boomer_b01_d_p3dm.ru_60: 3990112782472364569
+      zombie_boomer_b01_d_p3dm.ru_61: -2632104232934790357
+      zombie_boomer_b01_d_p3dm.ru_62: 2096064508172602087
+      zombie_boomer_b01_d_p3dm.ru_63: -5726705662950932848
+      zombie_boomer_b01_d_p3dm.ru_64: -5786032218379535752
+      zombie_boomer_b01_d_p3dm.ru_65: 3239807321417531045
+      zombie_boomer_b01_d_p3dm.ru_66: -923708291259235703
+      zombie_boomer_b01_d_p3dm.ru_67: -5913843880618410961
+      zombie_boomer_b01_d_p3dm.ru_68: 8571362660918750870
+      zombie_boomer_b01_d_p3dm.ru_69: 4332804621019017566
+      zombie_boomer_b01_d_p3dm.ru_7: 4404442000156040401
+      zombie_boomer_b01_d_p3dm.ru_70: 7104183254291637534
+      zombie_boomer_b01_d_p3dm.ru_71: 1833978158390396800
+      zombie_boomer_b01_d_p3dm.ru_72: -6601246545046657178
+      zombie_boomer_b01_d_p3dm.ru_73: -6486656798313288545
+      zombie_boomer_b01_d_p3dm.ru_74: 556073997814098075
+      zombie_boomer_b01_d_p3dm.ru_75: 7776206988341910543
+      zombie_boomer_b01_d_p3dm.ru_76: -5176732121371483900
+      zombie_boomer_b01_d_p3dm.ru_77: 5292592986708906163
+      zombie_boomer_b01_d_p3dm.ru_78: -8913817795052597456
+      zombie_boomer_b01_d_p3dm.ru_79: 8002333761026947738
+      zombie_boomer_b01_d_p3dm.ru_8: 3439568972317839815
+      zombie_boomer_b01_d_p3dm.ru_80: 1845212359416572575
+      zombie_boomer_b01_d_p3dm.ru_81: -4062361406012846346
+      zombie_boomer_b01_d_p3dm.ru_82: 3142156122055676738
+      zombie_boomer_b01_d_p3dm.ru_83: 1795139757545257270
+      zombie_boomer_b01_d_p3dm.ru_84: -4349518627742139318
+      zombie_boomer_b01_d_p3dm.ru_85: 4163261470241991404
+      zombie_boomer_b01_d_p3dm.ru_86: 3051142562743845653
+      zombie_boomer_b01_d_p3dm.ru_87: -6830404540243655414
+      zombie_boomer_b01_d_p3dm.ru_88: 1082618313555811645
+      zombie_boomer_b01_d_p3dm.ru_89: -700686648052317012
+      zombie_boomer_b01_d_p3dm.ru_9: -2592227218770449729
+      zombie_boomer_b01_d_p3dm.ru_90: 1319228672794448167
+      zombie_boomer_b01_d_p3dm.ru_91: -1419309106604395019
+      zombie_boomer_b01_d_p3dm.ru_92: 3247663170467068353
+      zombie_boomer_b01_d_p3dm.ru_93: -9137120001912392876
+      zombie_boomer_b01_d_p3dm.ru_94: -7084496406803415803
+      zombie_boomer_b01_d_p3dm.ru_95: 61316323672965095
+      zombie_boomer_b01_d_p3dm.ru_96: -1225235184261716309
+      zombie_boomer_b01_d_p3dm.ru_97: -7091675149585216686
+      zombie_boomer_b01_d_p3dm.ru_98: -1606899551291648495
+      zombie_boomer_b01_d_p3dm.ru_99: -780702454008945619
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
