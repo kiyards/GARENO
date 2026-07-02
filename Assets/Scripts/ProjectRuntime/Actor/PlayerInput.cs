@@ -73,7 +73,7 @@ namespace ProjectRuntime.Actor
         public bool InteractHold => interactHold;
         public bool InteractRelease => interactRelease;
         public bool ReloadPress => reloadPress;
-        public bool TurretExitPress => Keyboard.current != null && Keyboard.current.tKey.wasPressedThisFrame;
+        public bool TurretExitPress => Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame;
         public bool TeammateIndicatorsTogglePress => Keyboard.current != null && Keyboard.current.tabKey.wasPressedThisFrame;
 
         public InputAction moveInput;
