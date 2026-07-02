@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6240586649149598673}
   - component: {fileID: 8258380815827404543}
   - component: {fileID: 7889556804679466369}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -268,7 +268,7 @@ GameObject:
   - component: {fileID: 3755640324832242681}
   - component: {fileID: 8277495380130426580}
   - component: {fileID: 5620791204912389779}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: FirstPersonCam
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -374,7 +374,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2490783541060357679}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: AimRig
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -408,7 +408,7 @@ GameObject:
   - component: {fileID: 3373680502583921736}
   - component: {fileID: 6735982392377984524}
   - component: {fileID: 3264892787347041308}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: NameText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -544,7 +544,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4026340512582019932}
   - component: {fileID: 3611815320372169542}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Input
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -773,7 +773,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6858470976675487877}
   - component: {fileID: 5551630792213025358}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: GroundCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -826,7 +826,7 @@ GameObject:
   - component: {fileID: 3086394861078213070}
   - component: {fileID: 5845632010730616114}
   - component: {fileID: 7805670267703114024}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: CameraController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -930,7 +930,7 @@ GameObject:
   - component: {fileID: 4153696930341277465}
   - component: {fileID: 2609033042455968224}
   - component: {fileID: 6885505529193906755}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1342,7 +1342,7 @@ GameObject:
   - component: {fileID: 1374426062021327346}
   - component: {fileID: 4530458533011293639}
   - component: {fileID: 6711707841149257512}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: ThirdPersonCam
   m_TagString: Untagged
   m_Icon: {fileID: 0}
