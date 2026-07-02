@@ -648,7 +648,7 @@ namespace ProjectRuntime.Actor
             float dot = Vector3.Dot(camFwd, dirToFlash);
             float intensity = Mathf.Clamp01(Mathf.InverseLerp(0f, 1f, dot));
             float duration = maxDuration * intensity;
-            if (duration > 0.05f) _flashEffect.StartFlash(duration);
+            if (duration > 0.05f) _flashEffect.StartFlash(duration, intensity);
         }
 
         [Server]
