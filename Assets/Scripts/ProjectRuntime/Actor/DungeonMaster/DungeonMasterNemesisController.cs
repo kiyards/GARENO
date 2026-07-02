@@ -127,8 +127,18 @@ namespace ProjectRuntime.Actor
             _activeNemesis = null;
 
             var player = ResolvePlayer();
-            if (player != null
-                && player.isLocalPlayer
+            if (player == null)
+            {
+                return;
+            }
+
+            // Server restarts the Nemesis countdown so it can be used again — it is not one-time-use.
+            if (player.isServer)
+            {
+                player.CardManager.ServerOnNemesisEnded();
+            }
+
+            if (player.isLocalPlayer
                 && player.currentState is DungeonMasterNemesisState)
             {
                 player.QueueState(new DungeonMasterMovementState(player));

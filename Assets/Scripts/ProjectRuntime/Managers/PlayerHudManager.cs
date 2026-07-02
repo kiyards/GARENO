@@ -130,6 +130,14 @@ namespace ProjectRuntime.Managers
         [field: SerializeField]
         private UIAttackDisplay[] NemesisAttackDisplays { get; set; }
 
+        // Live lifetime countdown shown inside NemesisControlUI while controlling the Nemesis (the
+        // side-card's NemesisCountdownTMP/NemesisChargeFill are hidden with the DM HUD in that state).
+        [field: SerializeField]
+        private TextMeshProUGUI NemesisControlCountdownTMP { get; set; }
+
+        [field: SerializeField]
+        private Image NemesisControlLifetimeFill { get; set; }
+
         [field: SerializeField, Header("Effects")]
         private FlashEffect FlashEffect { get; set; }
 
@@ -305,8 +313,9 @@ namespace ProjectRuntime.Managers
             bool available = this.BoundCardManager.NemesisAvailable;
             bool active = this.BoundCardManager.NemesisActive;
 
-            // While the Nemesis entity exists the DM is actively controlling it; once it's gone
-            // (lifetime expired or ended early) the one-use side-card is spent.
+            // While the Nemesis entity exists the DM controls it and this side-card is hidden along
+            // with the rest of the DM HUD — the live lifetime countdown shows in NemesisControlUI
+            // instead (see RefreshNemesisControlLifetime).
             var nemesisController =
                 this.BoundGameplayPlayer != null ? this.BoundGameplayPlayer.Nemesis : null;
             bool controlling = nemesisController != null && nemesisController.HasActiveNemesis;
@@ -318,18 +327,12 @@ namespace ProjectRuntime.Managers
                 this.NemesisDarkenOverlay.SetActive(!available || active);
             }
 
+            // Side-card tracks the cooldown until the Nemesis can next be deployed: "READY"/full when
+            // available, otherwise the countdown to ready. (Not one-time-use — the countdown restarts
+            // each time a deployed Nemesis ends; see DungeonMasterCardManager.ServerOnNemesisEnded.)
             if (this.NemesisCountdownTMP != null)
             {
-                if (controlling)
-                {
-                    int lifeSeconds = Mathf.CeilToInt(nemesisController.ActiveLifetimeRemaining);
-                    this.NemesisCountdownTMP.text = $"{lifeSeconds / 60}:{lifeSeconds % 60:00}";
-                }
-                else if (active)
-                {
-                    this.NemesisCountdownTMP.text = "USED";
-                }
-                else if (available)
+                if (available)
                 {
                     this.NemesisCountdownTMP.text = "READY";
                 }
@@ -340,29 +343,10 @@ namespace ProjectRuntime.Managers
                 }
             }
 
-            // Charge fill: fills toward READY while charging, sits full when READY, drains over the
-            // lifetime while controlling, and empties once spent.
             if (this.NemesisChargeFill != null)
             {
-                float fill;
-                if (controlling)
-                {
-                    fill = nemesisController.ActiveLifetimeFraction;
-                }
-                else if (active)
-                {
-                    fill = 0f;
-                }
-                else if (available)
-                {
-                    fill = 1f;
-                }
-                else
-                {
-                    fill = this.BoundCardManager.NemesisReadyProgress;
-                }
-
-                this.NemesisChargeFill.fillAmount = fill;
+                this.NemesisChargeFill.fillAmount =
+                    available ? 1f : this.BoundCardManager.NemesisReadyProgress;
             }
 
             // Entering/leaving Nemesis control flips whether the normal DM HUD is shown. Re-apply HUD
@@ -376,14 +360,16 @@ namespace ProjectRuntime.Managers
 
         private void RefreshNemesisAttackDisplays()
         {
+            var nemesisController =
+                this.BoundGameplayPlayer != null ? this.BoundGameplayPlayer.Nemesis : null;
+            var nemesis = nemesisController != null ? nemesisController.ActiveNemesis : null;
+
+            this.RefreshNemesisControlLifetime(nemesisController);
+
             if (this.NemesisAttackDisplays == null || this.NemesisAttackDisplays.Length == 0)
             {
                 return;
             }
-
-            var nemesisController =
-                this.BoundGameplayPlayer != null ? this.BoundGameplayPlayer.Nemesis : null;
-            var nemesis = nemesisController != null ? nemesisController.ActiveNemesis : null;
 
             foreach (var display in this.NemesisAttackDisplays)
             {
@@ -401,6 +387,27 @@ namespace ProjectRuntime.Managers
 
                 display.SetCooldownFill(nemesis.GetAttackCooldownFraction(display.Type));
                 display.SetAvailable(nemesis.IsAttackAvailable(display.Type));
+            }
+        }
+
+        // Drives the lifetime countdown text + bar inside NemesisControlUI (only visible while
+        // controlling). The fill drains 1 → 0 as the Nemesis's lifetime elapses.
+        private void RefreshNemesisControlLifetime(DungeonMasterNemesisController nemesisController)
+        {
+            if (nemesisController == null || !nemesisController.HasActiveNemesis)
+            {
+                return;
+            }
+
+            if (this.NemesisControlLifetimeFill != null)
+            {
+                this.NemesisControlLifetimeFill.fillAmount = nemesisController.ActiveLifetimeFraction;
+            }
+
+            if (this.NemesisControlCountdownTMP != null)
+            {
+                int seconds = Mathf.CeilToInt(nemesisController.ActiveLifetimeRemaining);
+                this.NemesisControlCountdownTMP.text = $"{seconds / 60}:{seconds % 60:00}";
             }
         }
 

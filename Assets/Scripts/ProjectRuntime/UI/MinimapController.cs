@@ -357,7 +357,7 @@ namespace ProjectRuntime.UI
                 Color color = isLocal ? localPlayerColor :
                     isDungeonMaster ? dungeonMasterColor : survivorColor;
                 float size = isLocal ? localPlayerBlipSize : defaultBlipSize;
-                AddTarget(target, color, size, isLocal, 10);
+                AddTarget(target, color, size, isLocal && isSurvivor, 10);
             }
         }
 

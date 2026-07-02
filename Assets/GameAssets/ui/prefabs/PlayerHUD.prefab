@@ -946,6 +946,8 @@ MonoBehaviour:
   - {fileID: 5807250873233178585}
   - {fileID: 179178191208172440}
   - {fileID: 8579037645062150244}
+  <NemesisControlCountdownTMP>k__BackingField: {fileID: 3578586233398444917}
+  <NemesisControlLifetimeFill>k__BackingField: {fileID: 2270923340604708656}
   <FlashEffect>k__BackingField: {fileID: 971552068320990604}
 --- !u!114 &1000000000000000006
 MonoBehaviour:
@@ -5803,8 +5805,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_Name:
+  m_EditorClassIdentifier:
   m_Material: {fileID: 0}
   m_Color: {r: 0.8616352, g: 0.60059404, b: 0.0081285, a: 1}
   m_RaycastTarget: 1
@@ -5813,11 +5815,11 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
+  m_Sprite: {fileID: 21300000, guid: 4b66f21097323d44ab40669b2fb9c53d, type: 3}
+  m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
-  m_FillMethod: 4
+  m_FillMethod: 0
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0

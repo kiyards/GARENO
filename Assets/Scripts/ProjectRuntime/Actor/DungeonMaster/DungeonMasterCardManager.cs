@@ -205,8 +205,9 @@ namespace ProjectRuntime.Actor
             }
         }
 
-        // Spawns the Nemesis at the placement-confirmed position and locks out the side-card for the
-        // rest of the match. Only flips to "active" once the entity actually spawns.
+        // Spawns the Nemesis at the placement-confirmed position and locks out the side-card while it is
+        // alive. Only flips to "active" once the entity actually spawns. Not one-time-use: when the
+        // Nemesis ends the countdown restarts (see ServerOnNemesisEnded).
         [Server]
         public bool ServerTryActivateNemesis(Vector3 position)
         {
@@ -221,6 +222,20 @@ namespace ProjectRuntime.Actor
             this._nemesisActive = true;
             this._nemesisAvailable = false;
             return true;
+        }
+
+        // Called when the active Nemesis ends (lifetime expiry, manual disassemble, or destruction) via
+        // DungeonMasterNemesisController.DetachSpawnedNemesis. Clears the active flag and restarts the
+        // countdown so the Nemesis becomes available again — it is not a one-time-use ability.
+        [Server]
+        public void ServerOnNemesisEnded()
+        {
+            if (!this.Player.IsDungeonMaster) return;
+            if (!this._nemesisActive) return;
+
+            this._nemesisActive = false;
+            this._nemesisAvailable = false;
+            this._nemesisReadyNetworkTime = NetworkTime.time + this.nemesisBaseCountdown;
         }
 
         // Begins placement targeting for the Nemesis side-card. Reuses the card placement flow (green
