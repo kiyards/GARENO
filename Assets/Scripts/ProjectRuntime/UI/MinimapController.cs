@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using ProjectRuntime.Actor;
+using ProjectRuntime.Actor.PlayerStates;
 using ProjectRuntime.Managers;
 using ProjectRuntime.Network;
 using ProjectRuntime.Objectives;
@@ -32,13 +33,13 @@ namespace ProjectRuntime.UI
         [SerializeField] private float defaultBlipSize = 8f;
         [SerializeField] private float localPlayerBlipSize = 13f;
         [SerializeField] private float objectiveBlipSize = 10f;
+        [SerializeField] private float nemesisBlipSize = 15f;
         [SerializeField] private Color localPlayerColor = new(0.35f, 1f, 0.45f, 1f);
         [SerializeField] private Color survivorColor = new(0.35f, 0.8f, 1f, 1f);
         [SerializeField] private Color dungeonMasterColor = new(1f, 0.2f, 0.22f, 1f);
         [SerializeField] private Color crystalColor = new(0.7f, 0.35f, 1f, 1f);
-        [SerializeField] private Color extractionColor = new(0.1f, 1f, 0.25f, 1f);
-        [SerializeField] private Color enemyColor = new(1f, 0.78f, 0.16f, 1f);
-        [SerializeField] private Color trapColor = new(1f, 0.95f, 0.15f, 1f);
+        [SerializeField] private Color enemyColor = new(1f, 0.45f, 0.05f, 1f);
+        [SerializeField] private Color trapColor = new(1f, 0.95f, 0.05f, 1f);
         [SerializeField] private Color turretColor = new(1f, 0.55f, 0.1f, 1f);
 
         [Header("Refresh")]
@@ -222,6 +223,8 @@ namespace ProjectRuntime.UI
             AddLayerToMask("TransparentFX", ref mask);
             AddLayerToMask("Ground", ref mask);
             AddLayerToMask("Water", ref mask);
+            AddLayerToMask("Wall", ref mask);
+            AddLayerToMask("Door", ref mask);
             return mask == 0 ? ~LayerMask.GetMask("UI") : mask;
         }
 
@@ -333,6 +336,13 @@ namespace ProjectRuntime.UI
                 bool isSurvivor = player.playerRole == PlayerRole.Survivor;
                 bool isDungeonMaster = player.playerRole == PlayerRole.DungeonMaster;
 
+                if (isLocal && _role == PlayerRole.DungeonMaster &&
+                    player.player != null &&
+                    player.player.currentState is DungeonMasterNemesisState)
+                {
+                    continue;
+                }
+
                 if (_role == PlayerRole.Survivor && !isSurvivor)
                 {
                     continue;
@@ -353,9 +363,7 @@ namespace ProjectRuntime.UI
 
         private void AddObjectiveTargets(BattleManager battleManager)
         {
-            bool showCrystals = _role == PlayerRole.DungeonMaster ||
-                                battleManager.CurrentRoundPhase == RoundPhase.DestroyCrystals;
-            if (showCrystals)
+            if (_role == PlayerRole.DungeonMaster)
             {
                 foreach (var crystal in FindObjectsByType<CrystalObjective>(FindObjectsSortMode.None))
                 {
@@ -366,20 +374,6 @@ namespace ProjectRuntime.UI
                 }
             }
 
-            bool showExtraction = _role == PlayerRole.DungeonMaster ||
-                                  battleManager.CurrentRoundPhase == RoundPhase.CrystalsComplete;
-            if (!showExtraction)
-            {
-                return;
-            }
-
-            foreach (var extractionZone in FindObjectsByType<ExtractionZone>(FindObjectsSortMode.None))
-            {
-                if (extractionZone != null)
-                {
-                    AddTarget(extractionZone.transform, extractionColor, objectiveBlipSize, false, 30);
-                }
-            }
         }
 
         private void AddDungeonMasterTargets()
@@ -392,19 +386,34 @@ namespace ProjectRuntime.UI
                 }
             }
 
-            foreach (var trap in FindObjectsByType<BearTrap>(FindObjectsSortMode.None))
+            foreach (var nemesis in FindObjectsByType<DungeonMasterNemesis>(FindObjectsSortMode.None))
             {
-                if (trap != null)
+                if (nemesis != null)
                 {
-                    AddTarget(trap.transform, trapColor, defaultBlipSize, false, 50);
+                    AddTarget(nemesis.transform, enemyColor, nemesisBlipSize, false, 45);
                 }
             }
+
+            AddTrapTargets<BearTrap>();
+            AddTrapTargets<C4Trap>();
+            AddTrapTargets<FlashbangTrap>();
 
             foreach (var turret in FindObjectsByType<DungeonMasterTurret>(FindObjectsSortMode.None))
             {
                 if (turret != null)
                 {
                     AddTarget(turret.transform, turretColor, defaultBlipSize, false, 60);
+                }
+            }
+        }
+
+        private void AddTrapTargets<T>() where T : Component, ITrap
+        {
+            foreach (var trap in FindObjectsByType<T>(FindObjectsSortMode.None))
+            {
+                if (trap != null)
+                {
+                    AddTarget(trap.transform, trapColor, defaultBlipSize, false, 50);
                 }
             }
         }

@@ -974,13 +974,13 @@ MonoBehaviour:
   defaultBlipSize: 8
   localPlayerBlipSize: 13
   objectiveBlipSize: 10
+  nemesisBlipSize: 15
   localPlayerColor: {r: 0.35, g: 1, b: 0.45, a: 1}
   survivorColor: {r: 0.35, g: 0.8, b: 1, a: 1}
   dungeonMasterColor: {r: 1, g: 0.2, b: 0.22, a: 1}
   crystalColor: {r: 0.7, g: 0.35, b: 1, a: 1}
-  extractionColor: {r: 0.1, g: 1, b: 0.25, a: 1}
-  enemyColor: {r: 1, g: 0.78, b: 0.16, a: 1}
-  trapColor: {r: 1, g: 0.95, b: 0.15, a: 1}
+  enemyColor: {r: 1, g: 0.45, b: 0.05, a: 1}
+  trapColor: {r: 1, g: 0.95, b: 0.05, a: 1}
   turretColor: {r: 1, g: 0.55, b: 0.1, a: 1}
   targetRefreshInterval: 0.5
 --- !u!1 &1000000000001300000
