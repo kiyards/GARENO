@@ -1031,8 +1031,8 @@ GameObject:
   - component: {fileID: 2200131109173453123}
   - component: {fileID: 3086273937048574866}
   - component: {fileID: 6988870576730226306}
-  - component: {fileID: 4739078296007626547}
   - component: {fileID: 7236363269636559078}
+  - component: {fileID: 7893470114192060199}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -1251,10 +1251,6 @@ MonoBehaviour:
   reloadDuration: 1.5
   fireCooldown: 0.25
   damagePopupPrefab: {fileID: 8824996141537536103, guid: 8f299d7398d8b7c48917932052b6b2f6, type: 3}
-  tracerDuration: 0.12
-  tracerWidth: 0.05
-  tracerColor: {r: 1, g: 0.76, b: 0.22, a: 1}
-  tracerMaterial: {fileID: 0}
 --- !u!114 &6988870576730226306
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1275,28 +1271,9 @@ MonoBehaviour:
   placementRayDistance: 1000
   placementIndicatorRadius: 1.5
   placementIndicatorHeight: 0.03
+  placementChargeDuration: 1
   Mana: 0
---- !u!114 &4739078296007626547
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6497081027001187553}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c4747363f8748bb90f89e9f4a364932, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxPlacementRange: 80
-  placementSurfaceMask:
-    serializedVersion: 2
-    m_Bits: 9
-  placementCooldown: 0.35
-  groundProbeHeight: 3
-  maxGroundSnapDistance: 2
-  minGroundNormalY: 0.65
-  trapOverlapRadius: 1.25
+  nemesisBaseCountdown: 120
 --- !u!114 &7236363269636559078
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1315,10 +1292,27 @@ MonoBehaviour:
   aimTargetMask:
     serializedVersion: 2
     m_Bits: 64
-  tracerDuration: 0.08
-  tracerWidth: 0.035
-  tracerColor: {r: 1, g: 0.76, b: 0.22, a: 1}
-  tracerMaterial: {fileID: 0}
+--- !u!114 &7893470114192060199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6497081027001187553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a07d1f6eef49c2c478b374216b5051ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxPlacementRange: 80
+  placementSurfaceMask:
+    serializedVersion: 2
+    m_Bits: 8
+  placementCooldown: 0.35
+  groundProbeHeight: 3
+  maxGroundSnapDistance: 2
+  minGroundNormalY: 0.65
+  trapOverlapRadius: 1.25
 --- !u!1 &7463206360524112506
 GameObject:
   m_ObjectHideFlags: 0

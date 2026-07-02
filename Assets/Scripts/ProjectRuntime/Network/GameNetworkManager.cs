@@ -21,6 +21,7 @@ namespace ProjectRuntime.Network
         [Header("Prefabs")]
         [field: SerializeField] private LobbyPlayer LobbyPlayerPrefab { get; set; }
         [SerializeField] private GameObject bearTrapPrefab;
+        [SerializeField] private GameObject c4TrapPrefab;
         [SerializeField] private GameObject dungeonMasterTurretPrefab;
         [SerializeField] private GameObject dungeonMasterSlowingTurretPrefab;
 
@@ -31,6 +32,7 @@ namespace ProjectRuntime.Network
         public Dictionary<Type, int> State2GuidCache = new Dictionary<Type, int>();
 
         public GameObject BearTrapPrefab => bearTrapPrefab;
+        public GameObject C4TrapPrefab => c4TrapPrefab;
         public GameObject DungeonMasterTurretPrefab => dungeonMasterTurretPrefab;
         public GameObject DungeonMasterSlowingTurretPrefab => dungeonMasterSlowingTurretPrefab;
 

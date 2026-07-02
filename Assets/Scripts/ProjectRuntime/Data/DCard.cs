@@ -158,9 +158,13 @@ public class DCard : ScriptableObject, IDataImport
 
     private static CardType InferCardType(string effect)
     {
-        return effect != null && effect.IndexOf("TRAP", StringComparison.OrdinalIgnoreCase) >= 0
-            ? CardType.TRAP
-            : CardType.ZOMBIE;
+        if (effect == null) return CardType.ZOMBIE;
+        if (effect.IndexOf("TRAP", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            effect.IndexOf("C4", StringComparison.OrdinalIgnoreCase) >= 0)
+            return CardType.TRAP;
+        if (effect.IndexOf("TURRET", StringComparison.OrdinalIgnoreCase) >= 0)
+            return CardType.WEAPON;
+        return CardType.ZOMBIE;
     }
 #endif
 }
@@ -179,12 +183,14 @@ public enum CardEffectType
     SPAWN_GROUP_OF_DOGS,
     SPAWN_MIMIC_ZOMBIE,
     DEPLOY_SLOWING_TURRET,
+    PLACE_C4,
 }
 
 public enum CardType
 {
     ZOMBIE,
     TRAP,
+    WEAPON,
 }
 
 [Serializable]

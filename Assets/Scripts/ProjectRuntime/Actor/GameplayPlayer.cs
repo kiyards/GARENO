@@ -82,11 +82,11 @@ namespace ProjectRuntime.Actor
         private DungeonMasterTurretController _turret;
         public DungeonMasterTurretController Turret
             => this._turret != null ? this._turret : this._turret = this.EnsureTurretController();
-        private DungeonMasterBearTrapController _bearTrapController;
-        public DungeonMasterBearTrapController BearTrapController
-            => this._bearTrapController != null
-                ? this._bearTrapController
-                : this._bearTrapController = this.EnsureBearTrapController();
+        private DungeonMasterTrapController _trapController;
+        public DungeonMasterTrapController TrapController
+            => this._trapController != null
+                ? this._trapController
+                : this._trapController = this.EnsureTrapController();
         private Renderer[] _roleRenderers;
         private bool[] _roleRendererInitialEnabled;
         private bool _initialColliderEnabled;
@@ -117,7 +117,7 @@ namespace ProjectRuntime.Actor
             base.Awake();
             CacheRoleDefaults();
             Turret.SetVisible(false);
-            BearTrapController.Initialize(this);
+            TrapController.Initialize(this);
         }
 
         public override void NetworkStart()
@@ -516,9 +516,9 @@ namespace ProjectRuntime.Actor
         }
 
         [Command]
-        public void CmdPlaceBearTrap(Vector3 position, Vector3 normal)
+        public void CmdPlaceTrap(TrapType trapType, Vector3 position, Vector3 normal)
         {
-            BearTrapController.ServerPlace(position, normal);
+            TrapController.ServerPlace(trapType, position, normal);
         }
 
         [Command]
@@ -563,6 +563,30 @@ namespace ProjectRuntime.Actor
             _speedMultiplier = newMultiplier;
             if (connectionToClient != null)
                 TargetSetSpeedMultiplier(connectionToClient, newMultiplier);
+        }
+
+        [Server]
+        public void ServerImmobilize(float duration)
+        {
+            if (IsDungeonMaster || IsInactive)
+                return;
+            ServerApplySlow(1f, duration);
+        }
+
+        [Server]
+        public void ServerApplyKnockback(Vector3 impulse)
+        {
+            if (IsDungeonMaster || IsInactive || IsDowned || connectionToClient == null)
+                return;
+            TargetApplyKnockback(connectionToClient, impulse);
+        }
+
+        [TargetRpc]
+        private void TargetApplyKnockback(NetworkConnectionToClient conn, Vector3 impulse)
+        {
+            if (rb == null || rb.isKinematic)
+                return;
+            rb.AddForce(impulse, ForceMode.VelocityChange);
         }
 
         [Server]
@@ -735,11 +759,11 @@ namespace ProjectRuntime.Actor
             return turret;
         }
 
-        private DungeonMasterBearTrapController EnsureBearTrapController()
+        private DungeonMasterTrapController EnsureTrapController()
         {
-            var bearTrapController = GetComponent<DungeonMasterBearTrapController>();
-            bearTrapController.Initialize(this);
-            return bearTrapController;
+            var trapController = GetComponent<DungeonMasterTrapController>();
+            trapController.Initialize(this);
+            return trapController;
         }
     }
 }

@@ -9,7 +9,7 @@ namespace ProjectRuntime.Actor
     [RequireComponent(typeof(NetworkIdentity))]
     [RequireComponent(typeof(Health))]
     [RequireComponent(typeof(Rigidbody))]
-    public class BearTrap : NetworkBehaviour
+    public class BearTrap : NetworkBehaviour, ITrap
     {
         [Header("Health")]
         [SerializeField] private float maxHealth = 500f;

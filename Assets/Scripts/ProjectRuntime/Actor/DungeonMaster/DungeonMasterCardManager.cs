@@ -751,7 +751,15 @@ namespace ProjectRuntime.Actor
                     );
 
                 case CardEffectType.PLACE_BEAR_TRAP:
-                    return this.Player.BearTrapController.ServerPlaceFromCard(
+                    return this.Player.TrapController.ServerPlaceFromCard(
+                        TrapType.BearTrap,
+                        groundPosition,
+                        Vector3.up
+                    );
+
+                case CardEffectType.PLACE_C4:
+                    return this.Player.TrapController.ServerPlaceFromCard(
+                        TrapType.C4,
                         groundPosition,
                         Vector3.up
                     );

@@ -4,7 +4,13 @@ using UnityEngine;
 
 namespace ProjectRuntime.Actor
 {
-    public class DungeonMasterBearTrapController : MonoBehaviour
+    public enum TrapType
+    {
+        BearTrap,
+        C4,
+    }
+
+    public class DungeonMasterTrapController : MonoBehaviour
     {
         [Header("Placement")]
         [SerializeField] private float maxPlacementRange = 80f;
@@ -24,7 +30,7 @@ namespace ProjectRuntime.Actor
             _player = owner;
         }
 
-        public void TryPlace()
+        public void TryPlace(TrapType trapType)
         {
             var player = ResolvePlayer();
             if (player == null ||
@@ -50,11 +56,11 @@ namespace ProjectRuntime.Actor
             }
 
             _clientLastPlaceTime = NetworkTime.time;
-            player.CmdPlaceBearTrap(position, normal);
+            player.CmdPlaceTrap(trapType, position, normal);
         }
 
         [Server]
-        public void ServerPlace(Vector3 requestedPosition, Vector3 requestedNormal)
+        public void ServerPlace(TrapType trapType, Vector3 requestedPosition, Vector3 requestedNormal)
         {
             var player = ResolvePlayer();
             if (player == null ||
@@ -75,11 +81,11 @@ namespace ProjectRuntime.Actor
             }
 
             _serverLastPlaceTime = NetworkTime.time;
-            ServerSpawnTrap(position, normal);
+            ServerSpawnTrap(trapType, position, normal);
         }
 
         [Server]
-        public bool ServerPlaceFromCard(Vector3 requestedPosition, Vector3 requestedNormal)
+        public bool ServerPlaceFromCard(TrapType trapType, Vector3 requestedPosition, Vector3 requestedNormal)
         {
             var player = ResolvePlayer();
             if (player == null || !player.IsDungeonMaster)
@@ -92,25 +98,38 @@ namespace ProjectRuntime.Actor
                 return false;
             }
 
-            ServerSpawnTrap(position, normal);
+            ServerSpawnTrap(trapType, position, normal);
             return true;
         }
 
         [Server]
-        private void ServerSpawnTrap(Vector3 position, Vector3 normal)
+        private void ServerSpawnTrap(TrapType trapType, Vector3 position, Vector3 normal)
         {
-            GameObject trapPrefab = GameNetworkManager.Instance != null
-                ? GameNetworkManager.Instance.BearTrapPrefab
-                : null;
-            if (trapPrefab == null)
+            if (GameNetworkManager.Instance == null)
             {
-                Debug.LogWarning("[DungeonMasterBearTrapController] Assign the bear trap prefab on GameNetworkManager.");
+                Debug.LogWarning("[DungeonMasterTrapController] GameNetworkManager not found.");
                 return;
             }
 
-            if (!trapPrefab.TryGetComponent(out BearTrap _))
+            GameObject trapPrefab = trapType == TrapType.BearTrap
+                ? GameNetworkManager.Instance.BearTrapPrefab
+                : GameNetworkManager.Instance.C4TrapPrefab;
+
+            if (trapPrefab == null)
             {
-                Debug.LogWarning("[DungeonMasterBearTrapController] Bear trap prefab must have a BearTrap component on its root.");
+                Debug.LogWarning($"[DungeonMasterTrapController] Prefab for {trapType} is not assigned on GameNetworkManager.");
+                return;
+            }
+
+            if (trapType == TrapType.BearTrap && !trapPrefab.TryGetComponent(out BearTrap _))
+            {
+                Debug.LogWarning("[DungeonMasterTrapController] Bear trap prefab must have a BearTrap component on its root.");
+                return;
+            }
+
+            if (trapType == TrapType.C4 && !trapPrefab.TryGetComponent(out C4Trap _))
+            {
+                Debug.LogWarning("[DungeonMasterTrapController] C4 prefab must have a C4Trap component on its root.");
                 return;
             }
 
@@ -168,7 +187,7 @@ namespace ProjectRuntime.Actor
                          Physics.AllLayers,
                          QueryTriggerInteraction.Ignore))
             {
-                if (nearbyCollider.GetComponentInParent<BearTrap>() != null)
+                if (nearbyCollider.GetComponentInParent<ITrap>() != null)
                 {
                     return false;
                 }
