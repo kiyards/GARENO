@@ -867,7 +867,7 @@ MonoBehaviour:
   firstPersonCam: {fileID: 3755640324832242681}
   aimOcclusionMask:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 520
   aimTargetMask:
     serializedVersion: 2
     m_Bits: 64
@@ -1275,6 +1275,8 @@ MonoBehaviour:
   placementChargeDuration: 1
   Mana: 0
   nemesisBaseCountdown: 120
+  _debugForceCard: 0
+  _debugForcedCardId: CARD_FLASHBANG
 --- !u!114 &7236363269636559078
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1293,10 +1295,6 @@ MonoBehaviour:
   aimTargetMask:
     serializedVersion: 2
     m_Bits: 64
-  tracerDuration: 0.08
-  tracerWidth: 0.035
-  tracerColor: {r: 1, g: 0.76, b: 0.22, a: 1}
-  tracerMaterial: {fileID: 0}
 --- !u!114 &7893470114192060199
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1307,8 +1305,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a07d1f6eef49c2c478b374216b5051ac, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   maxPlacementRange: 80
   placementSurfaceMask:
     serializedVersion: 2
@@ -1328,8 +1326,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5bd9211deb7ad854aa4da478787bf8ae, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7463206360524112506
 GameObject:
   m_ObjectHideFlags: 0
@@ -1461,7 +1459,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AimCollisionFilter:
     serializedVersion: 2
-    m_Bits: 9
+    m_Bits: 521
   IgnoreTag: 
   AimDistance: 100
   NoiseCancellation: 1

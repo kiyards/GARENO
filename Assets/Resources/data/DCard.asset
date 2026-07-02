@@ -64,6 +64,6 @@ MonoBehaviour:
   - <CardId>k__BackingField: CARD_FLASHBANG
     <DisplayName>k__BackingField: Flashbang
     <ManaCost>k__BackingField: 2
-    <Effect>k__BackingField: 0
+    <Effect>k__BackingField: 8
     <CardType>k__BackingField: 1
     <CardDescription>k__BackingField: 

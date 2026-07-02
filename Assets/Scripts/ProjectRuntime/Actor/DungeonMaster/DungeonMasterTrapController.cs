@@ -8,6 +8,7 @@ namespace ProjectRuntime.Actor
     {
         BearTrap,
         C4,
+        Flashbang,
     }
 
     public class DungeonMasterTrapController : MonoBehaviour
@@ -111,9 +112,13 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            GameObject trapPrefab = trapType == TrapType.BearTrap
-                ? GameNetworkManager.Instance.BearTrapPrefab
-                : GameNetworkManager.Instance.C4TrapPrefab;
+            GameObject trapPrefab = trapType switch
+            {
+                TrapType.BearTrap  => GameNetworkManager.Instance.BearTrapPrefab,
+                TrapType.C4        => GameNetworkManager.Instance.C4TrapPrefab,
+                TrapType.Flashbang => GameNetworkManager.Instance.FlashbangPrefab,
+                _                  => null,
+            };
 
             if (trapPrefab == null)
             {
@@ -133,8 +138,16 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
+            if (trapType == TrapType.Flashbang && !trapPrefab.TryGetComponent(out FlashbangTrap _))
+            {
+                Debug.LogWarning("[DungeonMasterTrapController] Flashbang prefab must have a FlashbangTrap component on its root.");
+                return;
+            }
+
+            // Flashbang spawns elevated so gravity brings it down and it bounces before flashing.
+            Vector3 spawnPos = trapType == TrapType.Flashbang ? position + Vector3.up * 2.5f : position;
             Quaternion rotation = Quaternion.FromToRotation(Vector3.up, normal);
-            GameObject trapObject = Instantiate(trapPrefab, position, rotation);
+            GameObject trapObject = Instantiate(trapPrefab, spawnPos, rotation);
             NetworkServer.Spawn(trapObject);
         }
 

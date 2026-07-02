@@ -117,6 +117,9 @@ namespace ProjectRuntime.Managers
         [field: SerializeField]
         private UIAttackDisplay[] NemesisAttackDisplays { get; set; }
 
+        [field: SerializeField, Header("Effects")]
+        private FlashEffect FlashEffect { get; set; }
+
         private Health BoundHealth { get; set; }
         private PistolWeapon BoundWeapon { get; set; }
         private DungeonMasterCardManager BoundCardManager { get; set; }
@@ -203,6 +206,7 @@ namespace ProjectRuntime.Managers
             }
 
             this.BoundGameplayPlayer = gameplayPlayer;
+            gameplayPlayer.SetFlashEffect(this.FlashEffect);
 
             this.BoundHealth = gameplayPlayer.health;
             if (this.BoundHealth != null)
@@ -260,6 +264,7 @@ namespace ProjectRuntime.Managers
                 this.NemesisButton.onClick.RemoveListener(this.OnNemesisButtonClicked);
             }
 
+            this.BoundGameplayPlayer?.SetFlashEffect(null);
             this.BoundGameplayPlayer = null;
         }
 

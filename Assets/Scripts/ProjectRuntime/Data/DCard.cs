@@ -191,6 +191,7 @@ public enum CardEffectType
     SPAWN_MIMIC_ZOMBIE,
     DEPLOY_SLOWING_TURRET,
     PLACE_C4,
+    PLACE_FLASHBANG,
 }
 
 public enum CardType

@@ -4,6 +4,7 @@ using ProjectRuntime.Actor.PlayerStates;
 using ProjectRuntime.Combat;
 using ProjectRuntime.Managers;
 using ProjectRuntime.Network;
+using ProjectRuntime.UI;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -44,6 +45,10 @@ namespace ProjectRuntime.Actor
 
         [SerializeField] private float dungeonMasterMinY = 0f;
         [SerializeField] private float dungeonMasterMaxY = 40f;
+
+        [Header("Effects")]
+        private FlashEffect _flashEffect;
+        public void SetFlashEffect(FlashEffect effect) { _flashEffect = effect; }
 
         [Header("Revive")]
         // How long a downed survivor waits before auto-resolving if no teammate revives them.
@@ -605,6 +610,31 @@ namespace ProjectRuntime.Actor
             if (rb == null || rb.isKinematic)
                 return;
             rb.AddForce(impulse, ForceMode.VelocityChange);
+        }
+
+        [Server]
+        public void ServerApplyFlash(Vector3 flashPosition, float maxDuration)
+        {
+            if (IsDungeonMaster || IsInactive || IsDowned || connectionToClient == null)
+                return;
+            TargetApplyFlash(connectionToClient, flashPosition, maxDuration);
+        }
+
+        [TargetRpc]
+        private void TargetApplyFlash(NetworkConnectionToClient conn, Vector3 flashPosition, float maxDuration)
+        {
+            if (_flashEffect == null) return;
+            // Camera.main is valid here — TargetRpc only runs on the owning client.
+            Vector3 eyePos = Camera.main != null
+                ? Camera.main.transform.position
+                : transform.position + Vector3.up * 1.6f;
+            Vector3 camFwd = Camera.main != null ? Camera.main.transform.forward : transform.forward;
+            Vector3 dirToFlash = (flashPosition - eyePos).normalized;
+            // dot=1: looking directly at flash (full blind). dot<=0: looking away (no effect).
+            float dot = Vector3.Dot(camFwd, dirToFlash);
+            float intensity = Mathf.Clamp01(Mathf.InverseLerp(0f, 1f, dot));
+            float duration = maxDuration * intensity;
+            if (duration > 0.05f) _flashEffect.StartFlash(duration);
         }
 
         [Server]

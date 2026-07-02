@@ -22,6 +22,7 @@ namespace ProjectRuntime.Network
         [field: SerializeField] private LobbyPlayer LobbyPlayerPrefab { get; set; }
         [SerializeField] private GameObject bearTrapPrefab;
         [SerializeField] private GameObject c4TrapPrefab;
+        [SerializeField] private GameObject flashbangPrefab;
         [SerializeField] private GameObject dungeonMasterTurretPrefab;
         [SerializeField] private GameObject dungeonMasterSlowingTurretPrefab;
         [SerializeField] private GameObject dungeonMasterNemesisPrefab;
@@ -34,6 +35,7 @@ namespace ProjectRuntime.Network
 
         public GameObject BearTrapPrefab => bearTrapPrefab;
         public GameObject C4TrapPrefab => c4TrapPrefab;
+        public GameObject FlashbangPrefab => flashbangPrefab;
         public GameObject DungeonMasterTurretPrefab => dungeonMasterTurretPrefab;
         public GameObject DungeonMasterSlowingTurretPrefab => dungeonMasterSlowingTurretPrefab;
         public GameObject DungeonMasterNemesisPrefab => dungeonMasterNemesisPrefab;

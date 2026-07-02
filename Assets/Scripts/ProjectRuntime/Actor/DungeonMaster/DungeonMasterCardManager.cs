@@ -827,6 +827,13 @@ namespace ProjectRuntime.Actor
                         Vector3.up
                     );
 
+                case CardEffectType.PLACE_FLASHBANG:
+                    return this.Player.TrapController.ServerPlaceFromCard(
+                        TrapType.Flashbang,
+                        groundPosition,
+                        Vector3.up
+                    );
+
                 case CardEffectType.DEPLOY_TURRET:
                     return this.Player.Turret.ServerSpawnTurretForCard(groundPosition);
 
