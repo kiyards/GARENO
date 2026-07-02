@@ -46,6 +46,16 @@ namespace ProjectRuntime.Actor
         [SerializeField]
         private int maxAmmo = 50;
 
+        [Header("Slow")]
+        [SerializeField]
+        private bool slowOnHit = false;
+
+        [SerializeField]
+        private float slowAmount = 0.2f;
+
+        [SerializeField]
+        private float slowDuration = 3f;
+
         [Header("FX")]
         [SerializeField]
         private DamagePopup damagePopupPrefab;
@@ -88,6 +98,9 @@ namespace ProjectRuntime.Actor
         public float FireCooldown => fireCooldown;
         public int CurrentAmmo => _currentAmmo;
         public int MaxAmmo => maxAmmo;
+        public bool SlowOnHit => slowOnHit;
+        public float SlowAmount => slowAmount;
+        public float SlowDuration => slowDuration;
 
         [Server]
         public void ServerInitialize(GameplayPlayer owner)
@@ -97,7 +110,6 @@ namespace ProjectRuntime.Actor
             RegisterWithOwner();
             Health.OnDeathEvent += OnServerDeath;
             _status = TurretStatus.Assembled;
-            Debug.Log("[Turret] Assembled.");
         }
 
         [Server]
@@ -139,7 +151,6 @@ namespace ProjectRuntime.Actor
             StopAllCoroutines();
             _disassemblyEndNetworkTime = NetworkTime.time + disassemblyDuration;
             _status = TurretStatus.Disassembling;
-            Debug.Log("[Turret] Disassembling...");
             StartCoroutine(DisassembleCoroutine());
         }
 
@@ -147,7 +158,6 @@ namespace ProjectRuntime.Actor
         private IEnumerator DisassembleCoroutine()
         {
             yield return new WaitForSeconds(disassemblyDuration);
-            Debug.Log("[Turret] Disassembled.");
             NetworkServer.Destroy(gameObject);
         }
 
@@ -189,17 +199,28 @@ namespace ProjectRuntime.Actor
             if (_attachedOwner == null)
                 RegisterWithOwner();
 
-            if (_attachedOwner == null || !_attachedOwner.isLocalPlayer || PlayerHudManager.Instance == null)
+            if (
+                _attachedOwner == null
+                || !_attachedOwner.isLocalPlayer
+                || PlayerHudManager.Instance == null
+            )
                 return;
 
             if (_status == TurretStatus.Assembled)
             {
-                float remaining = Mathf.Max(0f, (float)(_lifetimeEndNetworkTime - NetworkTime.time));
+                float remaining = Mathf.Max(
+                    0f,
+                    (float)(_lifetimeEndNetworkTime - NetworkTime.time)
+                );
                 PlayerHudManager.Instance.SetTurretLifetime(remaining, lifetime);
             }
             else if (_status == TurretStatus.Disassembling)
             {
-                float fill = Mathf.Clamp01(1f - (float)(_disassemblyEndNetworkTime - NetworkTime.time) / disassemblyDuration);
+                float fill = Mathf.Clamp01(
+                    1f
+                        - (float)(_disassemblyEndNetworkTime - NetworkTime.time)
+                            / disassemblyDuration
+                );
                 PlayerHudManager.Instance.SetTurretDisassembling(fill);
             }
         }

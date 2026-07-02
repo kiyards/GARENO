@@ -184,7 +184,7 @@ GameObject:
   - component: {fileID: 3846101590264519707}
   - component: {fileID: 8553186631549262459}
   m_Layer: 6
-  m_Name: Turret
+  m_Name: SlowingTurret
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -220,7 +220,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneId: 0
-  _assetId: 3733181489
+  _assetId: 2105048997
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
@@ -243,13 +243,13 @@ MonoBehaviour:
   turretYawPivot: {fileID: 0}
   turretPitchPivot: {fileID: 0}
   turretMuzzle: {fileID: 0}
-  damage: 5
+  damage: 0
   maxRange: 80
   fireCooldown: 0.18
-  maxAmmo: 50
-  slowOnHit: 0
+  maxAmmo: 3
+  slowOnHit: 1
   slowAmount: 0.2
-  slowDuration: 3
+  slowDuration: 5
   damagePopupPrefab: {fileID: 8824996141537536103, guid: 8f299d7398d8b7c48917932052b6b2f6, type: 3}
   lifetime: 20
   assemblyDuration: 2

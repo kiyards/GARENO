@@ -10,7 +10,8 @@ namespace ProjectRuntime.Actor.PlayerStates
     {
         protected GameplayPlayer player;
 
-        protected PlayerState(GameplayPlayer sm) : base(sm)
+        protected PlayerState(GameplayPlayer sm)
+            : base(sm)
         {
             player = sm;
         }
@@ -20,7 +21,8 @@ namespace ProjectRuntime.Actor.PlayerStates
     {
         private bool _requestedJump;
 
-        public BaseMovementState(GameplayPlayer sm) : base(sm) { }
+        public BaseMovementState(GameplayPlayer sm)
+            : base(sm) { }
 
         public override void OnEnter()
         {
@@ -66,7 +68,8 @@ namespace ProjectRuntime.Actor.PlayerStates
             }
 
             Vector3 moveDir = GetMoveDir(player.input.moveVec);
-            Vector3 moveDelta = player.moveSpeed * Time.fixedDeltaTime * moveDir;
+            Vector3 moveDelta =
+                player.moveSpeed * player.SpeedMultiplier * Time.fixedDeltaTime * moveDir;
             player.rb.MovePosition(player.rb.position + moveDelta);
         }
 
@@ -89,7 +92,8 @@ namespace ProjectRuntime.Actor.PlayerStates
 
         public void Jump()
         {
-            if (!player.isLocalPlayer) return;
+            if (!player.isLocalPlayer)
+                return;
             if (player.rb.linearVelocity.y < 0)
             {
                 var vel = player.rb.linearVelocity;
@@ -101,14 +105,24 @@ namespace ProjectRuntime.Actor.PlayerStates
 
         public void RotateAim()
         {
-            player.transform.localEulerAngles = new Vector3(0f, player.cam.transform.localEulerAngles.y, 0f);
-            player.aimRig.localEulerAngles = new Vector3(player.cam.transform.localEulerAngles.x, 0f, 0f);
+            player.transform.localEulerAngles = new Vector3(
+                0f,
+                player.cam.transform.localEulerAngles.y,
+                0f
+            );
+            player.aimRig.localEulerAngles = new Vector3(
+                player.cam.transform.localEulerAngles.x,
+                0f,
+                0f
+            );
         }
 
         public Vector3 GetMoveDir(Vector3 inputVec)
         {
-            Vector3 up = player.groundCheck != null ? player.groundCheck.GroundedNormal : Vector3.up;
-            Vector3 aimForwardFlat = Quaternion.Euler(0f, player.cam.transform.eulerAngles.y, 0f) * Vector3.forward;
+            Vector3 up =
+                player.groundCheck != null ? player.groundCheck.GroundedNormal : Vector3.up;
+            Vector3 aimForwardFlat =
+                Quaternion.Euler(0f, player.cam.transform.eulerAngles.y, 0f) * Vector3.forward;
 
             Vector3 forward = Vector3.ProjectOnPlane(aimForwardFlat, up).normalized;
             Vector3 right = Vector3.Cross(up, forward).normalized;
@@ -119,7 +133,8 @@ namespace ProjectRuntime.Actor.PlayerStates
 
     public class DungeonMasterMovementState : PlayerState
     {
-        public DungeonMasterMovementState(GameplayPlayer sm) : base(sm) { }
+        public DungeonMasterMovementState(GameplayPlayer sm)
+            : base(sm) { }
 
         public override void OnEnter()
         {
@@ -134,7 +149,6 @@ namespace ProjectRuntime.Actor.PlayerStates
             {
                 return;
             }
-
         }
 
         public override void FixedUpdate()
@@ -156,9 +170,9 @@ namespace ProjectRuntime.Actor.PlayerStates
             }
 
             Vector3 moveInput = player.input != null ? player.input.MoveVector : Vector3.zero;
-            Vector3 horizontalMove = Vector3.ClampMagnitude(
-                new Vector3(moveInput.x, 0f, moveInput.z),
-                1f) * player.DungeonMasterHorizontalSpeed;
+            Vector3 horizontalMove =
+                Vector3.ClampMagnitude(new Vector3(moveInput.x, 0f, moveInput.z), 1f)
+                * player.DungeonMasterHorizontalSpeed;
 
             float verticalInput = 0f;
             if (player.input != null)
@@ -174,9 +188,12 @@ namespace ProjectRuntime.Actor.PlayerStates
                 }
             }
 
-            Vector3 moveDelta = (horizontalMove + Vector3.up * verticalInput * player.DungeonMasterVerticalSpeed) *
-                Time.fixedDeltaTime;
-            Vector3 nextPosition = player.ClampDungeonMasterPosition(player.transform.position + moveDelta);
+            Vector3 moveDelta =
+                (horizontalMove + Vector3.up * verticalInput * player.DungeonMasterVerticalSpeed)
+                * Time.fixedDeltaTime;
+            Vector3 nextPosition = player.ClampDungeonMasterPosition(
+                player.transform.position + moveDelta
+            );
 
             if (player.rb != null)
             {
@@ -194,7 +211,8 @@ namespace ProjectRuntime.Actor.PlayerStates
         public Vector3 m_anchorPosition;
         public bool m_hasAnchor;
 
-        public DungeonMasterTurretState(GameplayPlayer sm) : base(sm) { }
+        public DungeonMasterTurretState(GameplayPlayer sm)
+            : base(sm) { }
 
         public override void OnSerialize(NetworkWriter writer)
         {
@@ -312,7 +330,8 @@ namespace ProjectRuntime.Actor.PlayerStates
 
     public abstract class BaseInactiveState : PlayerState
     {
-        protected BaseInactiveState(GameplayPlayer sm) : base(sm) { }
+        protected BaseInactiveState(GameplayPlayer sm)
+            : base(sm) { }
     }
 
     public class BearTrappedState : PlayerState
@@ -320,7 +339,8 @@ namespace ProjectRuntime.Actor.PlayerStates
         public uint m_trapNetId;
         public Vector3 m_anchorPosition;
 
-        public BearTrappedState(GameplayPlayer sm) : base(sm) { }
+        public BearTrappedState(GameplayPlayer sm)
+            : base(sm) { }
 
         public override void OnSerialize(NetworkWriter writer)
         {
@@ -403,8 +423,16 @@ namespace ProjectRuntime.Actor.PlayerStates
                 return;
             }
 
-            player.transform.localEulerAngles = new Vector3(0f, player.cam.transform.localEulerAngles.y, 0f);
-            player.aimRig.localEulerAngles = new Vector3(player.cam.transform.localEulerAngles.x, 0f, 0f);
+            player.transform.localEulerAngles = new Vector3(
+                0f,
+                player.cam.transform.localEulerAngles.y,
+                0f
+            );
+            player.aimRig.localEulerAngles = new Vector3(
+                player.cam.transform.localEulerAngles.x,
+                0f,
+                0f
+            );
         }
     }
 
@@ -417,7 +445,8 @@ namespace ProjectRuntime.Actor.PlayerStates
     {
         public Vector3 m_anchorPosition;
 
-        public DownedState(GameplayPlayer sm) : base(sm) { }
+        public DownedState(GameplayPlayer sm)
+            : base(sm) { }
 
         public override void OnSerialize(NetworkWriter writer)
         {
@@ -467,7 +496,8 @@ namespace ProjectRuntime.Actor.PlayerStates
         const float RespawnTime = 0.5f;
         public Vector3 m_respawnPos;
 
-        public RespawnState(GameplayPlayer sm) : base(sm)
+        public RespawnState(GameplayPlayer sm)
+            : base(sm)
         {
             duration = RespawnTime;
         }
@@ -483,6 +513,7 @@ namespace ProjectRuntime.Actor.PlayerStates
             base.OnDeserialize(reader);
             m_respawnPos = reader.Read<Vector3>();
         }
+
         public override void OnEnter()
         {
             base.OnEnter();
@@ -499,6 +530,7 @@ namespace ProjectRuntime.Actor.PlayerStates
                 player.rb.angularVelocity = Vector3.zero;
             }
         }
+
         public override void OnExit()
         {
             base.OnExit();
@@ -523,7 +555,8 @@ namespace ProjectRuntime.Actor.PlayerStates
         private bool _corpseSpawned;
         private bool _requestedJump;
 
-        public DeadState(GameplayPlayer sm) : base(sm) { }
+        public DeadState(GameplayPlayer sm)
+            : base(sm) { }
 
         public override void OnSerialize(NetworkWriter writer)
         {
@@ -580,7 +613,9 @@ namespace ProjectRuntime.Actor.PlayerStates
         public override void FixedUpdate()
         {
             base.FixedUpdate();
-            Vector3 moveDir = GetMoveDir(player.input != null ? player.input.moveVec : Vector3.zero);
+            Vector3 moveDir = GetMoveDir(
+                player.input != null ? player.input.moveVec : Vector3.zero
+            );
             Vector3 moveDelta = player.moveSpeed * Time.fixedDeltaTime * moveDir;
             player.rb.MovePosition(player.rb.position + moveDelta);
         }
@@ -625,14 +660,24 @@ namespace ProjectRuntime.Actor.PlayerStates
                 return;
             }
 
-            player.transform.localEulerAngles = new Vector3(0f, player.cam.transform.localEulerAngles.y, 0f);
-            player.aimRig.localEulerAngles = new Vector3(player.cam.transform.localEulerAngles.x, 0f, 0f);
+            player.transform.localEulerAngles = new Vector3(
+                0f,
+                player.cam.transform.localEulerAngles.y,
+                0f
+            );
+            player.aimRig.localEulerAngles = new Vector3(
+                player.cam.transform.localEulerAngles.x,
+                0f,
+                0f
+            );
         }
 
         private Vector3 GetMoveDir(Vector3 inputVec)
         {
-            Vector3 up = player.groundCheck != null ? player.groundCheck.GroundedNormal : Vector3.up;
-            Vector3 aimForwardFlat = Quaternion.Euler(0f, player.cam.transform.eulerAngles.y, 0f) * Vector3.forward;
+            Vector3 up =
+                player.groundCheck != null ? player.groundCheck.GroundedNormal : Vector3.up;
+            Vector3 aimForwardFlat =
+                Quaternion.Euler(0f, player.cam.transform.eulerAngles.y, 0f) * Vector3.forward;
 
             Vector3 forward = Vector3.ProjectOnPlane(aimForwardFlat, up).normalized;
             Vector3 right = Vector3.Cross(up, forward).normalized;

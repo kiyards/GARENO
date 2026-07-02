@@ -1,3 +1,4 @@
+using System.Collections;
 using Mirror;
 using ProjectRuntime.Actor.PlayerStates;
 using ProjectRuntime.Combat;
@@ -71,6 +72,9 @@ namespace ProjectRuntime.Actor
         // currentState — so ghost visibility can be applied without depending on that timing.
         private bool _isGhost;
 
+        private float _speedMultiplier = 1f;
+        private int _slowStackCount;
+
         private PlayerRole _currentRole = PlayerRole.Unassigned;
         private DungeonMasterCardManager _cardManager;
         public DungeonMasterCardManager CardManager
@@ -90,6 +94,7 @@ namespace ProjectRuntime.Actor
         private bool _initialRigidbodyIsKinematic;
         private bool _cachedRoleDefaults;
 
+        public float SpeedMultiplier => _speedMultiplier;
         public bool IsInactive => currentState is BaseInactiveState;
         public bool IsBearTrapped => currentState is BearTrappedState;
         public bool IsDowned => currentState is DownedState;
@@ -531,6 +536,33 @@ namespace ProjectRuntime.Actor
             }
 
             bearTrap.ServerHandleMash(this);
+        }
+
+        [Server]
+        public void ServerApplySlow(float slowAmount, float duration)
+        {
+            _slowStackCount++;
+            float newMultiplier = Mathf.Clamp(1f - _slowStackCount * slowAmount, 0f, 1f);
+            _speedMultiplier = newMultiplier;
+            if (connectionToClient != null)
+                TargetSetSpeedMultiplier(connectionToClient, newMultiplier);
+            StartCoroutine(ExpireSlowStack(slowAmount, duration));
+        }
+
+        [TargetRpc]
+        private void TargetSetSpeedMultiplier(NetworkConnectionToClient conn, float multiplier)
+        {
+            _speedMultiplier = multiplier;
+        }
+
+        private IEnumerator ExpireSlowStack(float slowAmount, float duration)
+        {
+            yield return new WaitForSeconds(duration);
+            _slowStackCount = Mathf.Max(0, _slowStackCount - 1);
+            float newMultiplier = Mathf.Clamp(1f - _slowStackCount * slowAmount, 0f, 1f);
+            _speedMultiplier = newMultiplier;
+            if (connectionToClient != null)
+                TargetSetSpeedMultiplier(connectionToClient, newMultiplier);
         }
 
         [Server]

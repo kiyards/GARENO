@@ -34,7 +34,10 @@ namespace ProjectRuntime.Actor
             var player = ResolvePlayer();
             if (player != null && player.isServer)
             {
-                ServerSpawnTurret(spawnPosition);
+                GameObject prefab = GameNetworkManager.Instance != null
+                    ? GameNetworkManager.Instance.DungeonMasterTurretPrefab
+                    : null;
+                ServerSpawnTurret(spawnPosition, prefab);
             }
 
             SetVisible(true);
@@ -197,6 +200,15 @@ namespace ProjectRuntime.Actor
 
             damageable.ServerTakeDamage(_activeTurret.Damage, player.netId, hitPoint);
             _activeTurret.RpcShowDamageNumber(hitPoint, _activeTurret.Damage);
+
+            if (_activeTurret.SlowOnHit)
+            {
+                var targetPlayer = targetIdentity.GetComponentInParent<GameplayPlayer>();
+                if (targetPlayer == null)
+                    targetPlayer = targetIdentity.GetComponentInChildren<GameplayPlayer>();
+                if (targetPlayer != null)
+                    targetPlayer.ServerApplySlow(_activeTurret.SlowAmount, _activeTurret.SlowDuration);
+            }
         }
 
         private Vector3 GetMuzzlePosition()
@@ -338,12 +350,31 @@ namespace ProjectRuntime.Actor
                 return false;
             }
 
-            ServerSpawnTurret(position);
+            GameObject prefab = GameNetworkManager.Instance != null
+                ? GameNetworkManager.Instance.DungeonMasterTurretPrefab
+                : null;
+            ServerSpawnTurret(position, prefab);
             return true;
         }
 
         [Server]
-        private void ServerSpawnTurret(Vector3 spawnPosition)
+        public bool ServerSpawnSlowingTurretForCard(Vector3 position)
+        {
+            var player = ResolvePlayer();
+            if (player == null || !player.IsDungeonMaster || _activeTurret != null)
+            {
+                return false;
+            }
+
+            GameObject prefab = GameNetworkManager.Instance != null
+                ? GameNetworkManager.Instance.DungeonMasterSlowingTurretPrefab
+                : null;
+            ServerSpawnTurret(position, prefab);
+            return true;
+        }
+
+        [Server]
+        private void ServerSpawnTurret(Vector3 spawnPosition, GameObject turretPrefab)
         {
             var player = ResolvePlayer();
             if (player == null || !player.IsDungeonMaster || _activeTurret != null)
@@ -351,14 +382,10 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            GameObject turretPrefab =
-                GameNetworkManager.Instance != null
-                    ? GameNetworkManager.Instance.DungeonMasterTurretPrefab
-                    : null;
             if (turretPrefab == null)
             {
                 Debug.LogWarning(
-                    "[DungeonMasterTurretController] Assign the dungeon master turret prefab on GameNetworkManager."
+                    "[DungeonMasterTurretController] Turret prefab is null — assign it on GameNetworkManager."
                 );
                 return;
             }
@@ -366,12 +393,12 @@ namespace ProjectRuntime.Actor
             if (!turretPrefab.TryGetComponent(out DungeonMasterTurret _))
             {
                 Debug.LogWarning(
-                    "[DungeonMasterTurretController] Dungeon master turret prefab must have a DungeonMasterTurret component on its root."
+                    "[DungeonMasterTurretController] Turret prefab must have a DungeonMasterTurret component on its root."
                 );
                 return;
             }
-            float heightOffset = 1f;
 
+            float heightOffset = 1f;
             GameObject turretObject = Instantiate(
                 turretPrefab,
                 spawnPosition + Vector3.up * heightOffset,

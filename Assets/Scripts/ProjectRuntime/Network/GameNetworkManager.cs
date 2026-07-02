@@ -22,6 +22,7 @@ namespace ProjectRuntime.Network
         [field: SerializeField] private LobbyPlayer LobbyPlayerPrefab { get; set; }
         [SerializeField] private GameObject bearTrapPrefab;
         [SerializeField] private GameObject dungeonMasterTurretPrefab;
+        [SerializeField] private GameObject dungeonMasterSlowingTurretPrefab;
 
         public List<LobbyPlayer> LobbyPlayers { get; } = new List<LobbyPlayer>();
         public Dictionary<NetworkConnectionToClient, PlayerManager> ConnectedPlayersCurrent = new();
@@ -31,6 +32,7 @@ namespace ProjectRuntime.Network
 
         public GameObject BearTrapPrefab => bearTrapPrefab;
         public GameObject DungeonMasterTurretPrefab => dungeonMasterTurretPrefab;
+        public GameObject DungeonMasterSlowingTurretPrefab => dungeonMasterSlowingTurretPrefab;
 
         public CSteamID HostedLobbyId;
 

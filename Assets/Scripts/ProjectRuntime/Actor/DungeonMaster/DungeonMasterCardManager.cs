@@ -20,14 +20,24 @@ namespace ProjectRuntime.Actor
     {
         private const int HandSize = 4;
 
-        [SerializeField] private float manaRegenRate = 1f;
-        [SerializeField] private int maxMana = 10;
+        [SerializeField]
+        private float manaRegenRate = 1f;
+
+        [SerializeField]
+        private int maxMana = 10;
 
         [Header("Placement")]
-        [SerializeField] private float placementRayDistance = 1000f;
-        [SerializeField] private float placementIndicatorRadius = 1.5f;
-        [SerializeField] private float placementIndicatorHeight = 0.03f;
-        [SerializeField] private float placementChargeDuration = 1f;
+        [SerializeField]
+        private float placementRayDistance = 1000f;
+
+        [SerializeField]
+        private float placementIndicatorRadius = 1.5f;
+
+        [SerializeField]
+        private float placementIndicatorHeight = 0.03f;
+
+        [SerializeField]
+        private float placementChargeDuration = 1f;
 
         [SyncVar(hook = nameof(OnManaChanged))]
         public float Mana;
@@ -80,7 +90,8 @@ namespace ProjectRuntime.Actor
         private Material _placementIndicatorMaterial;
         private int _selectedHandSlot = -1;
         private string _selectedCardId;
-        private DungeonMasterCardPlacementState _placementState = DungeonMasterCardPlacementState.Idle;
+        private DungeonMasterCardPlacementState _placementState =
+            DungeonMasterCardPlacementState.Idle;
         private bool _hasPlacementPoint;
         private Vector3 _placementPosition;
         private Vector3 _placementNormal = Vector3.up;
@@ -90,12 +101,17 @@ namespace ProjectRuntime.Actor
         private string _committedCardId;
 
         public DungeonMasterCardPlacementState PlacementState => this._placementState;
-        public bool IsPlacementModeActive => this._placementState != DungeonMasterCardPlacementState.Idle;
-        public bool IsPlacementCharging => this._placementState == DungeonMasterCardPlacementState.ChargingPlacement;
+        public bool IsPlacementModeActive =>
+            this._placementState != DungeonMasterCardPlacementState.Idle;
+        public bool IsPlacementCharging =>
+            this._placementState == DungeonMasterCardPlacementState.ChargingPlacement;
         public string SelectedCardId => this._selectedCardId;
-        public float PlacementChargeProgress => this.IsPlacementCharging && this.placementChargeDuration > 0f
-            ? Mathf.Clamp01((Time.time - this._placementChargeStartTime) / this.placementChargeDuration)
-            : 0f;
+        public float PlacementChargeProgress =>
+            this.IsPlacementCharging && this.placementChargeDuration > 0f
+                ? Mathf.Clamp01(
+                    (Time.time - this._placementChargeStartTime) / this.placementChargeDuration
+                )
+                : 0f;
 
         private void Awake()
         {
@@ -108,8 +124,8 @@ namespace ProjectRuntime.Actor
             this.DestroyPlacementIndicator();
         }
 
-        private void OnHandCardsChanged(SyncList<string>.Operation op, int index, string item)
-            => this.OnHandChangedEvent?.Invoke();
+        private void OnHandCardsChanged(SyncList<string>.Operation op, int index, string item) =>
+            this.OnHandChangedEvent?.Invoke();
 
         public override void OnStartServer()
         {
@@ -137,12 +153,13 @@ namespace ProjectRuntime.Actor
         [Server]
         private void ServerTickMana()
         {
-            if (!this.Player.IsDungeonMaster) return;
+            if (!this.Player.IsDungeonMaster)
+                return;
             this.Mana = Mathf.Min(this.Mana + this.manaRegenRate * Time.deltaTime, this.maxMana);
         }
 
-        private void OnManaChanged(float oldVal, float newVal)
-            => this.OnManaChangedEvent?.Invoke(newVal, this.maxMana);
+        private void OnManaChanged(float oldVal, float newVal) =>
+            this.OnManaChangedEvent?.Invoke(newVal, this.maxMana);
 
         [Server]
         private void ServerTickNemesisAvailability()
@@ -198,7 +215,8 @@ namespace ProjectRuntime.Actor
         [Server]
         public bool ServerTrySpendMana(int amount)
         {
-            if (this.Mana < amount) return false;
+            if (this.Mana < amount)
+                return false;
             this.Mana -= amount;
             return true;
         }
@@ -252,8 +270,10 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            if (this._placementState == DungeonMasterCardPlacementState.SelectingPlacement &&
-                mouse.rightButton.wasPressedThisFrame)
+            if (
+                this._placementState == DungeonMasterCardPlacementState.SelectingPlacement
+                && mouse.rightButton.wasPressedThisFrame
+            )
             {
                 this.CancelPlacement();
                 return;
@@ -262,10 +282,12 @@ namespace ProjectRuntime.Actor
             if (this._placementState == DungeonMasterCardPlacementState.SelectingPlacement)
             {
                 this.UpdatePlacementPoint(mouse);
-                if (this._hasPlacementPoint &&
-                    Time.frameCount != this._placementStartedFrame &&
-                    mouse.leftButton.wasPressedThisFrame &&
-                    !IsPointerOverUi())
+                if (
+                    this._hasPlacementPoint
+                    && Time.frameCount != this._placementStartedFrame
+                    && mouse.leftButton.wasPressedThisFrame
+                    && !IsPointerOverUi()
+                )
                 {
                     this.BeginPlacementCharge();
                 }
@@ -296,9 +318,9 @@ namespace ProjectRuntime.Actor
         private bool CanUseLocalPlacement()
         {
             var player = this.Player;
-            return player != null &&
-                   player.IsDungeonMaster &&
-                   player.currentState is DungeonMasterMovementState;
+            return player != null
+                && player.IsDungeonMaster
+                && player.currentState is DungeonMasterMovementState;
         }
 
         private void TryBeginPlacement(int handSlot)
@@ -373,21 +395,27 @@ namespace ProjectRuntime.Actor
 
             float progress = this.PlacementChargeProgress;
             float pulse = 1f + Mathf.Sin(Time.time * 18f) * 0.08f;
-            Vector3 safeNormal = this._placementNormal.sqrMagnitude > 0.0001f
-                ? this._placementNormal.normalized
-                : Vector3.up;
+            Vector3 safeNormal =
+                this._placementNormal.sqrMagnitude > 0.0001f
+                    ? this._placementNormal.normalized
+                    : Vector3.up;
 
             this._placementIndicator.transform.SetPositionAndRotation(
                 this._placementPosition + safeNormal * this.placementIndicatorHeight,
-                Quaternion.FromToRotation(Vector3.up, safeNormal));
+                Quaternion.FromToRotation(Vector3.up, safeNormal)
+            );
             this._placementIndicator.transform.localScale = new Vector3(
                 this.placementIndicatorRadius * 2f * pulse,
                 this.placementIndicatorHeight,
-                this.placementIndicatorRadius * 2f * pulse);
-            this.SetPlacementIndicatorColor(Color.Lerp(
-                new Color(0.1f, 1f, 0.25f, 0.65f),
-                new Color(0.75f, 1f, 0.2f, 0.85f),
-                progress));
+                this.placementIndicatorRadius * 2f * pulse
+            );
+            this.SetPlacementIndicatorColor(
+                Color.Lerp(
+                    new Color(0.1f, 1f, 0.25f, 0.65f),
+                    new Color(0.75f, 1f, 0.2f, 0.85f),
+                    progress
+                )
+            );
             this.SetPlacementIndicatorVisible(true);
         }
 
@@ -402,9 +430,11 @@ namespace ProjectRuntime.Actor
 
         private void CancelPlacement()
         {
-            if (this._placementState == DungeonMasterCardPlacementState.Idle &&
-                this._selectedHandSlot < 0 &&
-                string.IsNullOrEmpty(this._selectedCardId))
+            if (
+                this._placementState == DungeonMasterCardPlacementState.Idle
+                && this._selectedHandSlot < 0
+                && string.IsNullOrEmpty(this._selectedCardId)
+            )
             {
                 return;
             }
@@ -436,12 +466,15 @@ namespace ProjectRuntime.Actor
             }
 
             Ray ray = camera.ScreenPointToRay(mouse.position.ReadValue());
-            if (!Physics.Raycast(
+            if (
+                !Physics.Raycast(
                     ray,
                     out RaycastHit hit,
                     this.placementRayDistance,
                     1 << groundLayer,
-                    QueryTriggerInteraction.Ignore))
+                    QueryTriggerInteraction.Ignore
+                )
+            )
             {
                 return false;
             }
@@ -470,7 +503,7 @@ namespace ProjectRuntime.Actor
             {
                 this._placementIndicatorMaterial = new Material(indicatorRenderer.sharedMaterial)
                 {
-                    color = new Color(0.1f, 1f, 0.25f, 0.65f)
+                    color = new Color(0.1f, 1f, 0.25f, 0.65f),
                 };
                 indicatorRenderer.material = this._placementIndicatorMaterial;
             }
@@ -489,11 +522,13 @@ namespace ProjectRuntime.Actor
             Vector3 safeNormal = normal.sqrMagnitude > 0.0001f ? normal.normalized : Vector3.up;
             this._placementIndicator.transform.SetPositionAndRotation(
                 position + safeNormal * this.placementIndicatorHeight,
-                Quaternion.FromToRotation(Vector3.up, safeNormal));
+                Quaternion.FromToRotation(Vector3.up, safeNormal)
+            );
             this._placementIndicator.transform.localScale = new Vector3(
                 this.placementIndicatorRadius * 2f,
                 this.placementIndicatorHeight,
-                this.placementIndicatorRadius * 2f);
+                this.placementIndicatorRadius * 2f
+            );
         }
 
         private void SetPlacementIndicatorVisible(bool isVisible)
@@ -609,7 +644,8 @@ namespace ProjectRuntime.Actor
             int handSlot,
             string expectedCardId,
             out string cardId,
-            out CardData card)
+            out CardData card
+        )
         {
             cardId = null;
             card = default;
@@ -675,7 +711,8 @@ namespace ProjectRuntime.Actor
 
                     return battleManager.ServerTrySpawnBasicZombie(
                         this.Player.localManager,
-                        groundPosition);
+                        groundPosition
+                    );
 
                 case CardEffectType.SPAWN_CREEPER_ZOMBIE:
                     var creeperBattleManager = BattleManager.Instance;
@@ -686,7 +723,8 @@ namespace ProjectRuntime.Actor
 
                     return creeperBattleManager.ServerTrySpawnCreeperZombie(
                         this.Player.localManager,
-                        groundPosition);
+                        groundPosition
+                    );
 
                 case CardEffectType.SPAWN_GROUP_OF_DOGS:
                     var dogBattleManager = BattleManager.Instance;
@@ -697,7 +735,8 @@ namespace ProjectRuntime.Actor
 
                     return dogBattleManager.ServerTrySpawnGroupOfDogs(
                         this.Player.localManager,
-                        groundPosition);
+                        groundPosition
+                    );
 
                 case CardEffectType.SPAWN_MIMIC_ZOMBIE:
                     var mimicBattleManager = BattleManager.Instance;
@@ -708,17 +747,25 @@ namespace ProjectRuntime.Actor
 
                     return mimicBattleManager.ServerTrySpawnMimicZombie(
                         this.Player.localManager,
-                        groundPosition);
+                        groundPosition
+                    );
 
                 case CardEffectType.PLACE_BEAR_TRAP:
-                    return this.Player.BearTrapController.ServerPlaceFromCard(groundPosition, Vector3.up);
+                    return this.Player.BearTrapController.ServerPlaceFromCard(
+                        groundPosition,
+                        Vector3.up
+                    );
 
                 case CardEffectType.DEPLOY_TURRET:
                     return this.Player.Turret.ServerSpawnTurretForCard(groundPosition);
 
+                case CardEffectType.DEPLOY_SLOWING_TURRET:
+                    return this.Player.Turret.ServerSpawnSlowingTurretForCard(groundPosition);
+
                 default:
                     Debug.LogWarning(
-                        $"[DungeonMasterCardManager] Unhandled card effect '{card.Effect}'.");
+                        $"[DungeonMasterCardManager] Unhandled card effect '{card.Effect}'."
+                    );
                     return false;
             }
         }

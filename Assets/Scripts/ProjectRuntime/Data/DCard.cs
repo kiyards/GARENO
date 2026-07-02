@@ -178,6 +178,7 @@ public enum CardEffectType
     SPAWN_CREEPER_ZOMBIE,
     SPAWN_GROUP_OF_DOGS,
     SPAWN_MIMIC_ZOMBIE,
+    DEPLOY_SLOWING_TURRET,
 }
 
 public enum CardType
