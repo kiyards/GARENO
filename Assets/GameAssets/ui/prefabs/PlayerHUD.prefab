@@ -732,7 +732,10 @@ MonoBehaviour:
   <TimerTMP>k__BackingField: {fileID: 900100000000000003}
   <ManaBarFill>k__BackingField: {fileID: 1000000000001320003}
   <ManaTMP>k__BackingField: {fileID: 8443430954768011309}
+  <ManaBarParent>k__BackingField: {fileID: 2950810506418172780}
   <DungeonMasterObjectiveTMP>k__BackingField: {fileID: 6642725445690249251}
+  <DungeonMasterHand>k__BackingField: {fileID: 71498284998745294}
+  <CardDescription>k__BackingField: {fileID: 5645899791068076992}
   <TurretReticle>k__BackingField: {fileID: 2023967056782836836}
   <TurretAmmoParent>k__BackingField: {fileID: 2800379074417338180}
   <TurretCurrentAmmoTMP>k__BackingField: {fileID: 5805133118350298788}
@@ -741,9 +744,10 @@ MonoBehaviour:
   <TurretLifetimeTMP>k__BackingField: {fileID: 1580651877865630344}
   <TurretDisassemblingParent>k__BackingField: {fileID: 689506935923600999}
   <TurretDisassemblingBarFill>k__BackingField: {fileID: 2018379331219658935}
-  <DungeonMasterHand>k__BackingField: {fileID: 71498284998745294}
-  <ManaBarParent>k__BackingField: {fileID: 2950810506418172780}
-  <CardDescription>k__BackingField: {fileID: 5645899791068076992}
+  <BearTrapEscapeParent>k__BackingField: {fileID: 8355326838281014552}
+  <BearTrapEscapeBarFill>k__BackingField: {fileID: 3872115099947649167}
+  <BearTrapEscapeBarTransform>k__BackingField: {fileID: 2258716839187056776}
+  <BearTrapShakeMaxPixels>k__BackingField: 12
   <Minimap>k__BackingField: {fileID: 1000000000000000006}
   <DirectionIndicators>k__BackingField: {fileID: 0}
   <NemesisButton>k__BackingField: {fileID: 9183370530588096216}
@@ -2045,7 +2049,7 @@ GameObject:
   - component: {fileID: 5466268377188032901}
   - component: {fileID: 3872115099947649167}
   m_Layer: 5
-  m_Name: TimerBar (1)
+  m_Name: TimerBarFill(1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2201,7 +2205,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &4378577524169853464
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2242,7 +2246,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2348,7 +2352,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -3220,6 +3224,81 @@ RectTransform:
   m_AnchoredPosition: {x: 100, y: 50}
   m_SizeDelta: {x: 400, y: 130}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &4295809183919351040
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7110211717607598809}
+  - component: {fileID: 7829457502950591788}
+  - component: {fileID: 6419457653805290400}
+  m_Layer: 5
+  m_Name: TimerBarBackground (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &7110211717607598809
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4295809183919351040}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.5744917, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2258716839187056776}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: 0, y: 24}
+  m_SizeDelta: {x: 1429.6566, y: 94.9}
+  m_Pivot: {x: 0.5, y: 0}
+--- !u!222 &7829457502950591788
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4295809183919351040}
+  m_CullTransparentMesh: 1
+--- !u!114 &6419457653805290400
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4295809183919351040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 4b66f21097323d44ab40669b2fb9c53d, type: 3}
+  m_Type: 3
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 0
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &4320959635109127935
 GameObject:
   m_ObjectHideFlags: 0
@@ -5922,6 +6001,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 7110211717607598809}
   - {fileID: 9047085044107464859}
   - {fileID: 2963372915793181804}
   m_Father: {fileID: 4582666833153064099}

@@ -457,6 +457,8 @@ namespace ProjectRuntime.Actor.PlayerStates
         public uint m_trapNetId;
         public Vector3 m_anchorPosition;
 
+        private BearTrap _trap;
+
         public BearTrappedState(GameplayPlayer sm)
             : base(sm) { }
 
@@ -483,6 +485,24 @@ namespace ProjectRuntime.Actor.PlayerStates
             }
 
             StopMovement();
+
+            if (player.isLocalPlayer)
+            {
+                if (NetworkClient.spawned.TryGetValue(m_trapNetId, out var identity))
+                    _trap = identity?.GetComponent<BearTrap>();
+
+                PlayerHudManager.Instance?.SetBearTrapBarActive(true);
+            }
+        }
+
+        public override void OnExit()
+        {
+            base.OnExit();
+            if (player.isLocalPlayer)
+            {
+                PlayerHudManager.Instance?.SetBearTrapBarActive(false);
+                _trap = null;
+            }
         }
 
         public override void Update()
@@ -493,9 +513,12 @@ namespace ProjectRuntime.Actor.PlayerStates
                 return;
             }
 
+            PlayerHudManager.Instance?.SetBearTrapEscapeFill(_trap != null ? _trap.MashProgress : 0f);
+
             if (player.input.InteractPress)
             {
                 player.CmdMashBearTrap(m_trapNetId);
+                PlayerHudManager.Instance?.TriggerBearTrapShake(_trap != null ? _trap.MashProgress : 0f);
             }
         }
 

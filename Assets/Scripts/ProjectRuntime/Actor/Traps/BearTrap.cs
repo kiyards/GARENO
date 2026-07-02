@@ -20,13 +20,15 @@ namespace ProjectRuntime.Actor
         [SerializeField] private float tickInterval = 1f;
 
         [Header("Escape")]
-        [SerializeField] private int requiredMashCount = 20;
+        [SerializeField] private float requiredMashCount = 20f;
+        [SerializeField] private float mashIncrement = 1f;
+        [SerializeField] private float mashDrainRate = 1.5f;
 
         [SyncVar(hook = nameof(OnTriggeredSynced))]
         private bool isTriggered;
 
         [SyncVar] private uint trappedPlayerNetId;
-        [SyncVar] private int mashCount;
+        [SyncVar] private float mashCount;
 
         private Health _health;
         private GameplayPlayer _trappedPlayer;
@@ -35,6 +37,7 @@ namespace ProjectRuntime.Actor
 
         public bool IsTriggered => isTriggered;
         public uint TrappedPlayerNetId => trappedPlayerNetId;
+        public float MashProgress => requiredMashCount > 0f ? mashCount / requiredMashCount : 0f;
 
         private void Awake()
         {
@@ -96,6 +99,8 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
+            mashCount = Mathf.Max(0f, mashCount - mashDrainRate * Time.fixedDeltaTime);
+
             if (NetworkTime.time < _nextDamageTime)
             {
                 return;
@@ -129,7 +134,7 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            mashCount++;
+            mashCount = Mathf.Min(requiredMashCount, mashCount + mashIncrement);
             if (mashCount >= requiredMashCount)
             {
                 ServerReleaseTrappedPlayer();

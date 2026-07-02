@@ -1,3 +1,4 @@
+using System.Collections;
 using ProjectRuntime.Actor;
 using ProjectRuntime.Combat;
 using ProjectRuntime.Network;
@@ -56,9 +57,18 @@ namespace ProjectRuntime.Managers
         private TextMeshProUGUI ManaTMP { get; set; }
 
         [field: SerializeField]
+        private GameObject ManaBarParent { get; set; }
+
+        [field: SerializeField]
         private TextMeshProUGUI DungeonMasterObjectiveTMP { get; set; }
 
         [field: SerializeField]
+        private UIDungeonMasterHand DungeonMasterHand { get; set; }
+
+        [field: SerializeField]
+        private GameObject CardDescription { get; set; }
+
+        [field: SerializeField, Header("Turret")]
         private GameObject TurretReticle { get; set; }
 
         [field: SerializeField]
@@ -82,14 +92,17 @@ namespace ProjectRuntime.Managers
         [field: SerializeField]
         private Image TurretDisassemblingBarFill { get; set; }
 
-        [field: SerializeField]
-        private UIDungeonMasterHand DungeonMasterHand { get; set; }
+        [field: SerializeField, Header("Bear Trap Escape")]
+        private GameObject BearTrapEscapeParent { get; set; }
 
         [field: SerializeField]
-        private GameObject ManaBarParent { get; set; }
+        private Image BearTrapEscapeBarFill { get; set; }
 
         [field: SerializeField]
-        private GameObject CardDescription { get; set; }
+        private RectTransform BearTrapEscapeBarTransform { get; set; }
+
+        [field: SerializeField]
+        private float BearTrapShakeMaxPixels { get; set; } = 12f;
 
         [field: SerializeField, Header("Minimap")]
         private MinimapController Minimap { get; set; }
@@ -280,8 +293,11 @@ namespace ProjectRuntime.Managers
 
         private void RefreshNemesisSideCard()
         {
-            if (this.NemesisButton == null || this.BoundCardManager == null
-                || this.CurrentRole != PlayerRole.DungeonMaster)
+            if (
+                this.NemesisButton == null
+                || this.BoundCardManager == null
+                || this.CurrentRole != PlayerRole.DungeonMaster
+            )
             {
                 return;
             }
@@ -489,6 +505,45 @@ namespace ProjectRuntime.Managers
                 TurretDisassemblingParent.SetActive(active);
         }
 
+        public void SetBearTrapBarActive(bool active)
+        {
+            if (BearTrapEscapeParent != null)
+                BearTrapEscapeParent.SetActive(active);
+        }
+
+        public void SetBearTrapEscapeFill(float fill)
+        {
+            if (BearTrapEscapeBarFill != null)
+                BearTrapEscapeBarFill.fillAmount = fill;
+        }
+
+        public void TriggerBearTrapShake(float fillAmount)
+        {
+            if (BearTrapEscapeBarTransform == null)
+                return;
+            StopCoroutine(nameof(BearTrapShakeCoroutine));
+            StartCoroutine(BearTrapShakeCoroutine(fillAmount));
+        }
+
+        private IEnumerator BearTrapShakeCoroutine(float intensity)
+        {
+            float duration = 0.12f;
+            float elapsed = 0f;
+            Vector2 origin = BearTrapEscapeBarTransform.anchoredPosition;
+            float maxOffset = BearTrapShakeMaxPixels * intensity;
+
+            while (elapsed < duration)
+            {
+                float x = Random.Range(-maxOffset, maxOffset);
+                float y = Random.Range(-maxOffset, maxOffset);
+                BearTrapEscapeBarTransform.anchoredPosition = origin + new Vector2(x, y);
+                elapsed += Time.unscaledDeltaTime;
+                yield return null;
+            }
+
+            BearTrapEscapeBarTransform.anchoredPosition = origin;
+        }
+
         public void SetTurretReticleActive(bool active)
         {
             if (TurretReticle != null)
@@ -528,8 +583,8 @@ namespace ProjectRuntime.Managers
             );
             this.DungeonMasterOnlyUIParent.SetActive(
                 this.IsPlayerUiVisible
-                && this.CurrentRole == PlayerRole.DungeonMaster
-                && !this.IsControllingNemesis
+                    && this.CurrentRole == PlayerRole.DungeonMaster
+                    && !this.IsControllingNemesis
             );
 
             // The in-control overlay sits on the always-active canvas root (not a role parent), so it
@@ -539,8 +594,8 @@ namespace ProjectRuntime.Managers
             {
                 this.NemesisControlUI.SetActive(
                     this.IsPlayerUiVisible
-                    && this.CurrentRole == PlayerRole.DungeonMaster
-                    && this.IsControllingNemesis
+                        && this.CurrentRole == PlayerRole.DungeonMaster
+                        && this.IsControllingNemesis
                 );
             }
         }
@@ -638,9 +693,10 @@ namespace ProjectRuntime.Managers
                 this.BoundBattleManager != null ? this.BoundBattleManager : BattleManager.Instance;
 
             int required = battleManager != null ? battleManager.RequiredCrystals : 3;
-            int remaining = battleManager != null
-                ? Mathf.Max(0, required - battleManager.DestroyedCrystals)
-                : required;
+            int remaining =
+                battleManager != null
+                    ? Mathf.Max(0, required - battleManager.DestroyedCrystals)
+                    : required;
 
             this.DungeonMasterObjectiveTMP.text = $"Protect the Crystals ({remaining}/{required})";
         }
@@ -760,10 +816,13 @@ namespace ProjectRuntime.Managers
                 return this.DirectionIndicators;
             }
 
-            this.DirectionIndicators = GetComponentInChildren<WorldDirectionIndicatorController>(true);
+            this.DirectionIndicators = GetComponentInChildren<WorldDirectionIndicatorController>(
+                true
+            );
             if (this.DirectionIndicators == null)
             {
-                this.DirectionIndicators = gameObject.AddComponent<WorldDirectionIndicatorController>();
+                this.DirectionIndicators =
+                    gameObject.AddComponent<WorldDirectionIndicatorController>();
             }
 
             return this.DirectionIndicators;
