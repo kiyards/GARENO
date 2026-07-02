@@ -17,6 +17,7 @@ namespace ProjectRuntime.Objectives
         private bool isDespawned;
 
         private bool _reportedDestroyed;
+        private bool _reportedDamaged;
 
         public bool IsDespawned => isDespawned;
 
@@ -30,9 +31,11 @@ namespace ProjectRuntime.Objectives
             base.OnStartServer();
             CacheComponents();
             this._reportedDestroyed = false;
+            this._reportedDamaged = false;
 
             if (this.health != null)
             {
+                this.health.OnDamagedEvent += this.OnDamaged;
                 this.health.OnDeathEvent += this.OnHealthDepleted;
             }
 
@@ -46,6 +49,7 @@ namespace ProjectRuntime.Objectives
         {
             if (this.health != null)
             {
+                this.health.OnDamagedEvent -= this.OnDamaged;
                 this.health.OnDeathEvent -= this.OnHealthDepleted;
             }
 
@@ -74,6 +78,18 @@ namespace ProjectRuntime.Objectives
 
             this.isDespawned = true;
             ApplyDespawned(true);
+        }
+
+        [Server]
+        private void OnDamaged(float amount, uint sourceNetId, Vector3 hitPoint)
+        {
+            if (this._reportedDamaged)
+            {
+                return;
+            }
+
+            this._reportedDamaged = true;
+            BattleManager.Instance?.ServerReportCrystalDamaged(this);
         }
 
         [Server]

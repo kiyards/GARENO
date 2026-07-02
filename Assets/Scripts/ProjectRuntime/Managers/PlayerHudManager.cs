@@ -91,6 +91,9 @@ namespace ProjectRuntime.Managers
         [field: SerializeField, Header("Minimap")]
         private MinimapController Minimap { get; set; }
 
+        [field: SerializeField, Header("Direction Indicators")]
+        private WorldDirectionIndicatorController DirectionIndicators { get; set; }
+
         [field: SerializeField, Header("Nemesis")]
         private Button NemesisButton { get; set; }
 
@@ -149,6 +152,7 @@ namespace ProjectRuntime.Managers
 
             Instance = this;
             this.EnsureMinimap();
+            this.EnsureDirectionIndicators();
             this.SetRole(PlayerRole.Unassigned);
         }
 
@@ -176,6 +180,7 @@ namespace ProjectRuntime.Managers
         {
             this.LocalPlayer = player;
             this.EnsureMinimap()?.BindLocalPlayer(player);
+            this.EnsureDirectionIndicators()?.BindLocalPlayer(player);
             this.SetRole(player != null ? player.playerRole : PlayerRole.Unassigned);
             this.BindCombat(player != null ? player.player : null);
         }
@@ -375,6 +380,7 @@ namespace ProjectRuntime.Managers
         {
             this.CurrentRole = role;
             this.EnsureMinimap()?.SetRole(role);
+            this.EnsureDirectionIndicators()?.SetRole(role);
 
             this.ApplyHudVisibility();
             this.BindBattleManager(BattleManager.Instance);
@@ -461,6 +467,7 @@ namespace ProjectRuntime.Managers
         private void ApplyHudVisibility()
         {
             this.EnsureMinimap()?.SetHudVisible(this.IsPlayerUiVisible);
+            this.EnsureDirectionIndicators()?.SetHudVisible(this.IsPlayerUiVisible);
 
             if (
                 this.SharedUIParent == null
@@ -506,6 +513,7 @@ namespace ProjectRuntime.Managers
             if (battleManager == null)
             {
                 this.EnsureMinimap()?.SetBattleManager(null);
+                this.EnsureDirectionIndicators()?.SetBattleManager(null);
                 this.RefreshTimerText();
                 this.RefreshObjectiveText();
                 return;
@@ -513,6 +521,7 @@ namespace ProjectRuntime.Managers
 
             this.BoundBattleManager = battleManager;
             this.EnsureMinimap()?.SetBattleManager(battleManager);
+            this.EnsureDirectionIndicators()?.SetBattleManager(battleManager);
             this.BoundBattleManager.OnRoundStateChanged += this.OnRoundStateChanged;
             this.RefreshTimerText();
             this.RefreshObjectiveText();
@@ -678,6 +687,22 @@ namespace ProjectRuntime.Managers
             }
 
             return this.Minimap;
+        }
+
+        private WorldDirectionIndicatorController EnsureDirectionIndicators()
+        {
+            if (this.DirectionIndicators != null)
+            {
+                return this.DirectionIndicators;
+            }
+
+            this.DirectionIndicators = GetComponentInChildren<WorldDirectionIndicatorController>(true);
+            if (this.DirectionIndicators == null)
+            {
+                this.DirectionIndicators = gameObject.AddComponent<WorldDirectionIndicatorController>();
+            }
+
+            return this.DirectionIndicators;
         }
     }
 }

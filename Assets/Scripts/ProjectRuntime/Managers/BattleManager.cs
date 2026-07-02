@@ -83,6 +83,9 @@ namespace ProjectRuntime.Managers
         [SyncVar(hook = nameof(OnTimerSynced))]
         private int remainingRoundSeconds;
 
+        [SyncVar(hook = nameof(OnCrystalGuidanceRevealedSynced))]
+        private bool crystalGuidanceRevealed;
+
         private readonly HashSet<CrystalObjective> _crystals = new();
         private readonly HashSet<PlayerManager> _survivorsInExtraction = new();
         private float _timerAccumulator;
@@ -98,6 +101,7 @@ namespace ProjectRuntime.Managers
         public int RequiredExtractedSurvivors => requiredExtractedSurvivors;
         public RoundWinner Winner => winner;
         public int RemainingRoundSeconds => remainingRoundSeconds;
+        public bool IsCrystalGuidanceRevealed => crystalGuidanceRevealed;
 
         private void Awake()
         {
@@ -274,6 +278,7 @@ namespace ProjectRuntime.Managers
             this.requiredExtractedSurvivors = 0;
             this.winner = RoundWinner.None;
             this.roundPhase = RoundPhase.DestroyCrystals;
+            this.crystalGuidanceRevealed = false;
             this._timerAccumulator = 0f;
             this.ServerSetRemainingRoundSeconds(this.startingRoundSeconds);
             this.ServerRefreshCrystalRegistry();
@@ -310,6 +315,20 @@ namespace ProjectRuntime.Managers
             {
                 this._crystals.Remove(crystal);
             }
+        }
+
+        [Server]
+        public void ServerReportCrystalDamaged(CrystalObjective crystal)
+        {
+            if (crystal == null ||
+                this.crystalGuidanceRevealed ||
+                this.roundPhase != RoundPhase.DestroyCrystals)
+            {
+                return;
+            }
+
+            this.crystalGuidanceRevealed = true;
+            this.NotifyRoundStateChanged();
         }
 
         [Server]
@@ -653,6 +672,11 @@ namespace ProjectRuntime.Managers
         }
 
         private void OnTimerSynced(int oldValue, int newValue)
+        {
+            this.NotifyRoundStateChanged();
+        }
+
+        private void OnCrystalGuidanceRevealedSynced(bool oldValue, bool newValue)
         {
             this.NotifyRoundStateChanged();
         }
