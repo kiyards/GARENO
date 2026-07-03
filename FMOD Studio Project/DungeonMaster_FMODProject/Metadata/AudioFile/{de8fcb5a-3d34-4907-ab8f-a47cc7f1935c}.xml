@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="AudioFile" id="{de8fcb5a-3d34-4907-ab8f-a47cc7f1935c}">
+		<property name="assetPath">
+			<value>FLASHBANG_SFX.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>16</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>4.7368750000000004</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{5a321781-3ab9-4174-af08-bffbeff06ee0}</destination>
+		</relationship>
+	</object>
+</objects>
