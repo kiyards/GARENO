@@ -8,6 +8,9 @@ namespace ProjectRuntime.Actor
 {
     public class DungeonMasterTurretController : MonoBehaviour
     {
+        private const double AimSyncInterval = 0.05;
+        private const float AimSyncDirectionDotThreshold = 0.999f;
+
         [Header("Aim")]
         [SerializeField]
         private LayerMask aimOcclusionMask;
@@ -19,6 +22,8 @@ namespace ProjectRuntime.Actor
         private DungeonMasterTurret _activeTurret;
         private double _clientLastFireTime;
         private double _serverLastFireTime;
+        private double _clientLastAimSyncTime;
+        private Vector3 _lastSyncedAimDirection;
 
         public float MaxRange => _activeTurret != null ? _activeTurret.MaxRange : 0f;
         public bool IsDisassembling => _activeTurret != null && _activeTurret.IsDisassembling;
@@ -97,6 +102,7 @@ namespace ProjectRuntime.Actor
             }
 
             _activeTurret.UpdateAim(worldDirection);
+            TrySyncAim(worldDirection);
         }
 
         public void TryFire()
@@ -140,6 +146,23 @@ namespace ProjectRuntime.Actor
             }
 
             player.CmdFireDungeonMasterTurret(targetNetId, hitPoint);
+        }
+
+        [Server]
+        public void ServerUpdateAim(Vector3 worldDirection)
+        {
+            var player = ResolvePlayer();
+            if (
+                player == null
+                || !player.IsDungeonMaster
+                || !(player.currentState is DungeonMasterTurretState)
+                || _activeTurret == null
+            )
+            {
+                return;
+            }
+
+            _activeTurret.ServerUpdateAim(player, worldDirection);
         }
 
         [Server]
@@ -286,7 +309,9 @@ namespace ProjectRuntime.Actor
             }
 
             _activeTurret = turret;
-            _activeTurret.SetVisible(player.currentState is DungeonMasterTurretState);
+            _clientLastAimSyncTime = 0;
+            _lastSyncedAimDirection = Vector3.zero;
+            _activeTurret.SetVisible(true);
         }
 
         public void DetachSpawnedTurret(DungeonMasterTurret turret)
@@ -432,10 +457,45 @@ namespace ProjectRuntime.Actor
         {
             if (_player == null)
             {
-                _player = GetComponent<GameplayPlayer>();
+            _player = GetComponent<GameplayPlayer>();
             }
 
             return _player;
+        }
+
+        private void TrySyncAim(Vector3 worldDirection)
+        {
+            var player = ResolvePlayer();
+            if (
+                player == null
+                || !player.isLocalPlayer
+                || !player.IsDungeonMaster
+                || !(player.currentState is DungeonMasterTurretState)
+                || _activeTurret == null
+                || !_activeTurret.IsAssembled
+                || worldDirection.sqrMagnitude <= 0.0001f
+            )
+            {
+                return;
+            }
+
+            Vector3 normalizedDirection = worldDirection.normalized;
+            bool hasSyncedAim = _lastSyncedAimDirection.sqrMagnitude > 0.0001f;
+            bool directionChanged =
+                !hasSyncedAim
+                || Vector3.Dot(_lastSyncedAimDirection, normalizedDirection)
+                    < AimSyncDirectionDotThreshold;
+            bool intervalElapsed =
+                NetworkTime.time - _clientLastAimSyncTime >= AimSyncInterval;
+
+            if (!directionChanged || (hasSyncedAim && !intervalElapsed))
+            {
+                return;
+            }
+
+            _clientLastAimSyncTime = NetworkTime.time;
+            _lastSyncedAimDirection = normalizedDirection;
+            player.CmdUpdateDungeonMasterTurretAim(normalizedDirection);
         }
     }
 }

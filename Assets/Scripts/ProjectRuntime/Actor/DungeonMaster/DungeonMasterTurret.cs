@@ -86,8 +86,12 @@ namespace ProjectRuntime.Actor
         [SyncVar]
         private double _disassemblyEndNetworkTime;
 
+        [SyncVar(hook = nameof(OnAimDirectionChanged))]
+        private Vector3 _syncedAimDirection;
+
         private GameplayPlayer _attachedOwner;
         private Health _health;
+        private bool _visibilityRequested = true;
 
         public Health Health => _health != null ? _health : _health = GetComponent<Health>();
         public uint OwnerNetId => ownerNetId;
@@ -155,6 +159,23 @@ namespace ProjectRuntime.Actor
         }
 
         [Server]
+        public void ServerUpdateAim(GameplayPlayer owner, Vector3 worldDirection)
+        {
+            if (
+                owner == null
+                || !IsOwnedBy(owner)
+                || _status != TurretStatus.Assembled
+                || worldDirection.sqrMagnitude <= 0.0001f
+            )
+            {
+                return;
+            }
+
+            _syncedAimDirection = worldDirection.normalized;
+            UpdateAim(_syncedAimDirection);
+        }
+
+        [Server]
         private IEnumerator DisassembleCoroutine()
         {
             yield return new WaitForSeconds(disassemblyDuration);
@@ -170,8 +191,9 @@ namespace ProjectRuntime.Actor
         public override void OnStartClient()
         {
             base.OnStartClient();
-            SetVisible(true);
             RegisterWithOwner();
+            ApplyVisibility();
+            UpdateAim(_syncedAimDirection);
         }
 
         public override void OnStopClient()
@@ -198,6 +220,8 @@ namespace ProjectRuntime.Actor
         {
             if (_attachedOwner == null)
                 RegisterWithOwner();
+
+            ApplyVisibility();
 
             if (
                 _attachedOwner == null
@@ -232,17 +256,33 @@ namespace ProjectRuntime.Actor
 
         public void SetVisible(bool isVisible)
         {
-            Transform root = turretRoot != null ? turretRoot : transform;
+            _visibilityRequested = isVisible;
+            ApplyVisibility();
+        }
 
+        private void ApplyVisibility()
+        {
+            bool shouldRender = _visibilityRequested && !ShouldHideForLocalController();
+            Transform root = turretRoot != null ? turretRoot : transform;
             if (turretRoot != null)
             {
-                turretRoot.gameObject.SetActive(isVisible);
+                turretRoot.gameObject.SetActive(shouldRender);
             }
 
             foreach (Renderer turretRenderer in root.GetComponentsInChildren<Renderer>(true))
             {
-                turretRenderer.enabled = isVisible;
+                turretRenderer.enabled = shouldRender;
             }
+        }
+
+        private bool ShouldHideForLocalController()
+        {
+            return _attachedOwner != null
+                && _attachedOwner.isLocalPlayer
+                && (
+                    _attachedOwner.currentState is DungeonMasterTurretState
+                    || _attachedOwner.nextState is DungeonMasterTurretState
+                );
         }
 
         public void UpdateAim(Vector3 worldDirection)
@@ -286,6 +326,11 @@ namespace ProjectRuntime.Actor
                 PlayerHudManager.Instance.SetTurretAmmo(next, maxAmmo);
         }
 
+        private void OnAimDirectionChanged(Vector3 _, Vector3 next)
+        {
+            UpdateAim(next);
+        }
+
         private void OnOwnerNetIdChanged(uint oldValue, uint newValue)
         {
             if (oldValue != newValue)
@@ -317,6 +362,7 @@ namespace ProjectRuntime.Actor
                         m_hasAnchor = true,
                     }
                 );
+                ApplyVisibility();
             }
             else if (next == TurretStatus.Disassembling)
             {

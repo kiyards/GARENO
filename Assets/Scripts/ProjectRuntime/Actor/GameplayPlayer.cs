@@ -536,6 +536,12 @@ namespace ProjectRuntime.Actor
         }
 
         [Command]
+        public void CmdUpdateDungeonMasterTurretAim(Vector3 worldDirection)
+        {
+            Turret.ServerUpdateAim(worldDirection);
+        }
+
+        [Command]
         public void CmdBeginTurretDisassemble()
         {
             Turret.ServerBeginDisassemble();
