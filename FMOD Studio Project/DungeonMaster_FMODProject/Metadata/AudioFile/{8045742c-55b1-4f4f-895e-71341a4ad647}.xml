@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="AudioFile" id="{8045742c-55b1-4f4f-895e-71341a4ad647}">
+		<property name="assetPath">
+			<value>UI_CARD_CANCEL_SFX.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>0.47999999999999998</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{5a321781-3ab9-4174-af08-bffbeff06ee0}</destination>
+		</relationship>
+	</object>
+</objects>

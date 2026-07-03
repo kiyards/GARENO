@@ -1,0 +1,231 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b689cd9a73384d88aa3fa1d6dfdf1e5c, type: 3}
+  m_Name: DAudio
+  m_EditorClassIdentifier: 
+  <Data>k__BackingField:
+  - <EventId>k__BackingField: GLOBAL_MAIN_BGM
+    <EventPath>k__BackingField: event:/GLOBAL_MAIN_BGM
+    <EventReference>k__BackingField:
+      Guid:
+        Data1: 1876642927
+        Data2: 1258146632
+        Data3: 905362870
+        Data4: 908432056
+      Path: event:/GLOBAL_MAIN_BGM
+    <PlaybackType>k__BackingField: 1
+    <SpatialMode>k__BackingField: 0
+    <ReturnMode>k__BackingField: 1
+  - <EventId>k__BackingField: GLOBAL_LAST_MINUTE_BGM
+    <EventPath>k__BackingField: event:/GLOBAL_LAST_MINUTE_BGM
+    <EventReference>k__BackingField:
+      Guid:
+        Data1: 1909282626
+        Data2: 1204058844
+        Data3: -386141262
+        Data4: -574048183
+      Path: event:/GLOBAL_LAST_MINUTE_BGM
+    <PlaybackType>k__BackingField: 1
+    <SpatialMode>k__BackingField: 0
+    <ReturnMode>k__BackingField: 1
+  - <EventId>k__BackingField: PLAYER_RELOAD_GUN
+    <EventPath>k__BackingField: event:/PLAYER_RELOAD_GUN
+    <EventReference>k__BackingField:
+      Guid:
+        Data1: -1402607006
+        Data2: 1110537292
+        Data3: -1818046786
+        Data4: -326075932
+      Path: event:/PLAYER_RELOAD_GUN
+    <PlaybackType>k__BackingField: 0
+    <SpatialMode>k__BackingField: 1
+    <ReturnMode>k__BackingField: 0
+  - <EventId>k__BackingField: PLAYER_FOOTSTEP_SFX
+    <EventPath>k__BackingField: event:/PLAYER_FOOTSTEP_SFX
+    <EventReference>k__BackingField:
+      Guid:
+        Data1: 918568433
+        Data2: 1233812722
+        Data3: 1622046621
+        Data4: 1354083201
+      Path: event:/PLAYER_FOOTSTEP_SFX
+    <PlaybackType>k__BackingField: 0
+    <SpatialMode>k__BackingField: 1
+    <ReturnMode>k__BackingField: 0
+  - <EventId>k__BackingField: PLAYER_SHOOT_SFX
+    <EventPath>k__BackingField: event:/PLAYER_SHOOT_SFX
+    <EventReference>k__BackingField:
+      Guid:
+        Data1: 2109120055
+        Data2: 1079625832
+        Data3: 1242914220
+        Data4: 791378108
+      Path: event:/PLAYER_SHOOT_SFX
+    <PlaybackType>k__BackingField: 0
+    <SpatialMode>k__BackingField: 1
+    <ReturnMode>k__BackingField: 0
+  - <EventId>k__BackingField: NEMESIS_PUNCH_SFX
+    <EventPath>k__BackingField: event:/NEMESIS_PUNCH_SFX
+    <EventReference>k__BackingField:
+      Guid:
+        Data1: 234680355
+        Data2: 1325416812
+        Data3: 6497430
+        Data4: -1362788888
+      Path: event:/NEMESIS_PUNCH_SFX
+    <PlaybackType>k__BackingField: 0
+    <SpatialMode>k__BackingField: 1
+    <ReturnMode>k__BackingField: 0
+  - <EventId>k__BackingField: NEMESIS_LUNGE_SFX
+    <EventPath>k__BackingField: event:/NEMESIS_LUNGE_SFX
+    <EventReference>k__BackingField:
+      Guid:
+        Data1: -1497918906
+        Data2: 1291034888
+        Data3: -1811302990
+        Data4: -834864019
+      Path: event:/NEMESIS_LUNGE_SFX
+    <PlaybackType>k__BackingField: 0
+    <SpatialMode>k__BackingField: 1
+    <ReturnMode>k__BackingField: 0
+  - <EventId>k__BackingField: NEMESIS_GROUND_SLAM_SFX
+    <EventPath>k__BackingField: event:/NEMESIS_GROUND_SLAM_SFX
+    <EventReference>k__BackingField:
+      Guid:
+        Data1: 2074780481
+        Data2: 1325681642
+        Data3: -906695276
+        Data4: -230260101
+      Path: event:/NEMESIS_GROUND_SLAM_SFX
+    <PlaybackType>k__BackingField: 0
+    <SpatialMode>k__BackingField: 1
+    <ReturnMode>k__BackingField: 0
+  - <EventId>k__BackingField: ZOMBIE_WALK_SFX
+    <EventPath>k__BackingField: event:/ZOMBIE_WALK_SFX
+    <EventReference>k__BackingField:
+      Guid:
+        Data1: -855318597
+        Data2: 1231720657
+        Data3: -2108067158
+        Data4: 1223235941
+      Path: event:/ZOMBIE_WALK_SFX
+    <PlaybackType>k__BackingField: 0
+    <SpatialMode>k__BackingField: 1
+    <ReturnMode>k__BackingField: 0
+  - <EventId>k__BackingField: ZOMBIE_ATTACK_SFX
+    <EventPath>k__BackingField: event:/ZOMBIE_ATTACK_SFX
+    <EventReference>k__BackingField:
+      Guid:
+        Data1: 1783816643
+        Data2: 1254858429
+        Data3: 1716596892
+        Data4: -2132758203
+      Path: event:/ZOMBIE_ATTACK_SFX
+    <PlaybackType>k__BackingField: 0
+    <SpatialMode>k__BackingField: 1
+    <ReturnMode>k__BackingField: 0
+  - <EventId>k__BackingField: ZOMBIE_CREEPER_EXPLODE_SFX
+    <EventPath>k__BackingField: event:/ZOMBIE_CREEPER_EXPLODE_SFX
+    <EventReference>k__BackingField:
+      Guid:
+        Data1: 1927052278
+        Data2: 1205076168
+        Data3: -1476450625
+        Data4: 1743570874
+      Path: event:/ZOMBIE_CREEPER_EXPLODE_SFX
+    <PlaybackType>k__BackingField: 0
+    <SpatialMode>k__BackingField: 1
+    <ReturnMode>k__BackingField: 0
+  - <EventId>k__BackingField: CARD_SPAWN_SFX
+    <EventPath>k__BackingField: event:/CARD_SPAWN_SFX
+    <EventReference>k__BackingField:
+      Guid:
+        Data1: -788259742
+        Data2: 1222422522
+        Data3: 1155314613
+        Data4: -1123175872
+      Path: event:/CARD_SPAWN_SFX
+    <PlaybackType>k__BackingField: 0
+    <SpatialMode>k__BackingField: 1
+    <ReturnMode>k__BackingField: 0
+  - <EventId>k__BackingField: CRYSTAL_SHOOT_SFX
+    <EventPath>k__BackingField: event:/CRYSTAL_SHOOT_SFX
+    <EventReference>k__BackingField:
+      Guid:
+        Data1: 1963647049
+        Data2: 1285307237
+        Data3: -765667395
+        Data4: -1459559122
+      Path: event:/CRYSTAL_SHOOT_SFX
+    <PlaybackType>k__BackingField: 0
+    <SpatialMode>k__BackingField: 1
+    <ReturnMode>k__BackingField: 0
+  - <EventId>k__BackingField: CRYSTAL_DESTROY_SFX
+    <EventPath>k__BackingField: event:/CRYSTAL_DESTROY_SFX
+    <EventReference>k__BackingField:
+      Guid:
+        Data1: -257149237
+        Data2: 1295527345
+        Data3: -1956829005
+        Data4: -1377332857
+      Path: event:/CRYSTAL_DESTROY_SFX
+    <PlaybackType>k__BackingField: 0
+    <SpatialMode>k__BackingField: 1
+    <ReturnMode>k__BackingField: 0
+  - <EventId>k__BackingField: CRYSTAL_ALL_DOWNED_SFX
+    <EventPath>k__BackingField: event:/CRYSTAL_ALL_DOWNED_SFX
+    <EventReference>k__BackingField:
+      Guid:
+        Data1: -1661026312
+        Data2: 1113362194
+        Data3: 224978366
+        Data4: -921416647
+      Path: event:/CRYSTAL_ALL_DOWNED_SFX
+    <PlaybackType>k__BackingField: 0
+    <SpatialMode>k__BackingField: 1
+    <ReturnMode>k__BackingField: 0
+  - <EventId>k__BackingField: UI_CARD_HOVER_SFX
+    <EventPath>k__BackingField: event:/UI_CARD_HOVER_SFX
+    <EventReference>k__BackingField:
+      Guid:
+        Data1: 1934187309
+        Data2: 1186469659
+        Data3: 202893744
+        Data4: 1674003820
+      Path: event:/UI_CARD_HOVER_SFX
+    <PlaybackType>k__BackingField: 0
+    <SpatialMode>k__BackingField: 0
+    <ReturnMode>k__BackingField: 0
+  - <EventId>k__BackingField: UI_CARD_CLICK_SFX
+    <EventPath>k__BackingField: event:/UI_CARD_CLICK_SFX
+    <EventReference>k__BackingField:
+      Guid:
+        Data1: -812040297
+        Data2: 1303024904
+        Data3: 134615204
+        Data4: -1774963268
+      Path: event:/UI_CARD_CLICK_SFX
+    <PlaybackType>k__BackingField: 0
+    <SpatialMode>k__BackingField: 0
+    <ReturnMode>k__BackingField: 0
+  - <EventId>k__BackingField: UI_CARD_CANCEL_SFX
+    <EventPath>k__BackingField: event:/UI_CARD_CANCEL_SFX
+    <EventReference>k__BackingField:
+      Guid:
+        Data1: -681712579
+        Data2: 1138503648
+        Data3: 990339230
+        Data4: 1483019191
+      Path: event:/UI_CARD_CANCEL_SFX
+    <PlaybackType>k__BackingField: 0
+    <SpatialMode>k__BackingField: 0
+    <ReturnMode>k__BackingField: 0
