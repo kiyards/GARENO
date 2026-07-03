@@ -62,6 +62,10 @@ namespace ProjectRuntime.Actor
         [SerializeField] private float attackAnimationHoldDuration = 0.6f;
         [SerializeField] private float deathDespawnDelay = 3.5f;
 
+        protected float AttackRange => this.attackRange;
+
+        protected bool IsTargetable => this.isTargetable;
+
         [SyncVar(hook = nameof(OnTargetableSynced))]
         private bool isTargetable = true;
 
@@ -550,7 +554,7 @@ namespace ProjectRuntime.Actor
                 NavMesh.AllAreas);
         }
 
-        private bool IsValidTarget(GameplayPlayer player)
+        protected bool IsValidTarget(GameplayPlayer player)
         {
             return player != null &&
                    player.localManager != null &&

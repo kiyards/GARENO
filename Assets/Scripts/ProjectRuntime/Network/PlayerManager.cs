@@ -171,6 +171,7 @@ namespace ProjectRuntime.Network
             {
                 player?.input?.SetCursorLockedForRole(role);
                 PlayerHudManager.EnsureInstance()?.SetRole(role);
+                GameplayPlayer.RefreshAllGhostVisibility();
             }
 
             OnPlayerRoleChanged?.Invoke(role);

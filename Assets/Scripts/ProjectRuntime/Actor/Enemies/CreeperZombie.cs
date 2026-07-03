@@ -1,5 +1,6 @@
 using System.Collections;
 using Mirror;
+using ProjectRuntime.Managers;
 using ProjectRuntime.Network;
 using UnityEngine;
 
@@ -34,6 +35,12 @@ namespace ProjectRuntime.Actor
         {
             if (this._hasExploded)
             {
+                return;
+            }
+
+            if (this.IsTargetable && this.ServerHasSurvivorInExplosionTriggerRange())
+            {
+                this.ServerStartExplosionSequence();
                 return;
             }
 
@@ -76,6 +83,32 @@ namespace ProjectRuntime.Actor
 
             yield return new WaitForSeconds(duration);
             this.ServerExplode();
+        }
+
+        [Server]
+        private bool ServerHasSurvivorInExplosionTriggerRange()
+        {
+            if (BattleManager.Instance == null)
+            {
+                return false;
+            }
+
+            float maxSqrDistance = this.AttackRange * this.AttackRange;
+            foreach (PlayerManager pm in BattleManager.Instance.Players)
+            {
+                GameplayPlayer player = pm != null ? pm.player : null;
+                if (!this.IsValidTarget(player))
+                {
+                    continue;
+                }
+
+                if ((this.transform.position - player.transform.position).sqrMagnitude <= maxSqrDistance)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         [Server]

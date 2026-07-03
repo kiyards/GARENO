@@ -716,8 +716,8 @@ namespace ProjectRuntime.Actor.PlayerStates
         }
     }
 
-    // A survivor who has spent all their lives is permanently dead. They leave a corpse where they fell
-    // and become a "ghost" that still walks and collides with the world exactly like a living player,
+    // A survivor who has spent all their lives is permanently dead. After the death presentation they
+    // become a "ghost" that still walks and collides with the world exactly like a living player,
     // except it passes through other players (collision-ignored in EnterGhostBody). The ghost is not
     // revivable (revive targeting only accepts IsDowned) and, being a BaseInactiveState, can't shoot and
     // is ignored by zombies and traps. It is visible only to the Dungeon Master and to other dead
@@ -725,7 +725,7 @@ namespace ProjectRuntime.Actor.PlayerStates
     public class DeadState : BaseInactiveState
     {
         public Vector3 m_anchorPosition;
-        private bool _corpseSpawned;
+        private bool _deathPresentationQueued;
         private bool _requestedJump;
 
         public DeadState(GameplayPlayer sm)
@@ -747,14 +747,20 @@ namespace ProjectRuntime.Actor.PlayerStates
         {
             base.OnEnter();
 
-            if (!_corpseSpawned)
+            if (!_deathPresentationQueued)
             {
-                player.SpawnCorpse(m_anchorPosition);
-                _corpseSpawned = true;
+                var visualAnimator = player.GetComponent<PlayerVisualAnimator>();
+                var deathPresentationDelay =
+                    player.currentState is DownedState
+                        ? 0f
+                        : visualAnimator.GetDeathAnimationDuration(0f);
+                player.BeginDeadBodyTransition(
+                    m_anchorPosition,
+                    player.transform.rotation,
+                    deathPresentationDelay
+                );
+                _deathPresentationQueued = true;
             }
-
-            player.EnterGhostBody();
-            player.RefreshGhostVisibility();
 
             if (player.isLocalPlayer)
             {
@@ -762,9 +768,6 @@ namespace ProjectRuntime.Actor.PlayerStates
                 {
                     player.cam.SetCam(CharacterMode.AIM);
                 }
-
-                // The local survivor just became a ghost — they can now see every other ghost.
-                GameplayPlayer.RefreshAllGhostVisibility();
             }
         }
 

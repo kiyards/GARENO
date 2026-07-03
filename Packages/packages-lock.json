@@ -1,11 +1,5 @@
 {
   "dependencies": {
-    "com.codex.explosion-vfx": {
-      "version": "file:C:/Users/SG4245/Documents/Codex/2026-07-03/cr/outputs/unity-explosion-vfx",
-      "depth": 0,
-      "source": "local",
-      "dependencies": {}
-    },
     "com.mirror.steamworks.net": {
       "version": "https://github.com/Chykary/FizzySteamworks.git?path=/com.mirror.steamworks.net",
       "depth": 0,

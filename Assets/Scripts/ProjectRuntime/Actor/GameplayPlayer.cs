@@ -46,6 +46,13 @@ namespace ProjectRuntime.Actor
         [field: SerializeField]
         public Transform aimRig { get; private set; }
 
+        [Header("Visuals")]
+        [SerializeField]
+        private GameObject corpseVisualPrefab;
+
+        [SerializeField]
+        private float corpseVisualYawOffset = 180f;
+
         [Header("Stats")]
         public float jumpForce = 2.5f;
         public float moveSpeed = 3f;
@@ -89,6 +96,7 @@ namespace ProjectRuntime.Actor
         private const float ReviveContactGrace = 0.25f;
 
         private double _downedStartTime;
+        private double _downedPresentationEndTime;
 
         // Server time (NetworkTime.time) when the current continuous revive-hold streak began, and
         // the last time a valid revive contact arrived. Hold duration is measured in real time so it
@@ -100,6 +108,7 @@ namespace ProjectRuntime.Actor
         // Guards against re-resolving while the downed→respawn state transition round-trips back from
         // the owning client (the state authority), which would otherwise re-fire every physics frame.
         private bool _downedResolved;
+        private Coroutine _downedPresentationCoroutine;
 
         // True once this survivor has permanently died and become a ghost. Set when the ghost body is
         // configured — which happens inside DeadState.OnEnter, before the state machine assigns
@@ -130,6 +139,7 @@ namespace ProjectRuntime.Actor
         private bool _initialRigidbodyUseGravity;
         private bool _initialRigidbodyIsKinematic;
         private bool _cachedRoleDefaults;
+        private Coroutine _deadBodyTransitionCoroutine;
 
         public float SpeedMultiplier => _speedMultiplier;
         public bool IsInactive => currentState is BaseInactiveState;
@@ -258,20 +268,46 @@ namespace ProjectRuntime.Actor
                 SetLayerRecursive(child.gameObject, layer);
         }
 
-        // Leaves a corpse marker where the survivor fell. The project has no character models yet, so the
-        // corpse is a plain capsule (matching the player's capsule body) laid on its side, with no
-        // collider. Instantiated locally on every client from the replicated death position.
-        public void SpawnCorpse(Vector3 position)
+        public void SpawnCorpse(Vector3 position, Quaternion rotation)
         {
-            var corpse = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            var corpseRotation = rotation * Quaternion.Euler(0f, corpseVisualYawOffset, 0f);
+            var corpse = Instantiate(corpseVisualPrefab, position, corpseRotation);
             corpse.name = "Corpse";
-            corpse.transform.SetPositionAndRotation(position, Quaternion.Euler(90f, 0f, 0f));
-            corpse.transform.localScale = transform.lossyScale;
 
-            var corpseCollider = corpse.GetComponent<Collider>();
-            if (corpseCollider != null)
+            foreach (var corpseCollider in corpse.GetComponentsInChildren<Collider>())
             {
                 Destroy(corpseCollider);
+            }
+
+            GetComponent<PlayerVisualAnimator>().ApplyDeathPose(corpse.GetComponentInChildren<Animator>());
+        }
+
+        public void BeginDeadBodyTransition(Vector3 position, Quaternion rotation, float delay)
+        {
+            if (_deadBodyTransitionCoroutine != null)
+            {
+                StopCoroutine(_deadBodyTransitionCoroutine);
+            }
+
+            _deadBodyTransitionCoroutine = StartCoroutine(
+                ApplyDeadBodyAfterDelay(position, rotation, delay)
+            );
+        }
+
+        private IEnumerator ApplyDeadBodyAfterDelay(Vector3 position, Quaternion rotation, float delay)
+        {
+            if (delay > 0f)
+            {
+                yield return new WaitForSeconds(delay);
+            }
+
+            SpawnCorpse(position, rotation);
+            EnterGhostBody();
+            RefreshGhostVisibility();
+
+            if (isLocalPlayer)
+            {
+                GameplayPlayer.RefreshAllGhostVisibility();
             }
         }
 
@@ -344,7 +380,10 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            _downedStartTime = NetworkTime.time;
+            var downedPresentationDelay = GetComponent<PlayerVisualAnimator>()
+                .GetDeathAnimationDuration(0f);
+            _downedStartTime = NetworkTime.time + downedPresentationDelay;
+            _downedPresentationEndTime = _downedStartTime;
             _downedSourceNetId = sourceNetId;
             // Sentinel in the past so the first contact always starts a fresh hold streak.
             _lastReviveContactTime = double.NegativeInfinity;
@@ -352,6 +391,28 @@ namespace ProjectRuntime.Actor
             _downedResolved = false;
 
             ServerForceState(new DownedState(this) { m_anchorPosition = transform.position });
+
+            if (_downedPresentationCoroutine != null)
+            {
+                StopCoroutine(_downedPresentationCoroutine);
+            }
+
+            _downedPresentationCoroutine = StartCoroutine(
+                ServerCompleteDownedPresentation(sourceNetId, downedPresentationDelay)
+            );
+        }
+
+        private IEnumerator ServerCompleteDownedPresentation(uint sourceNetId, float delay)
+        {
+            if (delay > 0f)
+            {
+                yield return new WaitForSeconds(delay);
+            }
+
+            if (!IsDowned || _downedResolved)
+            {
+                yield break;
+            }
 
             BattleManager.Instance?.ServerReportSurvivorDowned(localManager, sourceNetId);
             BattleManager.Instance?.ServerRefreshSurvivorDefeatState();
@@ -372,6 +433,11 @@ namespace ProjectRuntime.Actor
         private void ServerTickDowned()
         {
             if (!IsDowned)
+            {
+                return;
+            }
+
+            if (NetworkTime.time < _downedPresentationEndTime)
             {
                 return;
             }
@@ -436,6 +502,11 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
+            if (NetworkTime.time < _downedPresentationEndTime)
+            {
+                return;
+            }
+
             double now = NetworkTime.time;
             if (now - _lastReviveContactTime > ReviveContactGrace)
             {
@@ -457,6 +528,11 @@ namespace ProjectRuntime.Actor
         public void ServerResolveDowned(int livesLost)
         {
             if (!IsDowned || _downedResolved)
+            {
+                return;
+            }
+
+            if (NetworkTime.time < _downedPresentationEndTime)
             {
                 return;
             }
