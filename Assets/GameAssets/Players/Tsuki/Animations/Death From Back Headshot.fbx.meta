@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 294c48b6f3515fa4098a38e106022924
+guid: db9fce7f03094334dbc2b18f9966ab83
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -31,11 +31,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: enemy_defaultzombie_lunge
+      name: mixamo.com
       takeName: mixamo.com
       internalID: -203655887218126122
-      firstFrame: 25
-      lastFrame: 63
+      firstFrame: 0
+      lastFrame: 89
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
