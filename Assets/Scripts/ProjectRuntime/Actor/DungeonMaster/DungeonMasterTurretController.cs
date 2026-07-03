@@ -85,9 +85,9 @@ namespace ProjectRuntime.Actor
 
         public void UpdateAimFromCursor()
         {
-            if (TryGetCursorAim(out Vector3 hitPoint, out _))
+            if (CursorPlacementUtility.TryGetCursorRay(out Ray ray))
             {
-                UpdateAim(hitPoint - GetMuzzlePosition());
+                UpdateAim(ray.direction);
                 return;
             }
 
@@ -234,19 +234,6 @@ namespace ProjectRuntime.Actor
             }
         }
 
-        private Vector3 GetMuzzlePosition()
-        {
-            if (_activeTurret != null)
-            {
-                return _activeTurret.GetMuzzlePosition();
-            }
-
-            var player = ResolvePlayer();
-            return player != null
-                ? player.transform.position + player.transform.forward * 0.75f
-                : transform.position;
-        }
-
         private bool TryGetCursorAim(out Vector3 hitPoint, out uint targetNetId)
         {
             hitPoint = Vector3.zero;
@@ -282,6 +269,11 @@ namespace ProjectRuntime.Actor
                     continue;
                 }
 
+                if (IsActiveTurretCollider(hit.collider))
+                {
+                    continue;
+                }
+
                 if (hasOcclusion && hit.distance > occlusionHit.distance)
                 {
                     break;
@@ -298,6 +290,13 @@ namespace ProjectRuntime.Actor
             }
 
             return true;
+        }
+
+        private bool IsActiveTurretCollider(Collider hitCollider)
+        {
+            return hitCollider != null
+                && _activeTurret != null
+                && hitCollider.GetComponentInParent<DungeonMasterTurret>() == _activeTurret;
         }
 
         public void AttachSpawnedTurret(DungeonMasterTurret turret)

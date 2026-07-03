@@ -292,7 +292,8 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            Vector3 flatDirection = Vector3.ProjectOnPlane(worldDirection, Vector3.up);
+            Vector3 aimDirection = worldDirection.normalized;
+            Vector3 flatDirection = Vector3.ProjectOnPlane(aimDirection, Vector3.up);
             if (turretYawPivot != null && flatDirection.sqrMagnitude > 0.0001f)
             {
                 turretYawPivot.rotation = Quaternion.LookRotation(
@@ -303,10 +304,9 @@ namespace ProjectRuntime.Actor
 
             if (turretPitchPivot != null)
             {
-                turretPitchPivot.rotation = Quaternion.LookRotation(
-                    worldDirection.normalized,
-                    Vector3.up
-                );
+                float horizontalMagnitude = new Vector2(aimDirection.x, aimDirection.z).magnitude;
+                float pitchDegrees = Mathf.Atan2(-aimDirection.y, horizontalMagnitude) * Mathf.Rad2Deg;
+                turretPitchPivot.localRotation = Quaternion.Euler(pitchDegrees, 0f, 0f);
             }
         }
 
