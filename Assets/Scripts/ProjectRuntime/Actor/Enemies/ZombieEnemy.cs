@@ -1,3 +1,4 @@
+using System.Collections;
 using Mirror;
 using ProjectRuntime.Combat;
 using ProjectRuntime.Managers;
@@ -17,6 +18,15 @@ namespace ProjectRuntime.Actor
             Attacking,
         }
 
+        private enum ZombieVisualState
+        {
+            Spawn,
+            Idle,
+            Walk,
+            Lunge,
+            Death,
+        }
+
         [Header("Stats")]
         [SerializeField] private float moveSpeed = 2.4f;   // 0.8x survivor moveSpeed (3f)
         [SerializeField] private float damage = 30f;
@@ -32,12 +42,29 @@ namespace ProjectRuntime.Actor
         [SerializeField] private float wanderPointReachedDistance = 0.5f;
         [SerializeField] private float wanderPauseDuration = 1.25f;
 
+        [Header("Facing")]
+        [SerializeField] private float turnSpeed = 360f;
+        [SerializeField] private float moveAlignmentAngle = 12f;
+
         [Header("Lunge")]
         [SerializeField] private float lungeDistance = 1.2f;
         [SerializeField] private float lungeDuration = 0.18f;
 
+        [Header("Animation")]
+        [SerializeField] private Animator animator;
+        [SerializeField] private RuntimeAnimatorController spawnController;
+        [SerializeField] private RuntimeAnimatorController idleController;
+        [SerializeField] private RuntimeAnimatorController walkController;
+        [SerializeField] private RuntimeAnimatorController lungeController;
+        [SerializeField] private RuntimeAnimatorController deathController;
+        [SerializeField] private float attackAnimationHoldDuration = 0.6f;
+        [SerializeField] private float deathDespawnDelay = 3.5f;
+
         [SyncVar(hook = nameof(OnTargetableSynced))]
         private bool isTargetable = true;
+
+        [SyncVar(hook = nameof(OnVisualStateSynced))]
+        private ZombieVisualState visualState = ZombieVisualState.Spawn;
 
         private Health _health;
         private NavMeshAgent _agent;
@@ -54,11 +81,13 @@ namespace ProjectRuntime.Actor
         private Vector3 _lungeEndPosition;
         private bool _attackDamageApplied;
         private bool _hasWanderDestination;
+        private Coroutine _deathDestroyCoroutine;
 
         private void Awake()
         {
             this.CacheComponents();
             this.ConfigureAgent();
+            this.ApplyVisualState(this.visualState);
         }
 
         public override void OnStartServer()
@@ -74,6 +103,7 @@ namespace ProjectRuntime.Actor
             this._nextAttackTime = 0d;
             this._hasWanderDestination = false;
             this.ServerSetTargetable(this.spawnWarmupDuration <= 0f);
+            this.ServerSetVisualState(ZombieVisualState.Spawn);
 
             this._health.OnDeathEvent += this.OnServerDeath;
             this._health.OnDamagedEvent += this.OnServerDamaged;
@@ -95,6 +125,7 @@ namespace ProjectRuntime.Actor
             base.OnStartClient();
             this.CacheComponents();
             this.ApplyTargetable(this.isTargetable);
+            this.ApplyVisualState(this.visualState);
 
             // Movement is server-authoritative and replicated via NetworkTransform. On
             // clients the agent must not drive the transform, or it fights the synced
@@ -188,30 +219,42 @@ namespace ProjectRuntime.Actor
                 if (this._agent.hasPath &&
                     this._agent.remainingDistance > this.wanderPointReachedDistance)
                 {
+                    this.ServerSetVisualState(ZombieVisualState.Walk);
+                    if (!this.ServerFaceMovementTarget(this._agent.steeringTarget))
+                    {
+                        return;
+                    }
+
+                    this._agent.isStopped = false;
                     return;
                 }
 
                 this._hasWanderDestination = false;
                 this._nextWanderMoveTime = NetworkTime.time + Mathf.Max(0f, this.wanderPauseDuration);
                 this.StopAgent();
+                this.ServerSetVisualState(ZombieVisualState.Idle);
                 return;
             }
 
             if (NetworkTime.time < this._nextWanderMoveTime)
             {
                 this.StopAgent();
+                this.ServerSetVisualState(ZombieVisualState.Idle);
                 return;
             }
 
             if (this.TryGetWanderPoint(out Vector3 point))
             {
-                this._agent.isStopped = false;
+                this._agent.isStopped = true;
                 this._agent.SetDestination(point);
                 this._hasWanderDestination = true;
+                this.ServerSetVisualState(ZombieVisualState.Walk);
+                this.ServerFaceMovementTarget(point);
             }
             else
             {
                 this._nextWanderMoveTime = NetworkTime.time + Mathf.Max(0.25f, this.wanderPauseDuration);
+                this.ServerSetVisualState(ZombieVisualState.Idle);
             }
         }
 
@@ -230,8 +273,14 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            this._agent.isStopped = false;
             this._agent.SetDestination(this._target.transform.position);
+            this.ServerSetVisualState(ZombieVisualState.Walk);
+            if (!this.ServerFaceMovementTarget(this._target.transform.position))
+            {
+                return;
+            }
+
+            this._agent.isStopped = false;
         }
 
         [Server]
@@ -247,6 +296,7 @@ namespace ProjectRuntime.Actor
             this._attackStartTime = NetworkTime.time;
             this._attackDamageApplied = false;
             this._lungeStartPosition = this.transform.position;
+            this.ServerSetVisualState(ZombieVisualState.Lunge);
 
             Vector3 direction = target.transform.position - this.transform.position;
             direction.y = 0f;
@@ -263,7 +313,8 @@ namespace ProjectRuntime.Actor
         private void ServerTickAttack()
         {
             float safeDuration = Mathf.Max(0.01f, this.lungeDuration);
-            float progress = Mathf.Clamp01((float)((NetworkTime.time - this._attackStartTime) / safeDuration));
+            double elapsed = NetworkTime.time - this._attackStartTime;
+            float progress = Mathf.Clamp01((float)(elapsed / safeDuration));
             Vector3 nextPosition = Vector3.Lerp(this._lungeStartPosition, this._lungeEndPosition, progress);
             this.MoveAgentTo(nextPosition);
 
@@ -282,10 +333,22 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            this._nextAttackTime = NetworkTime.time + Mathf.Max(0f, this.attackCooldown);
-            this._state = this.IsValidTarget(this._target)
-                ? ZombieAiState.Chasing
-                : ZombieAiState.Wandering;
+            if (elapsed < Mathf.Max(safeDuration, this.attackAnimationHoldDuration))
+            {
+                this.StopAgent();
+                return;
+            }
+
+            this._nextAttackTime = this._attackStartTime + safeDuration + Mathf.Max(0f, this.attackCooldown);
+            if (this.IsValidTarget(this._target))
+            {
+                this._state = ZombieAiState.Chasing;
+                this.ServerSetVisualState(ZombieVisualState.Walk);
+            }
+            else
+            {
+                this.ServerEnterWandering();
+            }
         }
 
         // The action taken when a survivor comes within attackRange. Basic zombies deal melee
@@ -336,6 +399,7 @@ namespace ProjectRuntime.Actor
             {
                 this._target = source;
                 this._state = ZombieAiState.Chasing;
+                this.ServerSetVisualState(ZombieVisualState.Walk);
             }
         }
 
@@ -343,6 +407,27 @@ namespace ProjectRuntime.Actor
         private void OnServerDeath(uint killerNetId)
         {
             BattleManager.Instance?.ServerReportZombieKilled(this, killerNetId);
+            this.ServerSetTargetable(false);
+            this.StopAgent();
+            if (this._agent != null)
+            {
+                this._agent.enabled = false;
+            }
+
+            if (this.animator == null || this.deathController == null || this.deathDespawnDelay <= 0f)
+            {
+                NetworkServer.Destroy(this.gameObject);
+                return;
+            }
+
+            this.ServerSetVisualState(ZombieVisualState.Death);
+            this._deathDestroyCoroutine ??= this.StartCoroutine(this.ServerDestroyAfterDeathAnimation());
+        }
+
+        [Server]
+        private IEnumerator ServerDestroyAfterDeathAnimation()
+        {
+            yield return new WaitForSeconds(this.deathDespawnDelay);
             NetworkServer.Destroy(this.gameObject);
         }
 
@@ -367,6 +452,7 @@ namespace ProjectRuntime.Actor
             if (this._agent != null)
             {
                 this._agent.speed = this.moveSpeed;
+                this._agent.updateRotation = false;
             }
         }
 
@@ -384,6 +470,32 @@ namespace ProjectRuntime.Actor
 
             this._agent.isStopped = true;
             this._agent.ResetPath();
+        }
+
+        [Server]
+        private bool ServerFaceMovementTarget(Vector3 targetPosition)
+        {
+            Vector3 direction = targetPosition - this.transform.position;
+            direction.y = 0f;
+            if (direction.sqrMagnitude < 0.0001f)
+            {
+                return true;
+            }
+
+            Quaternion targetRotation = Quaternion.LookRotation(direction.normalized, Vector3.up);
+            this.transform.rotation = Quaternion.RotateTowards(
+                this.transform.rotation,
+                targetRotation,
+                Mathf.Max(0f, this.turnSpeed) * Time.fixedDeltaTime);
+
+            float angle = Quaternion.Angle(this.transform.rotation, targetRotation);
+            bool aligned = angle <= Mathf.Max(0f, this.moveAlignmentAngle);
+            if (!aligned && this.IsAgentReady())
+            {
+                this._agent.isStopped = true;
+            }
+
+            return aligned;
         }
 
         private void MoveAgentTo(Vector3 nextPosition)
@@ -405,6 +517,7 @@ namespace ProjectRuntime.Actor
             this._hasWanderDestination = false;
             this._nextWanderMoveTime = NetworkTime.time + Mathf.Max(0f, this.wanderPauseDuration);
             this.StopAgent();
+            this.ServerSetVisualState(ZombieVisualState.Idle);
         }
 
         [Server]
@@ -466,6 +579,50 @@ namespace ProjectRuntime.Actor
         private void OnTargetableSynced(bool oldValue, bool newValue)
         {
             this.ApplyTargetable(newValue);
+        }
+
+        private void OnVisualStateSynced(ZombieVisualState oldValue, ZombieVisualState newValue)
+        {
+            this.ApplyVisualState(newValue);
+        }
+
+        [Server]
+        private void ServerSetVisualState(ZombieVisualState state)
+        {
+            if (this.visualState == state)
+            {
+                return;
+            }
+
+            this.visualState = state;
+            this.ApplyVisualState(state);
+        }
+
+        private void ApplyVisualState(ZombieVisualState state)
+        {
+            if (this.animator == null)
+            {
+                return;
+            }
+
+            RuntimeAnimatorController controller = state switch
+            {
+                ZombieVisualState.Spawn => this.spawnController,
+                ZombieVisualState.Idle => this.idleController,
+                ZombieVisualState.Walk => this.walkController,
+                ZombieVisualState.Lunge => this.lungeController,
+                ZombieVisualState.Death => this.deathController,
+                _ => null,
+            };
+
+            if (controller == null || this.animator.runtimeAnimatorController == controller)
+            {
+                return;
+            }
+
+            this.animator.runtimeAnimatorController = controller;
+            this.animator.Rebind();
+            this.animator.Update(0f);
         }
 
         private void ApplyTargetable(bool targetable)
