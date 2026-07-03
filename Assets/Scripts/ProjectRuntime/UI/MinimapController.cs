@@ -332,6 +332,13 @@ namespace ProjectRuntime.UI
                     continue;
                 }
 
+                // Ghosts (permanently dead survivors) never show up as minimap blips for anyone. The
+                // Dungeon Master can still see them in the world view (see GameplayPlayer ghost visibility).
+                if (player.player != null && player.player.IsGhost)
+                {
+                    continue;
+                }
+
                 bool isLocal = player == _localPlayer;
                 bool isSurvivor = player.playerRole == PlayerRole.Survivor;
                 bool isDungeonMaster = player.playerRole == PlayerRole.DungeonMaster;

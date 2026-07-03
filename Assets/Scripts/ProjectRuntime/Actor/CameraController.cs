@@ -45,6 +45,30 @@ namespace ProjectRuntime.Actor
             base.OnStartClient();
             thirdPersonCam.Priority.Enabled = isLocalPlayer;
             firstPersonCam.Priority.Enabled = isLocalPlayer;
+
+            if (isLocalPlayer)
+            {
+                EnsureGhostLayerRendered();
+            }
+        }
+
+        // Ghosts (permanently dead survivors) live on the "Ghost" physics layer so they pass through
+        // players and shots. The rendering camera must still be allowed to render that layer — who
+        // actually sees a ghost is gated per-viewer by GameplayPlayer.RefreshGhostVisibility toggling
+        // renderers. Enforced in code so it never depends on the scene camera's serialized culling mask.
+        private static void EnsureGhostLayerRendered()
+        {
+            var cam = Camera.main;
+            if (cam == null)
+            {
+                return;
+            }
+
+            int ghostLayer = LayerMask.NameToLayer("Ghost");
+            if (ghostLayer >= 0)
+            {
+                cam.cullingMask |= 1 << ghostLayer;
+            }
         }
         private void Update()
         {
