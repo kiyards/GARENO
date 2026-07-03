@@ -18,13 +18,14 @@ namespace ProjectRuntime.Actor
             Attacking,
         }
 
-        private enum ZombieVisualState
+        protected enum ZombieVisualState
         {
             Spawn,
             Idle,
             Walk,
             Lunge,
             Death,
+            Explode,
         }
 
         [Header("Stats")]
@@ -57,6 +58,7 @@ namespace ProjectRuntime.Actor
         [SerializeField] private RuntimeAnimatorController walkController;
         [SerializeField] private RuntimeAnimatorController lungeController;
         [SerializeField] private RuntimeAnimatorController deathController;
+        [SerializeField] private RuntimeAnimatorController explodeController;
         [SerializeField] private float attackAnimationHoldDuration = 0.6f;
         [SerializeField] private float deathDespawnDelay = 3.5f;
 
@@ -404,15 +406,9 @@ namespace ProjectRuntime.Actor
         }
 
         [Server]
-        private void OnServerDeath(uint killerNetId)
+        protected virtual void OnServerDeath(uint killerNetId)
         {
-            BattleManager.Instance?.ServerReportZombieKilled(this, killerNetId);
-            this.ServerSetTargetable(false);
-            this.StopAgent();
-            if (this._agent != null)
-            {
-                this._agent.enabled = false;
-            }
+            this.ServerPrepareForDeath(killerNetId);
 
             if (this.animator == null || this.deathController == null || this.deathDespawnDelay <= 0f)
             {
@@ -422,6 +418,18 @@ namespace ProjectRuntime.Actor
 
             this.ServerSetVisualState(ZombieVisualState.Death);
             this._deathDestroyCoroutine ??= this.StartCoroutine(this.ServerDestroyAfterDeathAnimation());
+        }
+
+        [Server]
+        protected void ServerPrepareForDeath(uint killerNetId)
+        {
+            BattleManager.Instance?.ServerReportZombieKilled(this, killerNetId);
+            this.ServerSetTargetable(false);
+            this.StopAgent();
+            if (this._agent != null)
+            {
+                this._agent.enabled = false;
+            }
         }
 
         [Server]
@@ -461,7 +469,7 @@ namespace ProjectRuntime.Actor
             return this._agent != null && this._agent.enabled && this._agent.isOnNavMesh;
         }
 
-        private void StopAgent()
+        protected void StopAgent()
         {
             if (!this.IsAgentReady())
             {
@@ -587,7 +595,7 @@ namespace ProjectRuntime.Actor
         }
 
         [Server]
-        private void ServerSetVisualState(ZombieVisualState state)
+        protected void ServerSetVisualState(ZombieVisualState state)
         {
             if (this.visualState == state)
             {
@@ -598,6 +606,26 @@ namespace ProjectRuntime.Actor
             this.ApplyVisualState(state);
         }
 
+        protected float GetVisualStateAnimationDuration(ZombieVisualState state, float fallbackDuration)
+        {
+            RuntimeAnimatorController controller = this.GetVisualStateController(state);
+            if (controller == null || controller.animationClips == null || controller.animationClips.Length == 0)
+            {
+                return Mathf.Max(0f, fallbackDuration);
+            }
+
+            float duration = 0f;
+            foreach (AnimationClip clip in controller.animationClips)
+            {
+                if (clip != null)
+                {
+                    duration = Mathf.Max(duration, clip.length);
+                }
+            }
+
+            return duration > 0f ? duration : Mathf.Max(0f, fallbackDuration);
+        }
+
         private void ApplyVisualState(ZombieVisualState state)
         {
             if (this.animator == null)
@@ -605,15 +633,7 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            RuntimeAnimatorController controller = state switch
-            {
-                ZombieVisualState.Spawn => this.spawnController,
-                ZombieVisualState.Idle => this.idleController,
-                ZombieVisualState.Walk => this.walkController,
-                ZombieVisualState.Lunge => this.lungeController,
-                ZombieVisualState.Death => this.deathController,
-                _ => null,
-            };
+            RuntimeAnimatorController controller = this.GetVisualStateController(state);
 
             if (controller == null || this.animator.runtimeAnimatorController == controller)
             {
@@ -623,6 +643,20 @@ namespace ProjectRuntime.Actor
             this.animator.runtimeAnimatorController = controller;
             this.animator.Rebind();
             this.animator.Update(0f);
+        }
+
+        private RuntimeAnimatorController GetVisualStateController(ZombieVisualState state)
+        {
+            return state switch
+            {
+                ZombieVisualState.Spawn => this.spawnController,
+                ZombieVisualState.Idle => this.idleController,
+                ZombieVisualState.Walk => this.walkController,
+                ZombieVisualState.Lunge => this.lungeController,
+                ZombieVisualState.Death => this.deathController,
+                ZombieVisualState.Explode => this.explodeController,
+                _ => null,
+            };
         }
 
         private void ApplyTargetable(bool targetable)

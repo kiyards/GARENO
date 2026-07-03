@@ -1,3 +1,4 @@
+using System.Collections;
 using Mirror;
 using ProjectRuntime.Network;
 using UnityEngine;
@@ -6,19 +7,20 @@ namespace ProjectRuntime.Actor
 {
     /// <summary>
     /// A zombie variant that chases the nearest survivor (inherited from <see cref="ZombieEnemy"/>)
-    /// and, instead of meleeing, explodes once it gets within range — dealing AOE damage to all
-    /// survivors nearby and then destroying itself. Per the GDD it is faster and tankier than a
-    /// basic zombie; those stats (health, move speed, range) are configured on the prefab.
+    /// and explodes after a short animation when it reaches a target or gets shot to death.
+    /// Per the GDD it is faster and tankier than a basic zombie; those stats are configured
+    /// on the prefab.
     /// </summary>
     public class CreeperZombie : ZombieEnemy
     {
         [Header("Creeper")]
         [SerializeField] private float explosionRadius = 4f;
         [SerializeField] private float explosionDamage = 50f;
+        [SerializeField] private float explosionAnimationDuration = 1.25f;
         // Layers checked for survivors caught in the blast. Set to the player layer(s) on the prefab.
         [SerializeField] private LayerMask explosionMask = ~0;
 
-        // Guards against the cooldown-driven attack path firing the explosion more than once.
+        // Guards against attack and death paths firing the explosion more than once.
         private bool _hasExploded;
 
         public override void OnStartServer()
@@ -28,7 +30,31 @@ namespace ProjectRuntime.Actor
         }
 
         [Server]
+        protected override void ServerTick()
+        {
+            if (this._hasExploded)
+            {
+                return;
+            }
+
+            base.ServerTick();
+        }
+
+        [Server]
         protected override void ServerBeginAttack(GameplayPlayer target)
+        {
+            this.ServerStartExplosionSequence();
+        }
+
+        [Server]
+        protected override void OnServerDeath(uint killerNetId)
+        {
+            this.ServerPrepareForDeath(killerNetId);
+            this.ServerStartExplosionSequence();
+        }
+
+        [Server]
+        private void ServerStartExplosionSequence()
         {
             if (this._hasExploded)
             {
@@ -36,6 +62,19 @@ namespace ProjectRuntime.Actor
             }
 
             this._hasExploded = true;
+            this.StopAgent();
+            this.ServerSetVisualState(ZombieVisualState.Explode);
+            this.StartCoroutine(this.ServerExplodeAfterAnimation());
+        }
+
+        [Server]
+        private IEnumerator ServerExplodeAfterAnimation()
+        {
+            float duration = this.GetVisualStateAnimationDuration(
+                ZombieVisualState.Explode,
+                this.explosionAnimationDuration);
+
+            yield return new WaitForSeconds(duration);
             this.ServerExplode();
         }
 
@@ -66,9 +105,7 @@ namespace ProjectRuntime.Actor
                     this.transform.position);
             }
 
-            // Self-detonation is not a survivor kill, so we destroy directly rather than routing
-            // through Health death — that keeps the zombie-kill timer bonus reserved for survivors
-            // who actually shoot a creeper down before it reaches them.
+            // Destroy directly so the delayed blast does not re-enter the Health death path.
             NetworkServer.Destroy(this.gameObject);
         }
     }
