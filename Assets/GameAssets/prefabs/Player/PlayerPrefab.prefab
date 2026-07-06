@@ -838,7 +838,6 @@ GameObject:
   - component: {fileID: 7893470114192060199}
   - component: {fileID: 1000000000000000019}
   - component: {fileID: 6412083917749823642}
-  - component: {fileID: 1000000000000000020}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -1126,28 +1125,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 7578397109688941967}
   animator: {fileID: 2494069372982321728}
-  networkAnimator: {fileID: 1000000000000000020}
+  idleController: {fileID: 9100000, guid: a30d1fbc199bd684fb209fdd780e03e1, type: 2}
+  runController: {fileID: 9100000, guid: 91d25a1329020d64f9069e8374dd0ae1, type: 2}
   deathController: {fileID: 9100000, guid: 791ae2f44c10609468ea3c9cd99d84d3, type: 2}
   runSpeedThreshold: 0.5
   runInputThreshold: 0.1
   runMovementGraceTime: 0.15
---- !u!114 &1000000000000000020
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6497081027001187553}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f6f3bf89aa97405989c802ba270f815, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 1
-  syncMode: 0
-  syncInterval: 0.1
-  clientAuthority: 1
-  animator: {fileID: 2494069372982321728}
 --- !u!1 &7463206360524112506
 GameObject:
   m_ObjectHideFlags: 0
@@ -1299,10 +1282,6 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
-    - target: {fileID: 7935024000332893671, guid: e32d76a198766014ca0722b6ff4ef6cc, type: 3}
-      propertyPath: m_Controller
-      value: 
-      objectReference: {fileID: 9100000, guid: d5278b7f80864a948975d111a8a59b55, type: 2}
     - target: {fileID: 9124774028005149419, guid: e32d76a198766014ca0722b6ff4ef6cc, type: 3}
       propertyPath: m_LocalScale.x
       value: 1
