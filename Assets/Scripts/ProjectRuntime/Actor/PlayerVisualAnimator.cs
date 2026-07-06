@@ -15,6 +15,8 @@ namespace ProjectRuntime.Actor
 
         [SerializeField] private GameplayPlayer player;
         [SerializeField] private Animator animator;
+        [SerializeField] private Transform normalVisualRoot;
+        [SerializeField] private GameObject ghostVisualPrefab;
         [SerializeField] private RuntimeAnimatorController idleController;
         [SerializeField] private RuntimeAnimatorController runController;
         [SerializeField] private RuntimeAnimatorController deathController;
@@ -23,27 +25,68 @@ namespace ProjectRuntime.Actor
         [SerializeField] private float runMovementGraceTime = 0.15f;
 
         private Vector3 previousPosition;
+        private Animator activeAnimator;
+        private GameObject ghostVisualRoot;
+        private Renderer[] normalRenderers;
+        private bool[] normalRendererInitialEnabled;
+        private Renderer[] ghostRenderers;
+        private bool[] ghostRendererInitialEnabled;
         private Renderer[] localOwnerHiddenRenderers;
         private VisualState currentState;
         private bool hasVisualState;
+        private bool isGhostVisualActive;
         private double movementRunUntil;
         private bool wasRunning;
 
         private void Awake()
         {
             previousPosition = transform.position;
-            localOwnerHiddenRenderers = animator.GetComponentsInChildren<Renderer>(true);
+            activeAnimator = animator;
+            normalRenderers = normalVisualRoot.GetComponentsInChildren<Renderer>(true);
+            normalRendererInitialEnabled = CacheInitialRendererState(normalRenderers);
+            localOwnerHiddenRenderers = normalRenderers;
             ApplyVisualState(VisualState.Idle);
         }
 
         private void LateUpdate()
         {
-            ApplyLocalOwnerVisibility();
-
             var currentPosition = transform.position;
             ApplyVisualState(ResolveVisualState(currentPosition));
+            ApplyLocalOwnerVisibility();
 
             previousPosition = currentPosition;
+        }
+
+        public void EnterGhostMode()
+        {
+            if (!isGhostVisualActive)
+            {
+                EnsureGhostVisual();
+                isGhostVisualActive = true;
+                activeAnimator = ghostVisualRoot.GetComponentInChildren<Animator>(true);
+                localOwnerHiddenRenderers = ghostRenderers;
+                hasVisualState = false;
+            }
+
+            SetRendererVisibility(normalRenderers, normalRendererInitialEnabled, false);
+            SetGhostVisible(false);
+            ApplyVisualState(VisualState.Idle);
+            ApplyLocalOwnerVisibility();
+        }
+
+        public void SetGhostVisible(bool isVisible)
+        {
+            if (!isGhostVisualActive)
+            {
+                return;
+            }
+
+            SetRendererVisibility(normalRenderers, normalRendererInitialEnabled, false);
+            SetRendererVisibility(
+                ghostRenderers,
+                ghostRendererInitialEnabled,
+                isVisible && !player.isLocalPlayer
+            );
         }
 
         private VisualState ResolveVisualState(Vector3 currentPosition)
@@ -83,7 +126,7 @@ namespace ProjectRuntime.Actor
             if (
                 hasVisualState
                 && currentState == state
-                && animator.runtimeAnimatorController == controller
+                && activeAnimator.runtimeAnimatorController == controller
             )
             {
                 return;
@@ -91,10 +134,10 @@ namespace ProjectRuntime.Actor
 
             hasVisualState = true;
             currentState = state;
-            animator.speed = 1f;
-            animator.runtimeAnimatorController = controller;
-            animator.Rebind();
-            animator.Update(0f);
+            activeAnimator.speed = 1f;
+            activeAnimator.runtimeAnimatorController = controller;
+            activeAnimator.Rebind();
+            activeAnimator.Update(0f);
         }
 
         public void ApplyDeathPose(Animator targetAnimator)
@@ -141,9 +184,54 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            foreach (var targetRenderer in localOwnerHiddenRenderers)
+            SetRendererVisibility(localOwnerHiddenRenderers, null, false);
+        }
+
+        private void EnsureGhostVisual()
+        {
+            if (ghostVisualRoot != null)
             {
-                targetRenderer.enabled = false;
+                return;
+            }
+
+            ghostVisualRoot = Instantiate(ghostVisualPrefab, normalVisualRoot.parent);
+            ghostVisualRoot.name = ghostVisualPrefab.name;
+
+            var ghostTransform = ghostVisualRoot.transform;
+            ghostTransform.localPosition = normalVisualRoot.localPosition;
+            ghostTransform.localRotation = normalVisualRoot.localRotation;
+            ghostTransform.localScale = normalVisualRoot.localScale;
+
+            foreach (var ghostCollider in ghostVisualRoot.GetComponentsInChildren<Collider>(true))
+            {
+                ghostCollider.enabled = false;
+            }
+
+            ghostRenderers = ghostVisualRoot.GetComponentsInChildren<Renderer>(true);
+            ghostRendererInitialEnabled = CacheInitialRendererState(ghostRenderers);
+        }
+
+        private static bool[] CacheInitialRendererState(Renderer[] renderers)
+        {
+            var initialState = new bool[renderers.Length];
+            for (var i = 0; i < renderers.Length; i++)
+            {
+                initialState[i] = renderers[i].enabled;
+            }
+
+            return initialState;
+        }
+
+        private static void SetRendererVisibility(
+            Renderer[] renderers,
+            bool[] initialEnabled,
+            bool isVisible
+        )
+        {
+            for (var i = 0; i < renderers.Length; i++)
+            {
+                renderers[i].enabled =
+                    isVisible && (initialEnabled == null || initialEnabled[i]);
             }
         }
     }

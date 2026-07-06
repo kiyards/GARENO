@@ -1125,6 +1125,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 7578397109688941967}
   animator: {fileID: 2494069372982321728}
+  normalVisualRoot: {fileID: 3612974361758491980}
+  ghostVisualPrefab: {fileID: 2399812958223130915, guid: 2666449971128b0419ff31d39dd81838, type: 3}
   idleController: {fileID: 9100000, guid: a30d1fbc199bd684fb209fdd780e03e1, type: 2}
   runController: {fileID: 9100000, guid: 91d25a1329020d64f9069e8374dd0ae1, type: 2}
   deathController: {fileID: 9100000, guid: 791ae2f44c10609468ea3c9cd99d84d3, type: 2}

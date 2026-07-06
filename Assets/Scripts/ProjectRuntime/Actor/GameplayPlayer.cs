@@ -247,12 +247,13 @@ namespace ProjectRuntime.Actor
         }
 
         // Sets up the ghost body: a permanently-dead survivor still walks and collides with the world
-        // (normal survivor physics), but passes through every other player. The model is left intact
-        // (the ghost reuses it); per-viewer visibility is handled by RefreshGhostVisibility.
+        // (normal survivor physics), but passes through every other player. The normal model is swapped
+        // to the ghost visual; per-viewer visibility is handled by RefreshGhostVisibility.
         public void EnterGhostBody()
         {
             CacheRoleDefaults();
             _isGhost = true;
+            GetComponent<PlayerVisualAnimator>().EnterGhostMode();
 
             if (col != null)
             {
@@ -330,7 +331,7 @@ namespace ProjectRuntime.Actor
             }
 
             bool canSee = LocalViewerCanSeeGhosts();
-            SetRenderersVisible(canSee);
+            GetComponent<PlayerVisualAnimator>().SetGhostVisible(canSee);
             localManager?.RefreshGhostNameVisibility(canSee);
         }
 
