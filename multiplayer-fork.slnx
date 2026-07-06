@@ -20,8 +20,6 @@
   <Project Path="FMODUnityHaptics.csproj" />
   <Project Path="Telepathy.csproj" />
   <Project Path="ParrelSync.csproj" />
-  <Project Path="Codex.ExplosionVFX.Editor.csproj" />
   <Project Path="FMODUnityResonance.csproj" />
   <Project Path="Mirror.CompilerSymbols.csproj" />
-  <Project Path="Codex.ExplosionVFX.csproj" />
 </Solution>
