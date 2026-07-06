@@ -55,8 +55,7 @@ namespace ProjectRuntime.UI
             if (_health != null)
                 _health.OnHealthChangedEvent += OnClientHealthChanged;
 
-            if (_healthBarRoot != null)
-                _healthBarRoot.SetActive(false);
+            _healthBarRoot.SetActive(false);
         }
 
         public override void OnStopClient()
@@ -74,9 +73,6 @@ namespace ProjectRuntime.UI
         [ClientRpc]
         private void RpcShowHealthBar()
         {
-            if (_healthBarRoot == null)
-                return;
-
             _healthBarRoot.SetActive(true);
             UpdateFill();
 
@@ -87,7 +83,7 @@ namespace ProjectRuntime.UI
 
         private void OnClientHealthChanged(float current, float max)
         {
-            if (_healthBarRoot == null || !_healthBarRoot.activeSelf)
+            if (!_healthBarRoot.activeSelf)
                 return;
 
             UpdateFill(current, max);
@@ -95,7 +91,7 @@ namespace ProjectRuntime.UI
 
         private void UpdateFill()
         {
-            if (_health == null || _fillImage == null)
+            if (_health == null)
                 return;
 
             _fillImage.fillAmount =
@@ -104,22 +100,18 @@ namespace ProjectRuntime.UI
 
         private void UpdateFill(float current, float max)
         {
-            if (_fillImage == null)
-                return;
-
             _fillImage.fillAmount = max > 0f ? current / max : 0f;
         }
 
         private IEnumerator HideAfterDelay()
         {
             yield return new WaitForSeconds(_hideDelay);
-            if (_healthBarRoot != null)
-                _healthBarRoot.SetActive(false);
+            _healthBarRoot.SetActive(false);
         }
 
         private void LateUpdate()
         {
-            if (_healthBarRoot == null || !_healthBarRoot.activeSelf || Camera.main == null)
+            if (!_healthBarRoot.activeSelf || Camera.main == null)
                 return;
 
             // Only match yaw so the bar stays upright instead of tilting with camera pitch.

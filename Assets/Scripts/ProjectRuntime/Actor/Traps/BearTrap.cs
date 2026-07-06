@@ -63,18 +63,12 @@ namespace ProjectRuntime.Actor
             mashCount = 0;
             _trappedPlayer = null;
 
-            if (_health != null)
-            {
-                _health.OnDeathEvent += OnHealthDepleted;
-            }
+            _health.OnDeathEvent += OnHealthDepleted;
         }
 
         public override void OnStopServer()
         {
-            if (_health != null)
-            {
-                _health.OnDeathEvent -= OnHealthDepleted;
-            }
+            _health.OnDeathEvent -= OnHealthDepleted;
 
             base.OnStopServer();
         }
@@ -93,7 +87,7 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            if (_trappedPlayer == null || _trappedPlayer.health == null || !_trappedPlayer.health.IsAlive)
+            if (_trappedPlayer == null || !_trappedPlayer.health.IsAlive)
             {
                 ServerDestroyTrap();
                 return;
@@ -151,7 +145,7 @@ namespace ProjectRuntime.Actor
             mashCount = 0;
             _nextDamageTime = NetworkTime.time + tickInterval;
 
-            Vector3 anchorPosition = player.rb != null ? player.rb.position : player.transform.position;
+            Vector3 anchorPosition = player.rb.position;
             player.ServerEnterBearTrap(this, anchorPosition);
             player.health.ServerTakeDamage(initialDamage, netId, transform.position);
         }
@@ -159,9 +153,7 @@ namespace ProjectRuntime.Actor
         [Server]
         private void ServerReleaseTrappedPlayer()
         {
-            if (_trappedPlayer != null &&
-                _trappedPlayer.health != null &&
-                _trappedPlayer.health.IsAlive)
+            if (_trappedPlayer != null && _trappedPlayer.health.IsAlive)
             {
                 _trappedPlayer.ServerExitBearTrap(netId);
             }
@@ -192,12 +184,12 @@ namespace ProjectRuntime.Actor
                 return false;
             }
 
-            if (player.localManager == null || player.localManager.playerRole != PlayerRole.Survivor)
+            if (player.localManager.playerRole != PlayerRole.Survivor)
             {
                 return false;
             }
 
-            return player.health != null && player.health.IsAlive;
+            return player.health.IsAlive;
         }
 
         private void OnTriggeredSynced(bool oldValue, bool newValue)

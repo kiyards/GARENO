@@ -517,14 +517,10 @@ namespace ProjectRuntime.Managers
 
         public void SetTurretModeActive(bool active)
         {
-            if (TurretReticle != null)
-                TurretReticle.SetActive(active);
-            if (TurretAmmoParent != null)
-                TurretAmmoParent.SetActive(active);
-            if (TurretLifetimeParent != null)
-                TurretLifetimeParent.SetActive(active);
-            if (TurretDisassemblingParent != null)
-                TurretDisassemblingParent.SetActive(false);
+            TurretReticle.SetActive(active);
+            TurretAmmoParent.SetActive(active);
+            TurretLifetimeParent.SetActive(active);
+            TurretDisassemblingParent.SetActive(false);
             if (DungeonMasterHand != null)
                 DungeonMasterHand.gameObject.SetActive(!active);
             if (ManaBarParent != null)
@@ -533,64 +529,53 @@ namespace ProjectRuntime.Managers
                 CardDescription.SetActive(!active);
             if (NemesisParent != null)
                 NemesisParent.SetActive(!active);
-            if (TurretEarlyCancelTMP != null)
-                TurretEarlyCancelTMP.gameObject.SetActive(active);
+            TurretEarlyCancelTMP.gameObject.SetActive(active);
         }
 
         public void SetTurretAmmo(int current, int max)
         {
-            if (TurretCurrentAmmoTMP != null)
-                TurretCurrentAmmoTMP.text = $"{current}/{max}";
+            TurretCurrentAmmoTMP.text = $"{current}/{max}";
         }
 
         public void SetTurretAmmoActive(bool active)
         {
-            if (TurretAmmoParent != null)
-                TurretAmmoParent.SetActive(active);
+            TurretAmmoParent.SetActive(active);
         }
 
         public void SetTurretLifetime(float remaining, float max)
         {
-            if (TurretLifetimeBarFill != null && max > 0f)
+            if (max > 0f)
                 TurretLifetimeBarFill.fillAmount = remaining / max;
-            if (TurretLifetimeTMP != null)
-                TurretLifetimeTMP.text = Mathf.CeilToInt(remaining).ToString();
+            TurretLifetimeTMP.text = Mathf.CeilToInt(remaining).ToString();
         }
 
         public void SetTurretLifetimeActive(bool active)
         {
-            if (TurretLifetimeParent != null)
-                TurretLifetimeParent.SetActive(active);
+            TurretLifetimeParent.SetActive(active);
         }
 
         public void SetTurretDisassembling(float fill)
         {
-            if (TurretDisassemblingBarFill != null)
-                TurretDisassemblingBarFill.fillAmount = fill;
+            TurretDisassemblingBarFill.fillAmount = fill;
         }
 
         public void SetTurretDisassemblingActive(bool active)
         {
-            if (TurretDisassemblingParent != null)
-                TurretDisassemblingParent.SetActive(active);
+            TurretDisassemblingParent.SetActive(active);
         }
 
         public void SetBearTrapBarActive(bool active)
         {
-            if (BearTrapEscapeParent != null)
-                BearTrapEscapeParent.SetActive(active);
+            BearTrapEscapeParent.SetActive(active);
         }
 
         public void SetBearTrapEscapeFill(float fill)
         {
-            if (BearTrapEscapeBarFill != null)
-                BearTrapEscapeBarFill.fillAmount = fill;
+            BearTrapEscapeBarFill.fillAmount = fill;
         }
 
         public void TriggerBearTrapShake(float fillAmount)
         {
-            if (BearTrapEscapeBarTransform == null)
-                return;
             StopCoroutine(nameof(BearTrapShakeCoroutine));
             StartCoroutine(BearTrapShakeCoroutine(fillAmount));
         }
@@ -616,8 +601,7 @@ namespace ProjectRuntime.Managers
 
         public void SetTurretReticleActive(bool active)
         {
-            if (TurretReticle != null)
-                TurretReticle.SetActive(active);
+            TurretReticle.SetActive(active);
         }
 
         public void TogglePlayerUI(bool toggle)

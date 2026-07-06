@@ -78,9 +78,7 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            Vector3 aimDirection =
-                player.cam != null ? player.cam.transform.forward : player.transform.forward;
-            UpdateAim(aimDirection);
+            UpdateAim(player.cam.transform.forward);
         }
 
         public void UpdateAimFromCursor()
@@ -124,11 +122,6 @@ namespace ProjectRuntime.Actor
             }
 
             if (_activeTurret.CurrentAmmo <= 0)
-            {
-                return;
-            }
-
-            if (player.cam == null || player.input == null)
             {
                 return;
             }
@@ -240,7 +233,7 @@ namespace ProjectRuntime.Actor
             targetNetId = 0;
 
             var player = ResolvePlayer();
-            if (player == null || player.cam == null)
+            if (player == null)
             {
                 return false;
             }
