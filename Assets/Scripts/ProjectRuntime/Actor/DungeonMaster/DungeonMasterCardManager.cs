@@ -19,6 +19,9 @@ namespace ProjectRuntime.Actor
     public class DungeonMasterCardManager : NetworkBehaviour
     {
         private const int HandSize = 4;
+        private const string PlacementIndicatorShaderName = "Universal Render Pipeline/Unlit";
+        private static readonly int BaseColorProperty = Shader.PropertyToID("_BaseColor");
+        private static readonly int ColorProperty = Shader.PropertyToID("_Color");
 
         [SerializeField]
         private float manaRegenRate = 1f;
@@ -579,11 +582,11 @@ namespace ProjectRuntime.Actor
 
             if (this._placementIndicator.TryGetComponent(out Renderer indicatorRenderer))
             {
-                this._placementIndicatorMaterial = new Material(indicatorRenderer.sharedMaterial)
-                {
-                    color = new Color(0.1f, 1f, 0.25f, 0.65f),
-                };
+                this._placementIndicatorMaterial =
+                    CreatePlacementIndicatorMaterial(indicatorRenderer.sharedMaterial);
                 indicatorRenderer.material = this._placementIndicatorMaterial;
+                indicatorRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                indicatorRenderer.receiveShadows = false;
             }
 
             this.SetPlacementIndicatorVisible(false);
@@ -621,7 +624,42 @@ namespace ProjectRuntime.Actor
         {
             if (this._placementIndicatorMaterial != null)
             {
-                this._placementIndicatorMaterial.color = color;
+                SetMaterialColor(this._placementIndicatorMaterial, color);
+            }
+        }
+
+        private static Material CreatePlacementIndicatorMaterial(Material fallbackMaterial)
+        {
+            Shader shader =
+                Shader.Find(PlacementIndicatorShaderName)
+                ?? Shader.Find("Sprites/Default")
+                ?? Shader.Find("Unlit/Color");
+            var material = shader != null ? new Material(shader) : new Material(fallbackMaterial);
+            material.name = "DungeonMasterPlacementIndicatorMaterial";
+            material.hideFlags = HideFlags.DontSave;
+
+            SetMaterialColor(material, new Color(0.1f, 1f, 0.25f, 1f));
+            return material;
+        }
+
+        private static void SetMaterialColor(Material material, Color color)
+        {
+            bool setColor = false;
+            if (material.HasProperty(BaseColorProperty))
+            {
+                material.SetColor(BaseColorProperty, color);
+                setColor = true;
+            }
+
+            if (material.HasProperty(ColorProperty))
+            {
+                material.SetColor(ColorProperty, color);
+                setColor = true;
+            }
+
+            if (!setColor)
+            {
+                material.color = color;
             }
         }
 

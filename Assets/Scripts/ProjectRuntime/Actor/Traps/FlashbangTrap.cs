@@ -101,8 +101,8 @@ namespace ProjectRuntime.Actor
         private static bool IsValidSurvivor(GameplayPlayer player)
         {
             if (player == null || player.IsDungeonMaster || player.IsInactive) return false;
-            if (player.localManager == null || player.localManager.playerRole != PlayerRole.Survivor) return false;
-            return player.health != null && player.health.IsAlive;
+            if (player.localManager.playerRole != PlayerRole.Survivor) return false;
+            return player.health.IsAlive;
         }
     }
 }

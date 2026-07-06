@@ -68,14 +68,12 @@ namespace ProjectRuntime.Actor
             _isArmed = false;
             _exploded = false;
 
-            if (_health != null)
-                _health.OnDeathEvent += OnHealthDepleted;
+            _health.OnDeathEvent += OnHealthDepleted;
         }
 
         public override void OnStopServer()
         {
-            if (_health != null)
-                _health.OnDeathEvent -= OnHealthDepleted;
+            _health.OnDeathEvent -= OnHealthDepleted;
             base.OnStopServer();
         }
 
@@ -206,13 +204,10 @@ namespace ProjectRuntime.Actor
             if (player == null || player.IsDungeonMaster || player.IsInactive)
                 return false;
 
-            if (
-                player.localManager == null
-                || player.localManager.playerRole != PlayerRole.Survivor
-            )
+            if (player.localManager.playerRole != PlayerRole.Survivor)
                 return false;
 
-            return player.health != null && player.health.IsAlive;
+            return player.health.IsAlive;
         }
 
         private void OnArmedSynced(bool oldValue, bool newValue)
