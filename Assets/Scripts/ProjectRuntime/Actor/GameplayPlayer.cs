@@ -95,6 +95,8 @@ namespace ProjectRuntime.Actor
         // reviver left range or stopped holding Interact) and the next contact starts a fresh hold.
         private const float ReviveContactGrace = 0.25f;
 
+        public float ReviveHoldTime => reviveHoldTime;
+
         private double _downedStartTime;
         private double _downedPresentationEndTime;
 
@@ -576,7 +578,9 @@ namespace ProjectRuntime.Actor
             }
         }
 
-        private GameplayPlayer FindReviveTarget()
+        // Public so client-side UI (e.g. a revive prompt) can query the same target this survivor
+        // would revive, without duplicating the range/eligibility logic.
+        public GameplayPlayer FindReviveTarget()
         {
             var battleManager = BattleManager.Instance;
             if (battleManager == null)

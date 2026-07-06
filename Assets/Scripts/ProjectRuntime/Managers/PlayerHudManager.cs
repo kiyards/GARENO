@@ -107,6 +107,12 @@ namespace ProjectRuntime.Managers
         [field: SerializeField]
         private float BearTrapShakeMaxPixels { get; set; } = 12f;
 
+        [field: SerializeField, Header("Revive")]
+        private GameObject ReviveInteractParent { get; set; }
+
+        [field: SerializeField]
+        private Image ReviveInteractBarFill { get; set; }
+
         [field: SerializeField, Header("Minimap")]
         private MinimapController Minimap { get; set; }
 
@@ -159,6 +165,7 @@ namespace ProjectRuntime.Managers
         private PlayerManager LocalPlayer { get; set; }
         private PlayerRole CurrentRole { get; set; } = PlayerRole.Unassigned;
         private bool IsPlayerUiVisible { get; set; } = true;
+        private float _reviveHoldProgress;
 
         /// <summary>
         /// Returns the scene-authored HUD instance. The HUD must exist in the active scene
@@ -216,6 +223,7 @@ namespace ProjectRuntime.Managers
 
             this.RefreshNemesisSideCard();
             this.RefreshNemesisAttackDisplays();
+            this.RefreshReviveInteract();
         }
 
         public void SetLocalPlayer(PlayerManager player)
@@ -397,6 +405,48 @@ namespace ProjectRuntime.Managers
                 display.SetCooldownFill(nemesis.GetAttackCooldownFraction(display.Type));
                 display.SetAvailable(nemesis.IsAttackAvailable(display.Type));
             }
+        }
+
+        // Shows the revive prompt while the local survivor is within range of a downed teammate, and
+        // fills it as Interact is held. This is a client-side approximation for feedback only — the
+        // authoritative hold timer lives on the downed player (see GameplayPlayer.ServerRegisterReviveContact).
+        private void RefreshReviveInteract()
+        {
+            if (this.BoundGameplayPlayer == null || this.CurrentRole != PlayerRole.Survivor)
+            {
+                this._reviveHoldProgress = 0f;
+                this.SetReviveInteractActive(false);
+                return;
+            }
+
+            var target = this.BoundGameplayPlayer.FindReviveTarget();
+            if (target == null)
+            {
+                this._reviveHoldProgress = 0f;
+                this.SetReviveInteractActive(false);
+                return;
+            }
+
+            this.SetReviveInteractActive(true);
+
+            bool holding =
+                this.BoundGameplayPlayer.input != null && this.BoundGameplayPlayer.input.InteractHold;
+            float holdTime = this.BoundGameplayPlayer.ReviveHoldTime;
+            this._reviveHoldProgress = holding
+                ? Mathf.Min(this._reviveHoldProgress + Time.deltaTime, holdTime)
+                : 0f;
+
+            if (this.ReviveInteractBarFill != null)
+            {
+                this.ReviveInteractBarFill.fillAmount =
+                    holdTime > 0f ? this._reviveHoldProgress / holdTime : 0f;
+            }
+        }
+
+        private void SetReviveInteractActive(bool active)
+        {
+            if (this.ReviveInteractParent != null)
+                this.ReviveInteractParent.SetActive(active);
         }
 
         // Drives the lifetime countdown text + bar inside NemesisControlUI (only visible while
