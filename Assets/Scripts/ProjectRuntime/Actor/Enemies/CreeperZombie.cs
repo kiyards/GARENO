@@ -60,6 +60,13 @@ namespace ProjectRuntime.Actor
             this.ServerStartExplosionSequence();
         }
 
+        protected override float GetWanderPauseDuration(float minimumDuration)
+        {
+            return Mathf.Max(
+                base.GetWanderPauseDuration(minimumDuration),
+                this.GetVisualStateAnimationDuration(ZombieVisualState.Idle, minimumDuration));
+        }
+
         [Server]
         private void ServerStartExplosionSequence()
         {

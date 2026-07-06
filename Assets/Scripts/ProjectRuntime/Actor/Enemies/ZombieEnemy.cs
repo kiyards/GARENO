@@ -23,6 +23,7 @@ namespace ProjectRuntime.Actor
             Spawn,
             Idle,
             Walk,
+            Run,
             Lunge,
             Death,
             Explode,
@@ -30,6 +31,7 @@ namespace ProjectRuntime.Actor
 
         [Header("Stats")]
         [SerializeField] private float moveSpeed = 2.4f;   // 0.8x survivor moveSpeed (3f)
+        [SerializeField] private float wanderMoveSpeed;
         [SerializeField] private float damage = 30f;
         [SerializeField] private float attackRange = 1.5f;
         [SerializeField] private float attackCooldown = 1f;
@@ -56,11 +58,13 @@ namespace ProjectRuntime.Actor
         [SerializeField] private RuntimeAnimatorController spawnController;
         [SerializeField] private RuntimeAnimatorController idleController;
         [SerializeField] private RuntimeAnimatorController walkController;
+        [SerializeField] private RuntimeAnimatorController runController;
         [SerializeField] private RuntimeAnimatorController lungeController;
         [SerializeField] private RuntimeAnimatorController deathController;
         [SerializeField] private RuntimeAnimatorController explodeController;
         [SerializeField] private float attackAnimationHoldDuration = 0.6f;
         [SerializeField] private float deathDespawnDelay = 3.5f;
+        [SerializeField] private bool logVisualStateChanges;
 
         protected float AttackRange => this.attackRange;
 
@@ -150,6 +154,11 @@ namespace ProjectRuntime.Actor
             this.ServerTick();
         }
 
+        private void Update()
+        {
+            this.TickLoopingVisualState();
+        }
+
         [Server]
         protected virtual void ServerTick()
         {
@@ -225,6 +234,7 @@ namespace ProjectRuntime.Actor
                 if (this._agent.hasPath &&
                     this._agent.remainingDistance > this.wanderPointReachedDistance)
                 {
+                    this.SetAgentSpeed(this.GetWanderMoveSpeed());
                     this.ServerSetVisualState(ZombieVisualState.Walk);
                     if (!this.ServerFaceMovementTarget(this._agent.steeringTarget))
                     {
@@ -236,7 +246,7 @@ namespace ProjectRuntime.Actor
                 }
 
                 this._hasWanderDestination = false;
-                this._nextWanderMoveTime = NetworkTime.time + Mathf.Max(0f, this.wanderPauseDuration);
+                this._nextWanderMoveTime = NetworkTime.time + this.GetWanderPauseDuration(0f);
                 this.StopAgent();
                 this.ServerSetVisualState(ZombieVisualState.Idle);
                 return;
@@ -252,6 +262,7 @@ namespace ProjectRuntime.Actor
             if (this.TryGetWanderPoint(out Vector3 point))
             {
                 this._agent.isStopped = true;
+                this.SetAgentSpeed(this.GetWanderMoveSpeed());
                 this._agent.SetDestination(point);
                 this._hasWanderDestination = true;
                 this.ServerSetVisualState(ZombieVisualState.Walk);
@@ -259,7 +270,7 @@ namespace ProjectRuntime.Actor
             }
             else
             {
-                this._nextWanderMoveTime = NetworkTime.time + Mathf.Max(0.25f, this.wanderPauseDuration);
+                this._nextWanderMoveTime = NetworkTime.time + this.GetWanderPauseDuration(0.25f);
                 this.ServerSetVisualState(ZombieVisualState.Idle);
             }
         }
@@ -279,8 +290,9 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
+            this.SetAgentSpeed(this.moveSpeed);
             this._agent.SetDestination(this._target.transform.position);
-            this.ServerSetVisualState(ZombieVisualState.Walk);
+            this.ServerSetVisualState(ZombieVisualState.Run);
             if (!this.ServerFaceMovementTarget(this._target.transform.position))
             {
                 return;
@@ -349,7 +361,7 @@ namespace ProjectRuntime.Actor
             if (this.IsValidTarget(this._target))
             {
                 this._state = ZombieAiState.Chasing;
-                this.ServerSetVisualState(ZombieVisualState.Walk);
+                this.ServerSetVisualState(ZombieVisualState.Run);
             }
             else
             {
@@ -405,7 +417,7 @@ namespace ProjectRuntime.Actor
             {
                 this._target = source;
                 this._state = ZombieAiState.Chasing;
-                this.ServerSetVisualState(ZombieVisualState.Walk);
+                this.ServerSetVisualState(ZombieVisualState.Run);
             }
         }
 
@@ -463,8 +475,21 @@ namespace ProjectRuntime.Actor
         {
             if (this._agent != null)
             {
-                this._agent.speed = this.moveSpeed;
+                this.SetAgentSpeed(this.moveSpeed);
                 this._agent.updateRotation = false;
+            }
+        }
+
+        private float GetWanderMoveSpeed()
+        {
+            return this.wanderMoveSpeed > 0f ? this.wanderMoveSpeed : this.moveSpeed;
+        }
+
+        private void SetAgentSpeed(float speed)
+        {
+            if (this._agent != null)
+            {
+                this._agent.speed = Mathf.Max(0f, speed);
             }
         }
 
@@ -527,7 +552,8 @@ namespace ProjectRuntime.Actor
             this._state = ZombieAiState.Wandering;
             this._target = null;
             this._hasWanderDestination = false;
-            this._nextWanderMoveTime = NetworkTime.time + Mathf.Max(0f, this.wanderPauseDuration);
+            this._nextWanderMoveTime = NetworkTime.time + this.GetWanderPauseDuration(0f);
+            this.SetAgentSpeed(this.GetWanderMoveSpeed());
             this.StopAgent();
             this.ServerSetVisualState(ZombieVisualState.Idle);
         }
@@ -610,6 +636,26 @@ namespace ProjectRuntime.Actor
             this.ApplyVisualState(state);
         }
 
+        // Binds a runtime-instantiated model's Animator (for subclasses that build their visual at
+        // runtime, e.g. the mimic copying a player model) and re-applies the current replicated
+        // visual state so the newly bound animator starts on the right controller.
+        protected void SetRuntimeAnimator(Animator runtimeAnimator)
+        {
+            this.animator = runtimeAnimator;
+            this.ApplyVisualState(this.visualState);
+        }
+
+        // Re-scans for hit colliders and re-applies the current targetable gating. Needed when a
+        // subclass adds colliders after Awake (e.g. a runtime-instantiated model), because
+        // CacheComponents caches the collider set once and ApplyTargetable only gates what was
+        // cached at spawn.
+        protected void RefreshHitColliders()
+        {
+            this._hitColliders = null;
+            this.CacheComponents();
+            this.ApplyTargetable(this.isTargetable);
+        }
+
         protected float GetVisualStateAnimationDuration(ZombieVisualState state, float fallbackDuration)
         {
             RuntimeAnimatorController controller = this.GetVisualStateController(state);
@@ -630,32 +676,159 @@ namespace ProjectRuntime.Actor
             return duration > 0f ? duration : Mathf.Max(0f, fallbackDuration);
         }
 
+        protected virtual float GetWanderPauseDuration(float minimumDuration)
+        {
+            return Mathf.Max(minimumDuration, this.wanderPauseDuration);
+        }
+
         private void ApplyVisualState(ZombieVisualState state)
         {
             if (this.animator == null)
             {
+                this.LogVisualStateIssue(state, "no Animator assigned");
                 return;
             }
 
             RuntimeAnimatorController controller = this.GetVisualStateController(state);
 
-            if (controller == null || this.animator.runtimeAnimatorController == controller)
+            if (controller == null)
+            {
+                this.LogVisualStateIssue(state, "no RuntimeAnimatorController assigned");
+                return;
+            }
+
+            if (this.animator.runtimeAnimatorController == controller)
             {
                 return;
             }
 
+            this.animator.speed = 1f;
             this.animator.runtimeAnimatorController = controller;
             this.animator.Rebind();
+            this.animator.Play(0, 0, 0f);
+            this.animator.Update(0f);
+            this.LogVisualStateApplied(state, controller);
+        }
+
+        private void TickLoopingVisualState()
+        {
+            if (this.animator == null ||
+                !this.animator.enabled ||
+                this.animator.layerCount <= 0 ||
+                !this.IsLoopingVisualState(this.visualState))
+            {
+                return;
+            }
+
+            AnimatorStateInfo stateInfo = this.animator.GetCurrentAnimatorStateInfo(0);
+            if (stateInfo.loop || stateInfo.normalizedTime < 0.98f)
+            {
+                return;
+            }
+
+            this.animator.Play(0, 0, 0f);
             this.animator.Update(0f);
         }
 
-        private RuntimeAnimatorController GetVisualStateController(ZombieVisualState state)
+        private bool IsLoopingVisualState(ZombieVisualState state)
+        {
+            return state == ZombieVisualState.Spawn ||
+                   state == ZombieVisualState.Idle ||
+                   state == ZombieVisualState.Walk ||
+                   state == ZombieVisualState.Run;
+        }
+
+        private void LogVisualStateIssue(ZombieVisualState state, string reason)
+        {
+            if (!this.logVisualStateChanges)
+            {
+                return;
+            }
+
+            Debug.LogWarning(
+                $"[{this.name}] Visual state {state} not applied: {reason}.",
+                this);
+        }
+
+        private void LogVisualStateApplied(ZombieVisualState state, RuntimeAnimatorController controller)
+        {
+            if (!this.logVisualStateChanges)
+            {
+                return;
+            }
+
+            Debug.Log(
+                $"[{this.name}] Visual state {state} applied. " +
+                $"controller={controller.name} controllerClips={this.FormatControllerClips(controller)} " +
+                $"animator={this.animator.name} animatorEnabled={this.animator.enabled} " +
+                $"animatorActive={this.animator.gameObject.activeInHierarchy} " +
+                $"currentClips={this.FormatCurrentAnimatorClips()}",
+                this);
+        }
+
+        private string FormatControllerClips(RuntimeAnimatorController controller)
+        {
+            AnimationClip[] clips = controller.animationClips;
+            if (clips == null || clips.Length == 0)
+            {
+                return "<none>";
+            }
+
+            string value = string.Empty;
+            for (int i = 0; i < clips.Length; i++)
+            {
+                AnimationClip clip = clips[i];
+                if (i > 0)
+                {
+                    value += ", ";
+                }
+
+                value += clip != null
+                    ? $"{clip.name}({clip.length:0.###}s)"
+                    : "<null>";
+            }
+
+            return value;
+        }
+
+        private string FormatCurrentAnimatorClips()
+        {
+            if (this.animator.layerCount <= 0)
+            {
+                return "<no layers>";
+            }
+
+            AnimatorClipInfo[] clips = this.animator.GetCurrentAnimatorClipInfo(0);
+            if (clips == null || clips.Length == 0)
+            {
+                return "<none>";
+            }
+
+            string value = string.Empty;
+            for (int i = 0; i < clips.Length; i++)
+            {
+                if (i > 0)
+                {
+                    value += ", ";
+                }
+
+                AnimationClip clip = clips[i].clip;
+                value += clip != null
+                    ? $"{clip.name}(weight={clips[i].weight:0.###})"
+                    : "<null>";
+            }
+
+            return value;
+        }
+
+        protected virtual RuntimeAnimatorController GetVisualStateController(ZombieVisualState state)
         {
             return state switch
             {
                 ZombieVisualState.Spawn => this.spawnController,
                 ZombieVisualState.Idle => this.idleController,
                 ZombieVisualState.Walk => this.walkController,
+                ZombieVisualState.Run => this.runController != null ? this.runController : this.walkController,
                 ZombieVisualState.Lunge => this.lungeController,
                 ZombieVisualState.Death => this.deathController,
                 ZombieVisualState.Explode => this.explodeController,
