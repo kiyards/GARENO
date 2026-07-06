@@ -240,7 +240,7 @@ MonoBehaviour:
   walkController: {fileID: 9100000, guid: a042b09075b59aa43bc3cce43951035f, type: 2}
   runController: {fileID: 9100000, guid: aa2f5594cd6f0ba47b516dd6b05f29ec, type: 2}
   lungeController: {fileID: 9100000, guid: 9d6bd86c130c1544fb65853b82549885, type: 2}
-  deathController: {fileID: 0}
+  deathController: {fileID: 9100000, guid: cf9b6cd0e3e163440ae8fdddddd207ec, type: 2}
   explodeController: {fileID: 0}
   attackAnimationHoldDuration: 0.6
   deathDespawnDelay: 3.5
