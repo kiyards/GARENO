@@ -97,6 +97,13 @@ namespace ProjectRuntime.Actor
 
         public float ReviveHoldTime => reviveHoldTime;
 
+        // Client-facing countdown for the local downed survivor's own HUD, backed by DownedState's
+        // replicated totalDuration/elapsedTime rather than the server-only _downedStartTime below.
+        public float DownedTimeRemaining =>
+            currentState is DownedState downedState
+                ? Mathf.Max(0f, downedState.totalDuration - downedState.elapsedTime)
+                : 0f;
+
         private double _downedStartTime;
         private double _downedPresentationEndTime;
 
@@ -392,7 +399,13 @@ namespace ProjectRuntime.Actor
             _reviveContactStartTime = 0d;
             _downedResolved = false;
 
-            ServerForceState(new DownedState(this) { m_anchorPosition = transform.position });
+            ServerForceState(
+                new DownedState(this)
+                {
+                    m_anchorPosition = transform.position,
+                    totalDuration = downedPresentationDelay + reviveWindow,
+                }
+            );
 
             if (_downedPresentationCoroutine != null)
             {

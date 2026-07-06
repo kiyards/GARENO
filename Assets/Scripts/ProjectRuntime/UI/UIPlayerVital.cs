@@ -14,6 +14,7 @@ namespace ProjectRuntime.UI
         [SerializeField] private TextMeshProUGUI PlayerNameTMP;
         [SerializeField] private Image PlayerStatusImage;
         [SerializeField] private GameObject DownedPlayerObject;
+        [SerializeField] private TextMeshProUGUI DownedTimerTMP;
         [SerializeField] private GameObject DeadPlayerObject;
         [SerializeField] private GameObject DungeonMasterObject;
         [SerializeField] private List<GameObject> PlayerLivesIcons;
@@ -160,6 +161,13 @@ namespace ProjectRuntime.UI
             if (DownedPlayerObject != null)
             {
                 DownedPlayerObject.SetActive(isDowned && !isDead);
+            }
+
+            if (DownedTimerTMP != null)
+            {
+                DownedTimerTMP.text = isDowned && !isDead
+                    ? $"{_boundPlayer.player.DownedTimeRemaining:0.0}s"
+                    : string.Empty;
             }
 
             if (DeadPlayerObject != null)

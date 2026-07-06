@@ -12,23 +12,37 @@ namespace ProjectRuntime.Actor
     public class BearTrap : NetworkBehaviour, ITrap
     {
         [Header("Health")]
-        [SerializeField] private float maxHealth = 500f;
+        [SerializeField]
+        private float maxHealth = 500f;
 
         [Header("Damage")]
-        [SerializeField] private float initialDamage = 10f;
-        [SerializeField] private float tickDamage = 5f;
-        [SerializeField] private float tickInterval = 1f;
+        [SerializeField]
+        private float initialDamage = 10f;
+
+        [SerializeField]
+        private float tickDamage = 5f;
+
+        [SerializeField]
+        private float tickInterval = 1f;
 
         [Header("Escape")]
-        [SerializeField] private float requiredMashCount = 20f;
-        [SerializeField] private float mashIncrement = 1f;
-        [SerializeField] private float mashDrainRate = 1.5f;
+        [SerializeField]
+        private float requiredMashCount = 20f;
+
+        [SerializeField]
+        private float mashIncrement = 1f;
+
+        [SerializeField]
+        private float mashDrainRate = 1.5f;
 
         [SyncVar(hook = nameof(OnTriggeredSynced))]
         private bool isTriggered;
 
-        [SyncVar] private uint trappedPlayerNetId;
-        [SyncVar] private float mashCount;
+        [SyncVar]
+        private uint trappedPlayerNetId;
+
+        [SyncVar]
+        private float mashCount;
 
         private Health _health;
         private GameplayPlayer _trappedPlayer;
@@ -179,7 +193,12 @@ namespace ProjectRuntime.Actor
 
         private bool IsValidSurvivor(GameplayPlayer player)
         {
-            if (player == null || player.IsDungeonMaster || player.IsInactive || player.IsBearTrapped)
+            if (
+                player == null
+                || player.IsDungeonMaster
+                || player.IsInactive
+                || player.IsBearTrapped
+            )
             {
                 return false;
             }

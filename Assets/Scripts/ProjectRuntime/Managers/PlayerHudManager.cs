@@ -113,6 +113,12 @@ namespace ProjectRuntime.Managers
         [field: SerializeField]
         private Image ReviveInteractBarFill { get; set; }
 
+        [field: SerializeField, Header("Revive Timer")]
+        private GameObject ReviveTimerParent { get; set; }
+
+        [field: SerializeField]
+        private TextMeshProUGUI ReviveTimerTMP { get; set; }
+
         [field: SerializeField, Header("Minimap")]
         private MinimapController Minimap { get; set; }
 
@@ -224,6 +230,7 @@ namespace ProjectRuntime.Managers
             this.RefreshNemesisSideCard();
             this.RefreshNemesisAttackDisplays();
             this.RefreshReviveInteract();
+            this.RefreshReviveTimer();
         }
 
         public void SetLocalPlayer(PlayerManager player)
@@ -447,6 +454,28 @@ namespace ProjectRuntime.Managers
         {
             if (this.ReviveInteractParent != null)
                 this.ReviveInteractParent.SetActive(active);
+        }
+
+        // Shows the local downed survivor's own countdown until the revive window expires and they're
+        // permanently lost. Backed by GameplayPlayer.DownedTimeRemaining, which reads DownedState's
+        // replicated totalDuration/elapsedTime — no separate client-side timer to keep in sync.
+        private void RefreshReviveTimer()
+        {
+            if (this.BoundGameplayPlayer == null || !this.BoundGameplayPlayer.IsDowned)
+            {
+                this.SetReviveTimerActive(false);
+                return;
+            }
+
+            this.SetReviveTimerActive(true);
+
+            float remaining = this.BoundGameplayPlayer.DownedTimeRemaining;
+            this.ReviveTimerTMP.text = $"{remaining:0.0}s";
+        }
+
+        private void SetReviveTimerActive(bool active)
+        {
+            this.ReviveTimerParent.SetActive(active);
         }
 
         // Drives the lifetime countdown text + bar inside NemesisControlUI (only visible while

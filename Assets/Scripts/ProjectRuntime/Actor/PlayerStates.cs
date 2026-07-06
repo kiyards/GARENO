@@ -618,6 +618,12 @@ namespace ProjectRuntime.Actor.PlayerStates
     {
         public Vector3 m_anchorPosition;
 
+        // Total time from entering this state until the revive window expires (presentation delay +
+        // GameplayPlayer.ReviveWindow), set once server-side in ServerEnterDowned. Combined with the
+        // base class's replicated elapsedTime, this lets clients display a countdown without
+        // duplicating the server's timeout calculation.
+        public float totalDuration;
+
         public DownedState(GameplayPlayer sm)
             : base(sm) { }
 
@@ -625,12 +631,14 @@ namespace ProjectRuntime.Actor.PlayerStates
         {
             base.OnSerialize(writer);
             writer.Write(m_anchorPosition);
+            writer.Write(totalDuration);
         }
 
         public override void OnDeserialize(NetworkReader reader)
         {
             base.OnDeserialize(reader);
             m_anchorPosition = reader.Read<Vector3>();
+            totalDuration = reader.ReadFloat();
         }
 
         public override void OnEnter()
