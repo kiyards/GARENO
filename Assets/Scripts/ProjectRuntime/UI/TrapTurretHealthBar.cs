@@ -8,23 +8,27 @@ namespace ProjectRuntime.UI
 {
     /// <summary>
     /// World-space health bar for traps and turrets.
-    /// Shown only to the player who lands a hit, hidden to everyone else.
+    /// Shown to all clients whenever the trap/turret takes damage.
     /// Add this component alongside a Health component, then drag in the UI references.
     /// </summary>
     public class TrapTurretHealthBar : NetworkBehaviour
     {
         [Header("References")]
         [Tooltip("The root GameObject of the world-space health bar UI. Will be shown/hidden.")]
-        [SerializeField] private GameObject _healthBarRoot;
+        [SerializeField]
+        private GameObject _healthBarRoot;
 
         [Tooltip("Image with Fill Method set to Horizontal. Represents current health.")]
-        [SerializeField] private Image _fillImage;
+        [SerializeField]
+        private Image _fillImage;
 
         [Tooltip("Leave empty to auto-find Health on this GameObject.")]
-        [SerializeField] private Health _health;
+        [SerializeField]
+        private Health _health;
 
         [Header("Settings")]
-        [SerializeField] private float _hideDelay = 3f;
+        [SerializeField]
+        private float _hideDelay = 3f;
 
         private Coroutine _hideCoroutine;
 
@@ -64,16 +68,11 @@ namespace ProjectRuntime.UI
         [Server]
         private void OnServerDamaged(float amount, uint sourceNetId, Vector3 hitPoint)
         {
-            if (!NetworkServer.spawned.TryGetValue(sourceNetId, out var shooterIdentity))
-                return;
-
-            var conn = shooterIdentity.connectionToClient;
-            if (conn != null)
-                TargetShowHealthBar(conn);
+            RpcShowHealthBar();
         }
 
-        [TargetRpc]
-        private void TargetShowHealthBar(NetworkConnectionToClient target)
+        [ClientRpc]
+        private void RpcShowHealthBar()
         {
             if (_healthBarRoot == null)
                 return;
@@ -99,9 +98,8 @@ namespace ProjectRuntime.UI
             if (_health == null || _fillImage == null)
                 return;
 
-            _fillImage.fillAmount = _health.MaxHealth > 0f
-                ? _health.CurrentHealth / _health.MaxHealth
-                : 0f;
+            _fillImage.fillAmount =
+                _health.MaxHealth > 0f ? _health.CurrentHealth / _health.MaxHealth : 0f;
         }
 
         private void UpdateFill(float current, float max)
@@ -124,7 +122,9 @@ namespace ProjectRuntime.UI
             if (_healthBarRoot == null || !_healthBarRoot.activeSelf || Camera.main == null)
                 return;
 
-            _healthBarRoot.transform.rotation = Camera.main.transform.rotation;
+            // Only match yaw so the bar stays upright instead of tilting with camera pitch.
+            float camYaw = Camera.main.transform.eulerAngles.y;
+            _healthBarRoot.transform.rotation = Quaternion.Euler(0f, camYaw, 0f);
         }
     }
 }
