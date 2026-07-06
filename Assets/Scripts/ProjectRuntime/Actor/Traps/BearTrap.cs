@@ -1,6 +1,7 @@
 using Mirror;
 using ProjectRuntime.Combat;
 using ProjectRuntime.Network;
+using System.Collections;
 using UnityEngine;
 
 namespace ProjectRuntime.Actor
@@ -35,6 +36,25 @@ namespace ProjectRuntime.Actor
         [SerializeField]
         private float mashDrainRate = 1.5f;
 
+        [Header("Visuals")]
+        [SerializeField]
+        private Animator trapAnimator;
+
+        [SerializeField]
+        private Transform shakeRoot;
+
+        [SerializeField]
+        private float mashShakeDuration = 0.12f;
+
+        [SerializeField]
+        private float mashShakeAmplitude = 0.08f;
+
+        [SerializeField]
+        private float mashShakeFrequency = 38f;
+
+        [SerializeField]
+        private float mashShakeRotationDegrees = 4f;
+
         [SyncVar(hook = nameof(OnTriggeredSynced))]
         private bool isTriggered;
 
@@ -47,7 +67,12 @@ namespace ProjectRuntime.Actor
         private Health _health;
         private GameplayPlayer _trappedPlayer;
         private double _nextDamageTime;
-        private Renderer[] _renderers;
+        private Vector3 _shakeOriginLocalPosition;
+        private Quaternion _shakeOriginLocalRotation;
+        private Coroutine _mashShakeCoroutine;
+        private bool _triggerVisualPlayed;
+
+        private const string SnapAnimationStateName = "Take 001";
 
         public bool IsTriggered => isTriggered;
         public uint TrappedPlayerNetId => trappedPlayerNetId;
@@ -57,7 +82,8 @@ namespace ProjectRuntime.Actor
         {
             CacheComponents();
             ConfigureComponents();
-            ApplyTriggeredVisual(isTriggered);
+            CacheVisualOrigin();
+            ApplyTriggeredVisual(isTriggered, false);
         }
 
         protected override void OnValidate()
@@ -91,7 +117,8 @@ namespace ProjectRuntime.Actor
         {
             base.OnStartClient();
             CacheComponents();
-            ApplyTriggeredVisual(isTriggered);
+            CacheVisualOrigin();
+            ApplyTriggeredVisual(isTriggered, false);
         }
 
         private void FixedUpdate()
@@ -143,6 +170,8 @@ namespace ProjectRuntime.Actor
             }
 
             mashCount = Mathf.Min(requiredMashCount, mashCount + mashIncrement);
+            RpcPlayMashShake();
+
             if (mashCount >= requiredMashCount)
             {
                 ServerReleaseTrappedPlayer();
@@ -213,16 +242,12 @@ namespace ProjectRuntime.Actor
 
         private void OnTriggeredSynced(bool oldValue, bool newValue)
         {
-            ApplyTriggeredVisual(newValue);
+            ApplyTriggeredVisual(newValue, !oldValue && newValue);
         }
 
         private void CacheComponents()
         {
             _health ??= GetComponent<Health>();
-            if (_renderers == null || _renderers.Length == 0)
-            {
-                _renderers = GetComponentsInChildren<Renderer>(true);
-            }
         }
 
         private void ConfigureComponents()
@@ -239,23 +264,102 @@ namespace ProjectRuntime.Actor
             }
         }
 
-        private void ApplyTriggeredVisual(bool triggered)
+        private void CacheVisualOrigin()
         {
-            CacheComponents();
+            _shakeOriginLocalPosition = shakeRoot.localPosition;
+            _shakeOriginLocalRotation = shakeRoot.localRotation;
+        }
 
-            Color targetColor = triggered
-                ? new Color(0.85f, 0.18f, 0.12f, 1f)
-                : new Color(0.22f, 0.22f, 0.2f, 1f);
-
-            foreach (Renderer targetRenderer in _renderers)
+        private void ApplyTriggeredVisual(bool triggered, bool playSnap)
+        {
+            if (triggered)
             {
-                if (targetRenderer == null)
+                if (playSnap)
                 {
-                    continue;
+                    PlaySnapVisual();
+                    return;
                 }
 
-                targetRenderer.material.color = targetColor;
+                _triggerVisualPlayed = true;
+                trapAnimator.enabled = true;
+                trapAnimator.Play(SnapAnimationStateName, 0, 1f);
+                trapAnimator.Update(0f);
+                RestoreShakeRoot();
+                return;
             }
+
+            _triggerVisualPlayed = false;
+            trapAnimator.enabled = true;
+            trapAnimator.Play(SnapAnimationStateName, 0, 0f);
+            trapAnimator.Update(0f);
+            trapAnimator.enabled = false;
+            RestoreShakeRoot();
+        }
+
+        private void PlaySnapVisual()
+        {
+            if (_triggerVisualPlayed)
+            {
+                return;
+            }
+
+            _triggerVisualPlayed = true;
+            trapAnimator.enabled = true;
+            trapAnimator.Play(SnapAnimationStateName, 0, 0f);
+            trapAnimator.Update(0f);
+            RestoreShakeRoot();
+        }
+
+        [ClientRpc]
+        private void RpcPlayMashShake()
+        {
+            PlayMashShake();
+        }
+
+        private void PlayMashShake()
+        {
+            if (_mashShakeCoroutine != null)
+            {
+                StopCoroutine(_mashShakeCoroutine);
+            }
+
+            _mashShakeCoroutine = StartCoroutine(ShakeMashVisual());
+        }
+
+        private IEnumerator ShakeMashVisual()
+        {
+            float elapsed = 0f;
+
+            while (elapsed < mashShakeDuration)
+            {
+                float normalizedTime = elapsed / mashShakeDuration;
+                float falloff = 1f - normalizedTime;
+                float wave = Mathf.Sin(elapsed * mashShakeFrequency * Mathf.PI * 2f);
+                float offset = wave * mashShakeAmplitude * falloff;
+                float rotation = wave * mashShakeRotationDegrees * falloff;
+
+                shakeRoot.localPosition = _shakeOriginLocalPosition + new Vector3(offset, 0f, -offset * 0.35f);
+                shakeRoot.localRotation = _shakeOriginLocalRotation * Quaternion.Euler(0f, rotation, rotation * 0.35f);
+
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+
+            shakeRoot.localPosition = _shakeOriginLocalPosition;
+            shakeRoot.localRotation = _shakeOriginLocalRotation;
+            _mashShakeCoroutine = null;
+        }
+
+        private void RestoreShakeRoot()
+        {
+            if (_mashShakeCoroutine != null)
+            {
+                StopCoroutine(_mashShakeCoroutine);
+                _mashShakeCoroutine = null;
+            }
+
+            shakeRoot.localPosition = _shakeOriginLocalPosition;
+            shakeRoot.localRotation = _shakeOriginLocalRotation;
         }
     }
 }
