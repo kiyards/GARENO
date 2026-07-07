@@ -122,6 +122,9 @@ namespace ProjectRuntime.Managers
         [field: SerializeField, Header("Downed")]
         private GameObject DownedIndicator { get; set; }
 
+        [field: SerializeField, Header("Dead")]
+        private GameObject DeadIndicator { get; set; }
+
         [field: SerializeField, Header("Crystal Destroyed Notification")]
         private Image CrystalDestroyedNotification { get; set; }
 
@@ -250,6 +253,7 @@ namespace ProjectRuntime.Managers
             this.RefreshReviveInteract();
             this.RefreshReviveTimer();
             this.RefreshDownedIndicator();
+            this.RefreshDeadIndicator();
         }
 
         public void SetLocalPlayer(PlayerManager player)
@@ -505,6 +509,13 @@ namespace ProjectRuntime.Managers
         {
             bool downed = this.BoundGameplayPlayer != null && this.BoundGameplayPlayer.IsDowned;
             this.DownedIndicator.SetActive(downed);
+        }
+
+        // Shown once the local player is permanently dead (in DeadState), hidden while alive.
+        private void RefreshDeadIndicator()
+        {
+            bool dead = this.BoundGameplayPlayer != null && this.BoundGameplayPlayer.IsDead;
+            this.DeadIndicator.SetActive(dead);
         }
 
         // Drives the lifetime countdown text + bar inside NemesisControlUI (only visible while
