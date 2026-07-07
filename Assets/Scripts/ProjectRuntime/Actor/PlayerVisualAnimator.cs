@@ -24,6 +24,8 @@ namespace ProjectRuntime.Actor
         [SerializeField] private float runSpeedThreshold = 0.5f;
         [SerializeField] private float runInputThreshold = 0.1f;
         [SerializeField] private float runMovementGraceTime = 0.15f;
+        [SerializeField] private float stateBlendDuration = 0.12f;
+        [SerializeField] private float deathBlendDuration = 0.05f;
 
         private Vector3 previousPosition;
         private Animator activeAnimator;
@@ -148,17 +150,44 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
+            var isFirstApply = !hasVisualState;
             hasVisualState = true;
             currentState = state;
             activeAnimator.speed = 1f;
-            if (activeAnimator.runtimeAnimatorController != visualController)
+
+            var controllerChanged = activeAnimator.runtimeAnimatorController != visualController;
+            if (controllerChanged)
             {
                 activeAnimator.runtimeAnimatorController = visualController;
                 activeAnimator.Rebind();
             }
 
-            activeAnimator.Play(GetVisualStateName(state), 0, 0f);
-            activeAnimator.Update(0f);
+            var stateName = GetVisualStateName(state);
+            if (isFirstApply || controllerChanged)
+            {
+                // Nothing meaningful to blend from on the first pose or right after a
+                // controller swap (ghost mode) — snap instantly.
+                activeAnimator.Play(stateName, 0, 0f);
+                activeAnimator.Update(0f);
+            }
+            else
+            {
+                activeAnimator.CrossFadeInFixedTime(
+                    stateName,
+                    GetVisualStateBlendDuration(state),
+                    0,
+                    0f
+                );
+            }
+        }
+
+        private float GetVisualStateBlendDuration(VisualState state)
+        {
+            return state switch
+            {
+                VisualState.Death => deathBlendDuration,
+                _ => stateBlendDuration,
+            };
         }
 
         public void ApplyDeathPose(Animator targetAnimator)

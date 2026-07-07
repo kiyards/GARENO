@@ -72,12 +72,6 @@ namespace ProjectRuntime.Actor
             this.mimicName = target != null
                 ? target.playerName
                 : FallbackNames[Random.Range(0, FallbackNames.Length)];
-
-            // TODO (per-player models): once survivors have unique models, also snapshot the target's
-            // appearance here (target.characterData) into a replicated field and apply it in the
-            // client-side ApplyName path, so the mimic copies both the name AND the model of the
-            // survivor it impersonates. Omitted for now because nothing consumes characterData
-            // visually yet.
         }
 
         private void OnMimicNameSynced(string oldValue, string newValue)

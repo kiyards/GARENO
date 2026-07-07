@@ -68,6 +68,8 @@ namespace ProjectRuntime.Actor
         [SerializeField] private string lungeStateName = "enemy_defaultzombie_lunge";
         [SerializeField] private string deathStateName = "enemy_defaultzombie_death";
         [SerializeField] private string explodeStateName = "";
+        [SerializeField] private float locomotionBlendDuration = 0.12f;
+        [SerializeField] private float actionBlendDuration = 0.05f;
         [SerializeField] private float attackAnimationHoldDuration = 0.6f;
         [SerializeField] private float deathDespawnDelay = 3.5f;
         [SerializeField] private bool logVisualStateChanges;
@@ -81,6 +83,8 @@ namespace ProjectRuntime.Actor
 
         [SyncVar(hook = nameof(OnVisualStateSynced))]
         private ZombieVisualState visualState = ZombieVisualState.Spawn;
+
+        private bool hasAppliedVisualState;
 
         private Health _health;
         private NavMeshAgent _agent;
@@ -733,7 +737,9 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            if (this.animator.runtimeAnimatorController != this.visualController)
+            bool controllerChanged =
+                this.animator.runtimeAnimatorController != this.visualController;
+            if (controllerChanged)
             {
                 this.animator.speed = 1f;
                 this.animator.runtimeAnimatorController = this.visualController;
@@ -741,9 +747,40 @@ namespace ProjectRuntime.Actor
             }
 
             this.animator.speed = 1f;
-            this.animator.Play(stateName, 0, 0f);
-            this.animator.Update(0f);
+            bool isFirstApply = !this.hasAppliedVisualState;
+            this.hasAppliedVisualState = true;
+            if (isFirstApply || controllerChanged)
+            {
+                // Nothing meaningful to blend from on the first pose or right after the
+                // controller is (re)bound (e.g. a runtime-built model) — snap instantly.
+                this.animator.Play(stateName, 0, 0f);
+                this.animator.Update(0f);
+            }
+            else
+            {
+                this.animator.CrossFadeInFixedTime(
+                    stateName,
+                    this.GetVisualStateBlendDuration(state),
+                    0,
+                    0f
+                );
+            }
+
             this.LogVisualStateApplied(state, stateName);
+        }
+
+        private float GetVisualStateBlendDuration(ZombieVisualState state)
+        {
+            switch (state)
+            {
+                case ZombieVisualState.Idle:
+                case ZombieVisualState.Walk:
+                case ZombieVisualState.Run:
+                    return this.locomotionBlendDuration;
+                default:
+                    // Spawn / Lunge / Death / Explode — keep these snappy.
+                    return this.actionBlendDuration;
+            }
         }
 
         private void TickLoopingVisualState()
