@@ -16,15 +16,25 @@ namespace ProjectRuntime.Actor
     public class CreeperZombie : ZombieEnemy
     {
         [Header("Creeper")]
-        [SerializeField] private float explosionRadius = 4f;
-        [SerializeField] private float explosionDamage = 50f;
-        [SerializeField] private float explosionAnimationDuration = 1.25f;
+        [SerializeField]
+        private float explosionRadius = 4f;
+
+        [SerializeField]
+        private float explosionDamage = 50f;
+
+        [SerializeField]
+        private float explosionAnimationDuration = 1.25f;
+
         // Layers checked for survivors caught in the blast. Set to the player layer(s) on the prefab.
-        [SerializeField] private LayerMask explosionMask = ~0;
+        [SerializeField]
+        private LayerMask explosionMask = ~0;
 
         [Header("FX")]
-        [SerializeField] private GameObject explosionVfxPrefab;
-        [SerializeField] private float explosionVfxLifetime = 2f;
+        [SerializeField]
+        private GameObject explosionVfxPrefab;
+
+        [SerializeField]
+        private float explosionVfxLifetime = 2f;
 
         // Guards against attack and death paths firing the explosion more than once.
         private bool _hasExploded;
@@ -69,7 +79,8 @@ namespace ProjectRuntime.Actor
         {
             return Mathf.Max(
                 base.GetWanderPauseDuration(minimumDuration),
-                this.GetVisualStateAnimationDuration(ZombieVisualState.Idle, minimumDuration));
+                this.GetVisualStateAnimationDuration(ZombieVisualState.Idle, minimumDuration)
+            );
         }
 
         [Server]
@@ -89,11 +100,7 @@ namespace ProjectRuntime.Actor
         [Server]
         private IEnumerator ServerExplodeAfterAnimation()
         {
-            float duration = this.GetVisualStateAnimationDuration(
-                ZombieVisualState.Explode,
-                this.explosionAnimationDuration);
-
-            yield return new WaitForSeconds(duration);
+            yield return new WaitForSeconds(this.explosionAnimationDuration);
             this.ServerExplode();
             NetworkServer.Destroy(this.gameObject);
         }
@@ -115,7 +122,10 @@ namespace ProjectRuntime.Actor
                     continue;
                 }
 
-                if ((this.transform.position - player.transform.position).sqrMagnitude <= maxSqrDistance)
+                if (
+                    (this.transform.position - player.transform.position).sqrMagnitude
+                    <= maxSqrDistance
+                )
                 {
                     return true;
                 }
@@ -131,16 +141,19 @@ namespace ProjectRuntime.Actor
                 this.transform.position,
                 this.explosionRadius,
                 this.explosionMask,
-                QueryTriggerInteraction.Ignore);
+                QueryTriggerInteraction.Ignore
+            );
 
             foreach (Collider hit in hits)
             {
                 GameplayPlayer player = hit.GetComponentInParent<GameplayPlayer>();
-                if (player == null ||
-                    player.localManager == null ||
-                    player.localManager.playerRole != PlayerRole.Survivor ||
-                    player.health == null ||
-                    !player.health.IsAlive)
+                if (
+                    player == null
+                    || player.localManager == null
+                    || player.localManager.playerRole != PlayerRole.Survivor
+                    || player.health == null
+                    || !player.health.IsAlive
+                )
                 {
                     continue;
                 }
@@ -148,14 +161,19 @@ namespace ProjectRuntime.Actor
                 player.health.ServerTakeDamage(
                     this.explosionDamage,
                     this.netId,
-                    this.transform.position);
+                    this.transform.position
+                );
             }
 
             if (this.isClient)
             {
                 // Host is its own client too — play now rather than via the queued Rpc below,
                 // which would otherwise race with NetworkServer.Destroy() unspawning this object.
-                HitVfx.PlayAt(this.explosionVfxPrefab, this.transform.position, this.explosionVfxLifetime);
+                HitVfx.PlayAt(
+                    this.explosionVfxPrefab,
+                    this.transform.position,
+                    this.explosionVfxLifetime
+                );
             }
 
             this.RpcPlayExplosionVfx(this.transform.position);
