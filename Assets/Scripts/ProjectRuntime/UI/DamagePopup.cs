@@ -16,7 +16,6 @@ namespace ProjectRuntime.UI
         [SerializeField] private float riseSpeed = 1.2f;
         [SerializeField] private float spawnHeight = 0.75f;
         [SerializeField] private float scatterRadius = 0.25f;
-        [SerializeField] private float wallFadeSpeed = 16f;
 
         private static int _wallMask = -1;
 
@@ -24,7 +23,6 @@ namespace ProjectRuntime.UI
         private Material _runtimeMaterial;
         private float _elapsed;
         private Color _baseColor;
-        private float _visibility = 1f;
 
         private void Awake()
         {
@@ -71,16 +69,10 @@ namespace ProjectRuntime.UI
             Camera worldCamera = Camera.main;
             BillboardTo(worldCamera);
 
-            float lifetimeAlpha = 1f - Mathf.Clamp01(_elapsed / lifetime);
-            float targetVisibility = IsBlockedByWall(worldCamera) ? 0f : 1f;
-            _visibility = Mathf.MoveTowards(
-                _visibility,
-                targetVisibility,
-                wallFadeSpeed * Time.deltaTime
-            );
+            _text.enabled = !IsBlockedByWall(worldCamera);
 
             var c = _baseColor;
-            c.a = lifetimeAlpha * _visibility;
+            c.a = 1f - Mathf.Clamp01(_elapsed / lifetime);
             _text.color = c;
 
             if (_elapsed >= lifetime)
