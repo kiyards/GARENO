@@ -37,5 +37,20 @@ namespace ProjectRuntime.Combat
 
             Object.Destroy(vfx, lifetime);
         }
+
+        /// <summary>Non-organic impact VFX (sparks, dust, etc.) oriented along the surface normal
+        /// of whatever was hit — traps, turrets, the crystal.</summary>
+        public static void PlayImpact(GameObject prefab, Vector3 worldPos, Vector3 surfaceNormal, float lifetime)
+        {
+            if (prefab == null)
+                return;
+
+            Quaternion rotation = surfaceNormal.sqrMagnitude > 0.0001f
+                ? Quaternion.LookRotation(surfaceNormal)
+                : Quaternion.identity;
+
+            var vfx = Object.Instantiate(prefab, worldPos, rotation);
+            Object.Destroy(vfx, lifetime);
+        }
     }
 }

@@ -51,6 +51,12 @@ namespace ProjectRuntime.Combat
         [SerializeField]
         private float hitVfxLifetime = 2f;
 
+        [SerializeField]
+        private GameObject impactVfxPrefab;
+
+        [SerializeField]
+        private float impactVfxLifetime = 2f;
+
         [SyncVar(hook = nameof(OnAmmoSynced))]
         private int currentAmmo;
 
@@ -110,18 +116,20 @@ namespace ProjectRuntime.Combat
             cam.GetAimData(maxRange, out Vector3 origin, out Vector3 dir, out _);
             uint targetNetId = 0;
             Vector3 hitPoint = origin + dir * maxRange;
+            Vector3 hitNormal = -dir;
 
             var hits = cam.GetRaycastData(maxRange);
             if (hits.Count > 0)
             {
                 var first = hits[0];
                 hitPoint = first.hitPoint;
+                hitNormal = first.hit.normal;
                 var identity = first.hit.collider.GetComponentInParent<NetworkIdentity>();
                 if (identity != null)
                     targetNetId = identity.netId;
             }
 
-            CmdFire(targetNetId, hitPoint, dir);
+            CmdFire(targetNetId, hitPoint, dir, hitNormal);
         }
 
         private void TryReload()
@@ -132,7 +140,7 @@ namespace ProjectRuntime.Combat
         }
 
         [Command]
-        private void CmdFire(uint targetNetId, Vector3 hitPoint, Vector3 fireDirection)
+        private void CmdFire(uint targetNetId, Vector3 hitPoint, Vector3 fireDirection, Vector3 hitNormal)
         {
             if (player != null && (player.IsDungeonMaster || player.IsBearTrapped))
                 return;
@@ -167,6 +175,8 @@ namespace ProjectRuntime.Combat
                     RpcShowDamageNumber(hitPoint, damage);
                     if (IsOrganicTarget(targetIdentity))
                         RpcPlayHitVfx(hitPoint, fireDirection);
+                    else
+                        RpcPlayImpactVfx(hitPoint, hitNormal);
                 }
             }
         }
@@ -226,6 +236,12 @@ namespace ProjectRuntime.Combat
         private void RpcPlayHitVfx(Vector3 worldPos, Vector3 fireDirection)
         {
             HitVfx.Play(hitVfxPrefab, worldPos, fireDirection, hitVfxLifetime);
+        }
+
+        [ClientRpc]
+        private void RpcPlayImpactVfx(Vector3 worldPos, Vector3 hitNormal)
+        {
+            HitVfx.PlayImpact(impactVfxPrefab, worldPos, hitNormal, impactVfxLifetime);
         }
 
         private void OnAmmoSynced(int oldValue, int newValue)
