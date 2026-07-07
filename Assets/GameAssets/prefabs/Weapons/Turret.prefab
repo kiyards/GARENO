@@ -293,7 +293,7 @@ Transform:
   m_GameObject: {fileID: 1716658562292825774}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.825, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -438,7 +438,7 @@ Transform:
   m_GameObject: {fileID: 5822977817589434124}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.825, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -539,7 +539,6 @@ MonoBehaviour:
   turretYawPivot: {fileID: 1498495623279000002}
   turretPitchPivot: {fileID: 1498495623279000004}
   turretMuzzle: {fileID: 1498495623279000010}
-  placementHeightOffset: 0.9
   damage: 5
   maxRange: 80
   fireCooldown: 0.18
@@ -613,7 +612,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8482247675030602365}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.825, z: 0}
   m_LocalScale: {x: 0.01, y: 0.0017299999, z: 0.01}
   m_ConstrainProportionsScale: 0
   m_Children:

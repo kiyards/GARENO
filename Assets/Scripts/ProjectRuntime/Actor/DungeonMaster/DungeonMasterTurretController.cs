@@ -3,6 +3,7 @@ using ProjectRuntime.Actor.PlayerStates;
 using ProjectRuntime.Combat;
 using ProjectRuntime.Network;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace ProjectRuntime.Actor
 {
@@ -10,6 +11,7 @@ namespace ProjectRuntime.Actor
     {
         private const double AimSyncInterval = 0.05;
         private const float AimSyncDirectionDotThreshold = 0.999f;
+        private const float PlacementSampleRadius = 50f;
 
         [Header("Aim")]
         [SerializeField]
@@ -370,8 +372,7 @@ namespace ProjectRuntime.Actor
             GameObject prefab = GameNetworkManager.Instance != null
                 ? GameNetworkManager.Instance.DungeonMasterTurretPrefab
                 : null;
-            ServerSpawnTurret(position, prefab);
-            return true;
+            return ServerSpawnTurret(position, prefab);
         }
 
         [Server]
@@ -386,17 +387,16 @@ namespace ProjectRuntime.Actor
             GameObject prefab = GameNetworkManager.Instance != null
                 ? GameNetworkManager.Instance.DungeonMasterSlowingTurretPrefab
                 : null;
-            ServerSpawnTurret(position, prefab);
-            return true;
+            return ServerSpawnTurret(position, prefab);
         }
 
         [Server]
-        private void ServerSpawnTurret(Vector3 spawnPosition, GameObject turretPrefab)
+        private bool ServerSpawnTurret(Vector3 spawnPosition, GameObject turretPrefab)
         {
             var player = ResolvePlayer();
             if (player == null || !player.IsDungeonMaster || _activeTurret != null)
             {
-                return;
+                return false;
             }
 
             if (turretPrefab == null)
@@ -404,25 +404,33 @@ namespace ProjectRuntime.Actor
                 Debug.LogWarning(
                     "[DungeonMasterTurretController] Turret prefab is null — assign it on GameNetworkManager."
                 );
-                return;
+                return false;
             }
 
-            if (!turretPrefab.TryGetComponent(out DungeonMasterTurret turretTemplate))
+            if (!turretPrefab.TryGetComponent(out DungeonMasterTurret _))
             {
                 Debug.LogWarning(
                     "[DungeonMasterTurretController] Turret prefab must have a DungeonMasterTurret component on its root."
                 );
-                return;
+                return false;
             }
 
-            float heightOffset = turretTemplate.PlacementHeightOffset;
+            if (!NavMesh.SamplePosition(
+                    spawnPosition,
+                    out NavMeshHit navMeshHit,
+                    PlacementSampleRadius,
+                    NavMesh.AllAreas))
+            {
+                return false;
+            }
+
             Vector3 flatForward = Vector3.ProjectOnPlane(player.transform.forward, Vector3.up);
             Quaternion spawnRotation = flatForward.sqrMagnitude > 0.001f
                 ? Quaternion.LookRotation(flatForward, Vector3.up)
                 : Quaternion.identity;
             GameObject turretObject = Instantiate(
                 turretPrefab,
-                spawnPosition + Vector3.up * heightOffset,
+                navMeshHit.position,
                 spawnRotation
             );
             var turret = turretObject.GetComponent<DungeonMasterTurret>();
@@ -430,6 +438,7 @@ namespace ProjectRuntime.Actor
             NetworkServer.Spawn(turretObject);
             AttachSpawnedTurret(turret);
             turret.SetVisible(true);
+            return true;
         }
 
         [Server]
