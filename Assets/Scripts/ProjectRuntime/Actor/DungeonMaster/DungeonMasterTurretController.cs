@@ -407,7 +407,7 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            if (!turretPrefab.TryGetComponent(out DungeonMasterTurret _))
+            if (!turretPrefab.TryGetComponent(out DungeonMasterTurret turretTemplate))
             {
                 Debug.LogWarning(
                     "[DungeonMasterTurretController] Turret prefab must have a DungeonMasterTurret component on its root."
@@ -415,7 +415,7 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            float heightOffset = 1f;
+            float heightOffset = turretTemplate.PlacementHeightOffset;
             Vector3 flatForward = Vector3.ProjectOnPlane(player.transform.forward, Vector3.up);
             Quaternion spawnRotation = flatForward.sqrMagnitude > 0.001f
                 ? Quaternion.LookRotation(flatForward, Vector3.up)

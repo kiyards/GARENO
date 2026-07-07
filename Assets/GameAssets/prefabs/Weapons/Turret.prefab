@@ -463,8 +463,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.3199644, y: 2.1881158, z: 1}
-  m_Center: {x: 0.035444736, y: 0.5940578, z: 0}
+  m_Size: {x: 1.9318743, y: 2.3575864, z: 2.45933}
+  m_Center: {x: 0.071345806, y: 0.14471245, z: -0.25453448}
 --- !u!1 &7487658207218452854
 GameObject:
   m_ObjectHideFlags: 0
@@ -539,6 +539,7 @@ MonoBehaviour:
   turretYawPivot: {fileID: 1498495623279000002}
   turretPitchPivot: {fileID: 1498495623279000004}
   turretMuzzle: {fileID: 1498495623279000010}
+  placementHeightOffset: 0.9
   damage: 5
   maxRange: 80
   fireCooldown: 0.18

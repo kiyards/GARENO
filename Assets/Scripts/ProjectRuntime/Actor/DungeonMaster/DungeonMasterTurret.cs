@@ -33,6 +33,9 @@ namespace ProjectRuntime.Actor
         [SerializeField]
         private Transform turretMuzzle;
 
+        [SerializeField]
+        private float placementHeightOffset = 1f;
+
         [Header("Combat")]
         [SerializeField]
         private float damage = 20f;
@@ -105,6 +108,7 @@ namespace ProjectRuntime.Actor
         public bool SlowOnHit => slowOnHit;
         public float SlowAmount => slowAmount;
         public float SlowDuration => slowDuration;
+        public float PlacementHeightOffset => placementHeightOffset;
 
         [Server]
         public void ServerInitialize(GameplayPlayer owner)
