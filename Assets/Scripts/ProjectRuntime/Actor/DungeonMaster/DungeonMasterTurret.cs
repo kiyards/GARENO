@@ -99,6 +99,7 @@ namespace ProjectRuntime.Actor
         private GameplayPlayer _attachedOwner;
         private Health _health;
         private bool _visibilityRequested = true;
+        private float _lastKnownHealth = -1f;
 
         public Health Health => _health != null ? _health : _health = GetComponent<Health>();
         public uint OwnerNetId => ownerNetId;
@@ -209,12 +210,35 @@ namespace ProjectRuntime.Actor
             RegisterWithOwner();
             ApplyVisibility();
             UpdateAim(_syncedAimDirection);
+
+            // The turret carries its own Health (separate from the DM player), so the HUD's
+            // player-health vignette never fires for turret damage. Drive it from here instead,
+            // gated to the client that locally controls this turret.
+            _lastKnownHealth = Health.CurrentHealth;
+            Health.OnHealthChangedEvent += OnClientHealthChanged;
         }
 
         public override void OnStopClient()
         {
+            Health.OnHealthChangedEvent -= OnClientHealthChanged;
             DetachFromOwner();
             base.OnStopClient();
+        }
+
+        private void OnClientHealthChanged(float current, float max)
+        {
+            if (
+                _attachedOwner != null
+                && _attachedOwner.isLocalPlayer
+                && _lastKnownHealth >= 0f
+                && current < _lastKnownHealth
+                && PlayerHudManager.Instance != null
+            )
+            {
+                PlayerHudManager.Instance.FlashDamageVignette();
+            }
+
+            _lastKnownHealth = current;
         }
 
         public override void OnStopServer()

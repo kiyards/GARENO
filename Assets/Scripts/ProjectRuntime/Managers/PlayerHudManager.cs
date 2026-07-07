@@ -174,6 +174,9 @@ namespace ProjectRuntime.Managers
         [field: SerializeField, Header("Effects")]
         private FlashEffect FlashEffect { get; set; }
 
+        [field: SerializeField]
+        private DamageVignette DamageVignette { get; set; }
+
         private Health BoundHealth { get; set; }
         private PistolWeapon BoundWeapon { get; set; }
         private DungeonMasterCardManager BoundCardManager { get; set; }
@@ -185,6 +188,7 @@ namespace ProjectRuntime.Managers
         private bool IsPlayerUiVisible { get; set; } = true;
         private float _reviveHoldProgress;
         private int _lastDestroyedCrystals;
+        private float _lastKnownHealth = -1f;
         private Coroutine _crystalNotificationRoutine;
 
         /// <summary>
@@ -305,6 +309,8 @@ namespace ProjectRuntime.Managers
                 this.BoundHealth.OnHealthChangedEvent -= this.OnHealthChanged;
                 this.BoundHealth = null;
             }
+
+            this._lastKnownHealth = -1f;
 
             if (this.BoundWeapon != null)
             {
@@ -524,6 +530,14 @@ namespace ProjectRuntime.Managers
 
         private void OnHealthChanged(float current, float max)
         {
+            // A decrease means the local player took damage — flash the vignette. The first bind
+            // pushes the starting value with _lastKnownHealth == -1f, so no false trigger there.
+            if (this._lastKnownHealth >= 0f && current < this._lastKnownHealth)
+            {
+                this.FlashDamageVignette();
+            }
+            this._lastKnownHealth = current;
+
             if (this.PlayerHealthBar != null && max > 0f)
             {
                 this.PlayerHealthBar.FillAmount = current / max;
@@ -533,6 +547,14 @@ namespace ProjectRuntime.Managers
             {
                 this.PlayerHealthTMP.text = Mathf.CeilToInt(Mathf.Max(0f, current)).ToString();
             }
+        }
+
+        // Flash the full-screen damage vignette for the local player. Driven by the local player's
+        // health hook (OnHealthChanged) and by a locally-controlled turret taking damage
+        // (DungeonMasterTurret), since the turret has its own Health separate from the player.
+        public void FlashDamageVignette()
+        {
+            this.DamageVignette?.Flash();
         }
 
         private void OnAmmoChanged(int currentAmmo, int magazineSize)
