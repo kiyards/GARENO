@@ -363,11 +363,11 @@ MonoBehaviour:
   syncInterval: 0
   maxHealth: 500
   explosionDamage: 50
-  explosionRadius: 15
+  explosionRadius: 7
   knockbackForce: 20
   immobilizeDuration: 3
-  flashInterval: 1.5
-  flashDuration: 0.25
+  flashInterval: 1.25
+  flashDuration: 0.5
 --- !u!114 &7324124406378624339
 MonoBehaviour:
   m_ObjectHideFlags: 0
