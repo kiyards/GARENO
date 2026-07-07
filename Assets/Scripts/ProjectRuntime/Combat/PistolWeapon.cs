@@ -5,7 +5,6 @@ using ProjectRuntime.Actor;
 using ProjectRuntime.Network;
 using ProjectRuntime.UI;
 using UnityEngine;
-using UnityEngine.VFX;
 
 namespace ProjectRuntime.Combat
 {
@@ -16,8 +15,6 @@ namespace ProjectRuntime.Combat
     /// </summary>
     public class PistolWeapon : NetworkBehaviour
     {
-        private static readonly int BloodVelocityId = Shader.PropertyToID("BloodVelocity");
-
         [Header("Components")]
         [SerializeField]
         private GameplayPlayer player;
@@ -168,7 +165,8 @@ namespace ProjectRuntime.Combat
                 {
                     damageable.ServerTakeDamage(damage, netId, hitPoint);
                     RpcShowDamageNumber(hitPoint, damage);
-                    RpcPlayHitVfx(hitPoint, fireDirection);
+                    if (IsOrganicTarget(targetIdentity))
+                        RpcPlayHitVfx(hitPoint, fireDirection);
                 }
             }
         }
@@ -184,6 +182,13 @@ namespace ProjectRuntime.Combat
 
             return shooterManager.playerRole == PlayerRole.Survivor
                 && targetManager.playerRole == PlayerRole.Survivor;
+        }
+
+        /// <summary>Blood VFX only makes sense on zombies — not traps, turrets, or the crystal.
+        /// The pistol can't hit other survivors (blocked by friendly fire).</summary>
+        private static bool IsOrganicTarget(NetworkIdentity target)
+        {
+            return target.GetComponentInParent<ZombieEnemy>() != null;
         }
 
         [Command]
@@ -217,28 +222,7 @@ namespace ProjectRuntime.Combat
         [ClientRpc]
         private void RpcPlayHitVfx(Vector3 worldPos, Vector3 fireDirection)
         {
-            if (hitVfxPrefab == null)
-                return;
-            var vfx = Instantiate(hitVfxPrefab, worldPos, Quaternion.identity);
-
-            // Redirect the graph's authored horizontal spray to point back at the shooter,
-            // keeping its authored horizontal speed and vertical (arc) velocity untouched.
-            var visualEffect = vfx.GetComponentInChildren<VisualEffect>();
-            if (visualEffect != null && visualEffect.HasVector3(BloodVelocityId))
-            {
-                Vector3 authored = visualEffect.GetVector3(BloodVelocityId);
-                float horizontalSpeed = new Vector2(authored.x, authored.z).magnitude;
-
-                Vector3 back = new Vector3(-fireDirection.x, 0f, -fireDirection.z);
-                back = back.sqrMagnitude > 0.0001f ? back.normalized : Vector3.zero;
-
-                visualEffect.SetVector3(
-                    BloodVelocityId,
-                    new Vector3(back.x * horizontalSpeed, authored.y, back.z * horizontalSpeed)
-                );
-            }
-
-            Destroy(vfx, hitVfxLifetime);
+            HitVfx.Play(hitVfxPrefab, worldPos, fireDirection, hitVfxLifetime);
         }
 
         private void OnAmmoSynced(int oldValue, int newValue)

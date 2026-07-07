@@ -133,12 +133,12 @@ namespace ProjectRuntime.Actor
 
             _clientLastFireTime = NetworkTime.time;
 
-            if (!TryGetCursorAim(out Vector3 hitPoint, out uint targetNetId))
+            if (!TryGetCursorAim(out Vector3 hitPoint, out uint targetNetId, out Vector3 fireDirection))
             {
                 return;
             }
 
-            player.CmdFireDungeonMasterTurret(targetNetId, hitPoint);
+            player.CmdFireDungeonMasterTurret(targetNetId, hitPoint, fireDirection);
         }
 
         [Server]
@@ -159,7 +159,7 @@ namespace ProjectRuntime.Actor
         }
 
         [Server]
-        public void ServerFire(uint targetNetId, Vector3 hitPoint)
+        public void ServerFire(uint targetNetId, Vector3 hitPoint, Vector3 fireDirection)
         {
             var player = ResolvePlayer();
             if (
@@ -216,6 +216,7 @@ namespace ProjectRuntime.Actor
 
             damageable.ServerTakeDamage(_activeTurret.Damage, player.netId, hitPoint);
             _activeTurret.RpcShowDamageNumber(hitPoint, _activeTurret.Damage);
+            _activeTurret.RpcPlayHitVfx(hitPoint, fireDirection);
 
             if (_activeTurret.SlowOnHit)
             {
@@ -227,10 +228,11 @@ namespace ProjectRuntime.Actor
             }
         }
 
-        private bool TryGetCursorAim(out Vector3 hitPoint, out uint targetNetId)
+        private bool TryGetCursorAim(out Vector3 hitPoint, out uint targetNetId, out Vector3 fireDirection)
         {
             hitPoint = Vector3.zero;
             targetNetId = 0;
+            fireDirection = Vector3.zero;
 
             var player = ResolvePlayer();
             if (player == null)
@@ -242,6 +244,8 @@ namespace ProjectRuntime.Actor
             {
                 return false;
             }
+
+            fireDirection = ray.direction;
 
             float range = _activeTurret != null ? _activeTurret.MaxRange : 0f;
             bool hasOcclusion = Physics.Raycast(
@@ -270,6 +274,15 @@ namespace ProjectRuntime.Actor
                 if (hasOcclusion && hit.distance > occlusionHit.distance)
                 {
                     break;
+                }
+
+                // The turret should only lock onto survivors — traps, other turrets, the
+                // crystal, and zombies all share the Damageable layer but aren't valid targets,
+                // so skip past them (they don't block the shot) and keep looking.
+                var targetManager = hit.collider.GetComponentInParent<PlayerManager>();
+                if (targetManager == null || targetManager.playerRole != PlayerRole.Survivor)
+                {
+                    continue;
                 }
 
                 hitPoint = hit.point;

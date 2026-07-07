@@ -624,9 +624,9 @@ namespace ProjectRuntime.Actor
         }
 
         [Command]
-        public void CmdFireDungeonMasterTurret(uint targetNetId, Vector3 hitPoint)
+        public void CmdFireDungeonMasterTurret(uint targetNetId, Vector3 hitPoint, Vector3 fireDirection)
         {
-            Turret.ServerFire(targetNetId, hitPoint);
+            Turret.ServerFire(targetNetId, hitPoint, fireDirection);
         }
 
         [Command]

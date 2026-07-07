@@ -63,6 +63,12 @@ namespace ProjectRuntime.Actor
         [SerializeField]
         private DamagePopup damagePopupPrefab;
 
+        [SerializeField]
+        private GameObject hitVfxPrefab;
+
+        [SerializeField]
+        private float hitVfxLifetime = 2f;
+
         [Header("Lifetime")]
         [SerializeField]
         private float lifetime = 20f;
@@ -190,6 +196,12 @@ namespace ProjectRuntime.Actor
         public void RpcShowDamageNumber(Vector3 worldPos, float amount)
         {
             DamagePopup.Spawn(damagePopupPrefab, worldPos, amount);
+        }
+
+        [ClientRpc]
+        public void RpcPlayHitVfx(Vector3 worldPos, Vector3 fireDirection)
+        {
+            HitVfx.Play(hitVfxPrefab, worldPos, fireDirection, hitVfxLifetime);
         }
 
         public override void OnStartClient()
