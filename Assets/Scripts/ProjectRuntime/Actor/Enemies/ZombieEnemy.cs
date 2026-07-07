@@ -47,7 +47,12 @@ namespace ProjectRuntime.Actor
 
         [Header("Facing")]
         [SerializeField] private float turnSpeed = 360f;
+        // While turning in place the zombie must get within this angle of its target heading
+        // before it is allowed to start moving.
         [SerializeField] private float moveAlignmentAngle = 12f;
+        // Once walking the zombie holds its heading and only stops to turn in place again if the
+        // direction it needs to travel swings past this angle. Keeps it from pivoting mid-stride.
+        [SerializeField] private float reorientAngle = 45f;
 
         [Header("Lunge")]
         [SerializeField] private float lungeDistance = 1.2f;
@@ -92,6 +97,7 @@ namespace ProjectRuntime.Actor
         private Vector3 _lungeEndPosition;
         private bool _attackDamageApplied;
         private bool _hasWanderDestination;
+        private bool _isReorienting;
         private Coroutine _deathDestroyCoroutine;
 
         private void Awake()
@@ -113,6 +119,7 @@ namespace ProjectRuntime.Actor
             this._nextWanderMoveTime = 0d;
             this._nextAttackTime = 0d;
             this._hasWanderDestination = false;
+            this._isReorienting = false;
             this.ServerSetTargetable(this.spawnWarmupDuration <= 0f);
             this.ServerSetVisualState(ZombieVisualState.Spawn);
 
@@ -239,6 +246,8 @@ namespace ProjectRuntime.Actor
                     this.ServerSetVisualState(ZombieVisualState.Walk);
                     if (!this.ServerFaceMovementTarget(this._agent.steeringTarget))
                     {
+                        // Still turning in place toward the new heading; keep the walk
+                        // animation but don't translate yet (agent is stopped inside the call).
                         return;
                     }
 
@@ -267,7 +276,6 @@ namespace ProjectRuntime.Actor
                 this._agent.SetDestination(point);
                 this._hasWanderDestination = true;
                 this.ServerSetVisualState(ZombieVisualState.Walk);
-                this.ServerFaceMovementTarget(point);
             }
             else
             {
@@ -294,8 +302,11 @@ namespace ProjectRuntime.Actor
             this.SetAgentSpeed(this.moveSpeed);
             this._agent.SetDestination(this._target.transform.position);
             this.ServerSetVisualState(ZombieVisualState.Run);
-            if (!this.ServerFaceMovementTarget(this._target.transform.position))
+            // Face where it is actually pathing (the steering target), not the player directly —
+            // otherwise it faces the survivor while sliding sideways around obstacles.
+            if (!this.ServerFaceMovementTarget(this._agent.steeringTarget))
             {
+                // Still turning in place toward the new heading; don't translate yet.
                 return;
             }
 
@@ -510,6 +521,11 @@ namespace ProjectRuntime.Actor
             this._agent.ResetPath();
         }
 
+        // Reports whether the zombie is facing its movement heading closely enough to translate this
+        // tick. It rotates ONLY while turning in place (stopped) — never while moving — so it pivots
+        // to face where it is going and then walks straight, instead of rotating as it moves.
+        // A hysteresis band (moveAlignmentAngle..reorientAngle) keeps it from re-triggering a
+        // turn-in-place on every minor course correction once it has committed to a heading.
         [Server]
         private bool ServerFaceMovementTarget(Vector3 targetPosition)
         {
@@ -517,23 +533,43 @@ namespace ProjectRuntime.Actor
             direction.y = 0f;
             if (direction.sqrMagnitude < 0.0001f)
             {
+                // No meaningful heading (target is on top of us); nothing to turn toward.
+                this._isReorienting = false;
                 return true;
             }
 
             Quaternion targetRotation = Quaternion.LookRotation(direction.normalized, Vector3.up);
+            float angle = Quaternion.Angle(this.transform.rotation, targetRotation);
+
+            if (!this._isReorienting)
+            {
+                // Committed to a heading and still roughly on it: walk straight, no rotation.
+                if (angle <= Mathf.Max(0f, this.reorientAngle))
+                {
+                    return true;
+                }
+
+                // Heading swung too far to keep walking; stop and turn in place first.
+                this._isReorienting = true;
+            }
+
+            if (this.IsAgentReady())
+            {
+                this._agent.isStopped = true;
+            }
+
             this.transform.rotation = Quaternion.RotateTowards(
                 this.transform.rotation,
                 targetRotation,
                 Mathf.Max(0f, this.turnSpeed) * Time.fixedDeltaTime);
 
-            float angle = Quaternion.Angle(this.transform.rotation, targetRotation);
-            bool aligned = angle <= Mathf.Max(0f, this.moveAlignmentAngle);
-            if (!aligned && this.IsAgentReady())
+            if (Quaternion.Angle(this.transform.rotation, targetRotation) <= Mathf.Max(0f, this.moveAlignmentAngle))
             {
-                this._agent.isStopped = true;
+                this._isReorienting = false;
+                return true;
             }
 
-            return aligned;
+            return false;
         }
 
         private void MoveAgentTo(Vector3 nextPosition)
