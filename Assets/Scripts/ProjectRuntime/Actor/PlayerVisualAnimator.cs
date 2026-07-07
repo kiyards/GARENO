@@ -1,4 +1,6 @@
+using ProjectRuntime.Network;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace ProjectRuntime.Actor
 {
@@ -26,12 +28,16 @@ namespace ProjectRuntime.Actor
         [SerializeField] private float runMovementGraceTime = 0.15f;
         [SerializeField] private float stateBlendDuration = 0.12f;
         [SerializeField] private float deathBlendDuration = 0.05f;
+        [SerializeField] private Material auraMaterial;
+        [SerializeField] private LayerMask auraOcclusionMask = (1 << 9) | (1 << 10);
 
         private Vector3 previousPosition;
         private Animator activeAnimator;
         private GameObject ghostVisualRoot;
         private Renderer[] normalRenderers;
         private bool[] normalRendererInitialEnabled;
+        private GameObject[] auraObjects;
+        private Renderer[] auraRenderers;
         private Renderer[] ghostRenderers;
         private bool[] ghostRendererInitialEnabled;
         private Renderer[] localOwnerHiddenRenderers;
@@ -48,6 +54,7 @@ namespace ProjectRuntime.Actor
             activeAnimator = animator;
             normalRenderers = normalVisualRoot.GetComponentsInChildren<Renderer>(true);
             normalRendererInitialEnabled = CacheInitialRendererState(normalRenderers);
+            CreateAuraOverlays();
             localOwnerHiddenRenderers = normalRenderers;
             ApplyVisualState(VisualState.Idle);
         }
@@ -57,6 +64,7 @@ namespace ProjectRuntime.Actor
             var currentPosition = transform.position;
             ApplyVisualState(ResolveVisualState(currentPosition));
             ApplyLocalOwnerVisibility();
+            RefreshAuraVisibility();
 
             previousPosition = currentPosition;
         }
@@ -73,6 +81,7 @@ namespace ProjectRuntime.Actor
             }
 
             SetRendererVisibility(normalRenderers, normalRendererInitialEnabled, false);
+            SetAuraObjectsVisible(false);
             SetGhostVisible(false);
             ApplyVisualState(VisualState.Idle);
             ApplyLocalOwnerVisibility();
@@ -98,6 +107,214 @@ namespace ProjectRuntime.Actor
                 ghostRendererInitialEnabled,
                 isVisible && !player.isLocalPlayer
             );
+        }
+
+        private void CreateAuraOverlays()
+        {
+            auraObjects = new GameObject[normalRenderers.Length];
+            auraRenderers = new Renderer[normalRenderers.Length];
+
+            for (var i = 0; i < normalRenderers.Length; i++)
+            {
+                var source = normalRenderers[i];
+                var auraObject = new GameObject($"{source.name}_AuraOverlay")
+                {
+                    hideFlags = HideFlags.DontSave,
+                    layer = source.gameObject.layer,
+                };
+
+                var auraTransform = auraObject.transform;
+                auraTransform.SetParent(source.transform, false);
+                auraTransform.localPosition = Vector3.zero;
+                auraTransform.localRotation = Quaternion.identity;
+                auraTransform.localScale = Vector3.one;
+
+                auraObjects[i] = auraObject;
+                auraRenderers[i] = CreateAuraRenderer(source, auraObject);
+                auraObject.SetActive(false);
+            }
+        }
+
+        private Renderer CreateAuraRenderer(Renderer source, GameObject auraObject)
+        {
+            Renderer auraRenderer = source switch
+            {
+                SkinnedMeshRenderer skinnedSource => CreateSkinnedAuraRenderer(
+                    skinnedSource,
+                    auraObject
+                ),
+                MeshRenderer meshSource => CreateMeshAuraRenderer(meshSource, auraObject),
+                _ => null,
+            };
+
+            if (auraRenderer == null)
+            {
+                return null;
+            }
+
+            auraRenderer.sharedMaterials = CreateAuraMaterialSlots(source);
+            auraRenderer.shadowCastingMode = ShadowCastingMode.Off;
+            auraRenderer.receiveShadows = false;
+            auraRenderer.lightProbeUsage = LightProbeUsage.Off;
+            auraRenderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
+            auraRenderer.motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
+            auraRenderer.allowOcclusionWhenDynamic = false;
+            return auraRenderer;
+        }
+
+        private SkinnedMeshRenderer CreateSkinnedAuraRenderer(
+            SkinnedMeshRenderer source,
+            GameObject auraObject
+        )
+        {
+            var auraRenderer = auraObject.AddComponent<SkinnedMeshRenderer>();
+            auraRenderer.sharedMesh = source.sharedMesh;
+            auraRenderer.bones = source.bones;
+            auraRenderer.rootBone = source.rootBone;
+            auraRenderer.localBounds = source.localBounds;
+            auraRenderer.quality = source.quality;
+            auraRenderer.updateWhenOffscreen = true;
+            return auraRenderer;
+        }
+
+        private MeshRenderer CreateMeshAuraRenderer(MeshRenderer source, GameObject auraObject)
+        {
+            var sourceFilter = source.GetComponent<MeshFilter>();
+            var auraFilter = auraObject.AddComponent<MeshFilter>();
+            auraFilter.sharedMesh = sourceFilter.sharedMesh;
+            return auraObject.AddComponent<MeshRenderer>();
+        }
+
+        private Material[] CreateAuraMaterialSlots(Renderer source)
+        {
+            var slotCount = GetAuraMaterialSlotCount(source);
+            var materials = new Material[slotCount];
+            for (var i = 0; i < materials.Length; i++)
+            {
+                materials[i] = auraMaterial;
+            }
+
+            return materials;
+        }
+
+        private static int GetAuraMaterialSlotCount(Renderer source)
+        {
+            var slotCount = source.sharedMaterials.Length;
+            if (source is SkinnedMeshRenderer skinnedSource && skinnedSource.sharedMesh != null)
+            {
+                slotCount = Mathf.Max(slotCount, skinnedSource.sharedMesh.subMeshCount);
+            }
+            else if (source is MeshRenderer)
+            {
+                var meshFilter = source.GetComponent<MeshFilter>();
+                if (meshFilter != null && meshFilter.sharedMesh != null)
+                {
+                    slotCount = Mathf.Max(slotCount, meshFilter.sharedMesh.subMeshCount);
+                }
+            }
+
+            return Mathf.Max(1, slotCount);
+        }
+
+        private void RefreshAuraVisibility()
+        {
+            SetAuraObjectsVisible(ShouldShowAura());
+        }
+
+        private bool ShouldShowAura()
+        {
+            var viewer = PlayerManager.Instance;
+            if (viewer == null || player.localManager == viewer)
+            {
+                return false;
+            }
+
+            if (!IsAuraTarget())
+            {
+                return false;
+            }
+
+            if (!CanViewerSeeAura(viewer))
+            {
+                return false;
+            }
+
+            var worldCamera = Camera.main;
+            if (worldCamera == null)
+            {
+                return false;
+            }
+
+            return Physics.Linecast(
+                worldCamera.transform.position,
+                GetAuraTargetPosition(),
+                auraOcclusionMask,
+                QueryTriggerInteraction.Ignore
+            );
+        }
+
+        private bool IsAuraTarget()
+        {
+            return player.localManager.playerRole == PlayerRole.Survivor
+                && player.localManager.lives > 0
+                && !player.IsGhost
+                && (!player.IsInactive || player.IsDowned);
+        }
+
+        private static bool CanViewerSeeAura(PlayerManager viewer)
+        {
+            if (viewer.playerRole == PlayerRole.DungeonMaster)
+            {
+                return true;
+            }
+
+            return viewer.playerRole == PlayerRole.Survivor
+                && viewer.lives > 0
+                && viewer.player != null
+                && !viewer.player.IsGhost
+                && (!viewer.player.IsInactive || viewer.player.IsDowned);
+        }
+
+        private Vector3 GetAuraTargetPosition()
+        {
+            var hasBounds = false;
+            var bounds = new Bounds();
+            for (var i = 0; i < normalRenderers.Length; i++)
+            {
+                if (!normalRendererInitialEnabled[i])
+                {
+                    continue;
+                }
+
+                if (!hasBounds)
+                {
+                    bounds = normalRenderers[i].bounds;
+                    hasBounds = true;
+                    continue;
+                }
+
+                bounds.Encapsulate(normalRenderers[i].bounds);
+            }
+
+            return hasBounds ? bounds.center : normalVisualRoot.position;
+        }
+
+        private void SetAuraObjectsVisible(bool isVisible)
+        {
+            if (auraObjects == null)
+            {
+                return;
+            }
+
+            for (var i = 0; i < auraObjects.Length; i++)
+            {
+                if (auraObjects[i] == null || auraRenderers[i] == null)
+                {
+                    continue;
+                }
+
+                auraObjects[i].SetActive(isVisible && normalRendererInitialEnabled[i]);
+            }
         }
 
         private VisualState ResolveVisualState(Vector3 currentPosition)

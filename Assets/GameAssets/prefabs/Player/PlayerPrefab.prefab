@@ -1141,6 +1141,10 @@ MonoBehaviour:
   runMovementGraceTime: 0.15
   stateBlendDuration: 0.12
   deathBlendDuration: 0.05
+  auraMaterial: {fileID: 2100000, guid: 8ca9073bb24e8fa4aa56d3d71bb10a0c, type: 2}
+  auraOcclusionMask:
+    serializedVersion: 2
+    m_Bits: 1536
 --- !u!1 &7463206360524112506
 GameObject:
   m_ObjectHideFlags: 0
