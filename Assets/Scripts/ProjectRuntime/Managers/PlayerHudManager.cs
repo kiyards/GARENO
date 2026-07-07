@@ -122,6 +122,15 @@ namespace ProjectRuntime.Managers
         [field: SerializeField, Header("Downed")]
         private GameObject DownedIndicator { get; set; }
 
+        [field: SerializeField, Header("Crystal Destroyed Notification")]
+        private Image CrystalDestroyedNotification { get; set; }
+
+        [field: SerializeField]
+        private float CrystalNotificationHoldSeconds { get; set; } = 1f;
+
+        [field: SerializeField]
+        private float CrystalNotificationFadeSeconds { get; set; } = 1.5f;
+
         [field: SerializeField, Header("Minimap")]
         private MinimapController Minimap { get; set; }
 
@@ -175,6 +184,8 @@ namespace ProjectRuntime.Managers
         private PlayerRole CurrentRole { get; set; } = PlayerRole.Unassigned;
         private bool IsPlayerUiVisible { get; set; } = true;
         private float _reviveHoldProgress;
+        private int _lastDestroyedCrystals;
+        private Coroutine _crystalNotificationRoutine;
 
         /// <summary>
         /// Returns the scene-authored HUD instance. The HUD must exist in the active scene
@@ -713,6 +724,7 @@ namespace ProjectRuntime.Managers
 
             if (battleManager == null)
             {
+                this._lastDestroyedCrystals = 0;
                 this.EnsureMinimap()?.SetBattleManager(null);
                 this.EnsureDirectionIndicators()?.SetBattleManager(null);
                 this.RefreshTimerText();
@@ -721,6 +733,7 @@ namespace ProjectRuntime.Managers
             }
 
             this.BoundBattleManager = battleManager;
+            this._lastDestroyedCrystals = battleManager.DestroyedCrystals;
             this.EnsureMinimap()?.SetBattleManager(battleManager);
             this.EnsureDirectionIndicators()?.SetBattleManager(battleManager);
             this.BoundBattleManager.OnRoundStateChanged += this.OnRoundStateChanged;
@@ -741,9 +754,68 @@ namespace ProjectRuntime.Managers
 
         private void OnRoundStateChanged()
         {
+            this.CheckCrystalDestroyedNotification();
             this.RefreshRoleMessage();
             this.RefreshTimerText();
             this.RefreshObjectiveText();
+        }
+
+        // OnRoundStateChanged fires for any objective/timer sync, so compare against the last-seen
+        // destroyed count and only flash the notification when a new crystal has actually gone down.
+        // Fires on every client (survivor and Dungeon Master alike) since destroyedCrystals is a SyncVar.
+        private void CheckCrystalDestroyedNotification()
+        {
+            var battleManager =
+                this.BoundBattleManager != null ? this.BoundBattleManager : BattleManager.Instance;
+            if (battleManager == null)
+            {
+                return;
+            }
+
+            int destroyed = battleManager.DestroyedCrystals;
+            if (destroyed > this._lastDestroyedCrystals)
+            {
+                this.ShowCrystalDestroyedNotification();
+            }
+
+            this._lastDestroyedCrystals = destroyed;
+        }
+
+        // Restarts the hold-then-fade each time it's called, so a second crystal destroyed mid-fade
+        // snaps the image back to full opacity and begins the timer again from the start.
+        private void ShowCrystalDestroyedNotification()
+        {
+            if (this._crystalNotificationRoutine != null)
+            {
+                this.StopCoroutine(this._crystalNotificationRoutine);
+            }
+
+            this._crystalNotificationRoutine = this.StartCoroutine(
+                this.CrystalDestroyedNotificationCoroutine()
+            );
+        }
+
+        private IEnumerator CrystalDestroyedNotificationCoroutine()
+        {
+            var color = this.CrystalDestroyedNotification.color;
+            color.a = 1f;
+            this.CrystalDestroyedNotification.color = color;
+            this.CrystalDestroyedNotification.gameObject.SetActive(true);
+
+            yield return new WaitForSecondsRealtime(this.CrystalNotificationHoldSeconds);
+
+            float elapsed = 0f;
+            while (elapsed < this.CrystalNotificationFadeSeconds)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                color.a = Mathf.Clamp01(1f - elapsed / this.CrystalNotificationFadeSeconds);
+                this.CrystalDestroyedNotification.color = color;
+                yield return null;
+            }
+
+            color.a = 0f;
+            this.CrystalDestroyedNotification.color = color;
+            this.CrystalDestroyedNotification.gameObject.SetActive(false);
         }
 
         private void RefreshObjectiveText()
