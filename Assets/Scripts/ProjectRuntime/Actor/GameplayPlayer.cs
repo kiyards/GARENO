@@ -195,6 +195,36 @@ namespace ProjectRuntime.Actor
                 health.OnDeathEvent -= OnHealthDepleted;
         }
 
+        public void PlayAcceptedJumpVisual()
+        {
+            GetComponent<PlayerVisualAnimator>().PlayJump();
+
+            if (!isLocalPlayer)
+            {
+                return;
+            }
+
+            if (isServer)
+            {
+                RpcPlayJumpVisual();
+                return;
+            }
+
+            CmdPlayJumpVisual();
+        }
+
+        [Command]
+        private void CmdPlayJumpVisual()
+        {
+            RpcPlayJumpVisual();
+        }
+
+        [ClientRpc(includeOwner = false)]
+        private void RpcPlayJumpVisual()
+        {
+            GetComponent<PlayerVisualAnimator>().PlayJump();
+        }
+
         [Server]
         private void OnHealthDepleted(uint killerNetId)
         {

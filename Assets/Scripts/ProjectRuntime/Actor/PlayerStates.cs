@@ -103,7 +103,7 @@ namespace ProjectRuntime.Actor.PlayerStates
                 player.rb.linearVelocity = vel;
             }
             player.rb.AddForce(Vector3.up * player.jumpForce, ForceMode.VelocityChange);
-            player.GetComponent<PlayerVisualAnimator>().PlayJump();
+            player.PlayAcceptedJumpVisual();
         }
 
         public void RotateAim()
@@ -836,7 +836,7 @@ namespace ProjectRuntime.Actor.PlayerStates
             }
 
             player.rb.AddForce(Vector3.up * player.jumpForce, ForceMode.VelocityChange);
-            player.GetComponent<PlayerVisualAnimator>().PlayJump();
+            player.PlayAcceptedJumpVisual();
         }
 
         private void RotateAim()

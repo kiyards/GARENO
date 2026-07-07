@@ -1139,7 +1139,6 @@ MonoBehaviour:
   runSpeedThreshold: 0.5
   runInputThreshold: 0.1
   runMovementGraceTime: 0.15
-  jumpTakeoffMinHeightDelta: 0.02
 --- !u!1 &7463206360524112506
 GameObject:
   m_ObjectHideFlags: 0

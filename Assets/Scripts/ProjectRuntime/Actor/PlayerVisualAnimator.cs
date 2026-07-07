@@ -24,7 +24,6 @@ namespace ProjectRuntime.Actor
         [SerializeField] private float runSpeedThreshold = 0.5f;
         [SerializeField] private float runInputThreshold = 0.1f;
         [SerializeField] private float runMovementGraceTime = 0.15f;
-        [SerializeField] private float jumpTakeoffMinHeightDelta = 0.02f;
 
         private Vector3 previousPosition;
         private Animator activeAnimator;
@@ -40,12 +39,10 @@ namespace ProjectRuntime.Actor
         private double movementRunUntil;
         private double jumpVisualUntil;
         private bool wasRunning;
-        private bool wasGrounded;
 
         private void Awake()
         {
             previousPosition = transform.position;
-            wasGrounded = player.groundCheck.IsGrounded;
             activeAnimator = animator;
             normalRenderers = normalVisualRoot.GetComponentsInChildren<Renderer>(true);
             normalRendererInitialEnabled = CacheInitialRendererState(normalRenderers);
@@ -81,7 +78,8 @@ namespace ProjectRuntime.Actor
 
         public void PlayJump()
         {
-            jumpVisualUntil = Time.timeAsDouble + GetVisualStateAnimationDuration(VisualState.Jump, 0f);
+            var clipDuration = GetVisualStateAnimationDuration(VisualState.Jump, 0f);
+            jumpVisualUntil = Time.timeAsDouble + clipDuration;
             ApplyVisualState(VisualState.Jump);
         }
 
@@ -107,18 +105,7 @@ namespace ProjectRuntime.Actor
                 return VisualState.Death;
             }
 
-            var isGrounded = player.groundCheck.IsGrounded;
             var movementDelta = currentPosition - previousPosition;
-            if (
-                wasGrounded
-                && !isGrounded
-                && movementDelta.y > jumpTakeoffMinHeightDelta
-            )
-            {
-                jumpVisualUntil = Time.timeAsDouble + GetVisualStateAnimationDuration(VisualState.Jump, 0f);
-            }
-
-            wasGrounded = isGrounded;
             if (Time.timeAsDouble < jumpVisualUntil)
             {
                 return VisualState.Jump;
