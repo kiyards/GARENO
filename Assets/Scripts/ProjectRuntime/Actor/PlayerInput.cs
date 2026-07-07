@@ -76,6 +76,42 @@ namespace ProjectRuntime.Actor
         public bool TurretExitPress => Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame;
         public bool TeammateIndicatorsTogglePress => Keyboard.current != null && Keyboard.current.tabKey.wasPressedThisFrame;
 
+        public bool TryGetDungeonMasterJumpSlot(out int slotIndex)
+        {
+            slotIndex = -1;
+            Keyboard keyboard = Keyboard.current;
+            if (keyboard == null)
+            {
+                return false;
+            }
+
+            if (keyboard.digit1Key.wasPressedThisFrame)
+            {
+                slotIndex = 0;
+                return true;
+            }
+
+            if (keyboard.digit2Key.wasPressedThisFrame)
+            {
+                slotIndex = 1;
+                return true;
+            }
+
+            if (keyboard.digit3Key.wasPressedThisFrame)
+            {
+                slotIndex = 2;
+                return true;
+            }
+
+            if (keyboard.digit4Key.wasPressedThisFrame)
+            {
+                slotIndex = 3;
+                return true;
+            }
+
+            return false;
+        }
+
         public InputAction moveInput;
         public InputAction aimInput;
         public InputAction jumpInput;

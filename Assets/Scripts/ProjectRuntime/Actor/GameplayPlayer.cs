@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using Mirror;
 using ProjectRuntime.Actor.PlayerStates;
 using ProjectRuntime.Combat;
@@ -229,6 +230,16 @@ namespace ProjectRuntime.Actor
         private void OnHealthDepleted(uint killerNetId)
         {
             ServerEnterDowned(killerNetId);
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+
+            if (isLocalPlayer)
+            {
+                ClientTickDungeonMasterJumpHotkeys();
+            }
         }
 
         protected override void FixedUpdate()
@@ -620,6 +631,95 @@ namespace ProjectRuntime.Actor
             {
                 CmdReviveTeammate(target.netId);
             }
+        }
+
+        private void ClientTickDungeonMasterJumpHotkeys()
+        {
+            if (
+                !IsDungeonMaster
+                || input == null
+                || !(currentState is DungeonMasterMovementState)
+                || !input.TryGetDungeonMasterJumpSlot(out int slotIndex)
+                || !TryGetDungeonMasterJumpPosition(slotIndex, out Vector3 jumpPosition)
+            )
+            {
+                return;
+            }
+
+            JumpDungeonMasterTo(jumpPosition);
+        }
+
+        private bool TryGetDungeonMasterJumpPosition(int slotIndex, out Vector3 jumpPosition)
+        {
+            jumpPosition = Vector3.zero;
+            if (slotIndex < 0)
+            {
+                return false;
+            }
+
+            var battleManager = BattleManager.Instance;
+            if (battleManager == null)
+            {
+                return false;
+            }
+
+            var survivors = new List<PlayerManager>();
+            foreach (var playerManager in battleManager.Players)
+            {
+                if (
+                    playerManager != null
+                    && playerManager.playerRole == PlayerRole.Survivor
+                    && playerManager.player != null
+                )
+                {
+                    survivors.Add(playerManager);
+                }
+            }
+
+            survivors.Sort(ComparePlayerManagers);
+            if (slotIndex >= survivors.Count)
+            {
+                return false;
+            }
+
+            jumpPosition = GetDungeonMasterJumpTargetPosition(survivors[slotIndex].player);
+            return true;
+        }
+
+        private void JumpDungeonMasterTo(Vector3 targetPosition)
+        {
+            targetPosition.y = transform.position.y;
+            Vector3 clampedPosition = ClampDungeonMasterPosition(targetPosition);
+
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+                rb.position = clampedPosition;
+            }
+
+            transform.position = clampedPosition;
+        }
+
+        private static Vector3 GetDungeonMasterJumpTargetPosition(GameplayPlayer target)
+        {
+            if (target.currentState is DeadState deadState)
+            {
+                return deadState.m_anchorPosition;
+            }
+
+            return target.transform.position;
+        }
+
+        private static int ComparePlayerManagers(PlayerManager a, PlayerManager b)
+        {
+            int indexCompare = a.playerIndex.CompareTo(b.playerIndex);
+            if (indexCompare != 0)
+            {
+                return indexCompare;
+            }
+
+            return a.netId.CompareTo(b.netId);
         }
 
         // Public so client-side UI (e.g. a revive prompt) can query the same target this survivor
