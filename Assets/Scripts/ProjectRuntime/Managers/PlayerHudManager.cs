@@ -756,17 +756,17 @@ namespace ProjectRuntime.Managers
 
             if (battleManager == null)
             {
-                this.ObjectiveTMP.text = this.ComposeObjectiveText("Crystals: 0/0");
+                this.ObjectiveTMP.text = this.ComposeObjectiveText("Destroy the Crystals: 0/0");
                 return;
             }
 
             var objectiveText = battleManager.CurrentRoundPhase switch
             {
                 RoundPhase.CrystalsComplete =>
-                    $"Extract: {battleManager.ExtractedSurvivors}/{battleManager.RequiredExtractedSurvivors}",
+                    $"Extract yourselves: {battleManager.ExtractedSurvivors}/{battleManager.RequiredExtractedSurvivors}",
                 RoundPhase.RoundComplete => string.Empty,
                 _ =>
-                    $"Crystals: {battleManager.DestroyedCrystals}/{battleManager.RequiredCrystals}",
+                    $"Destroy the Crystals: {battleManager.DestroyedCrystals}/{battleManager.RequiredCrystals}",
             };
 
             this.ObjectiveTMP.text = this.ComposeObjectiveText(objectiveText);
