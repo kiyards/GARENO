@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using Mirror;
 using ProjectRuntime.Actor.PlayerStates;
 using ProjectRuntime.Managers;
+using ProjectRuntime.Network;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
+using Object = UnityEngine.Object;
 
 namespace ProjectRuntime.Actor
 {
@@ -19,6 +23,8 @@ namespace ProjectRuntime.Actor
     public class DungeonMasterCardManager : NetworkBehaviour
     {
         private const int HandSize = 4;
+        private const int PlacementIndicatorRingSegments = 96;
+        private const float PlacementIndicatorRingInnerRadius = 0.78f;
         private const string PlacementIndicatorShaderName = "Universal Render Pipeline/Unlit";
         private static readonly int BaseColorProperty = Shader.PropertyToID("_BaseColor");
         private static readonly int ColorProperty = Shader.PropertyToID("_Color");
@@ -38,6 +44,9 @@ namespace ProjectRuntime.Actor
 
         [SerializeField]
         private float placementIndicatorHeight = 0.03f;
+
+        [SerializeField]
+        private float placementPreviewLift = 0.12f;
 
         [SerializeField]
         private float placementChargeDuration = 1f;
@@ -101,6 +110,8 @@ namespace ProjectRuntime.Actor
 
         private GameObject _placementIndicator;
         private Material _placementIndicatorMaterial;
+        private Mesh _placementIndicatorRingMesh;
+        private DungeonMasterPlacementPreview _placementPreview;
         private int _selectedHandSlot = -1;
         private string _selectedCardId;
         private DungeonMasterCardPlacementState _placementState =
@@ -140,6 +151,7 @@ namespace ProjectRuntime.Actor
         private void OnDestroy()
         {
             this.HandCardIds.OnChange -= this.OnHandCardsChanged;
+            this.DestroyPlacementPreview();
             this.DestroyPlacementIndicator();
         }
 
@@ -265,6 +277,7 @@ namespace ProjectRuntime.Actor
             this._placementStartedFrame = Time.frameCount;
             this._hasPlacementPoint = false;
             this.EnsurePlacementIndicator();
+            this.ShowNemesisPlacementPreview();
             this.SetPlacementIndicatorVisible(false);
             this.NotifyPlacementStateChanged();
         }
@@ -417,6 +430,7 @@ namespace ProjectRuntime.Actor
             this._placementStartedFrame = Time.frameCount;
             this._hasPlacementPoint = false;
             this.EnsurePlacementIndicator();
+            this.ShowCardPlacementPreview(card.Effect);
             this.SetPlacementIndicatorVisible(false);
             this.NotifyPlacementStateChanged();
         }
@@ -427,6 +441,7 @@ namespace ProjectRuntime.Actor
             {
                 this._hasPlacementPoint = false;
                 this.SetPlacementIndicatorVisible(false);
+                this.SetPlacementPreviewVisible(false);
                 return;
             }
 
@@ -436,6 +451,7 @@ namespace ProjectRuntime.Actor
             this.SetPlacementIndicator(position, normal);
             this.SetPlacementIndicatorColor(new Color(0.1f, 1f, 0.25f, 0.65f));
             this.SetPlacementIndicatorVisible(true);
+            this.SetPlacementPreview(position, normal, true);
         }
 
         private void BeginPlacementCharge()
@@ -476,10 +492,11 @@ namespace ProjectRuntime.Actor
                 Quaternion.FromToRotation(Vector3.up, safeNormal)
             );
             this._placementIndicator.transform.localScale = new Vector3(
-                this.placementIndicatorRadius * 2f * pulse,
-                this.placementIndicatorHeight,
-                this.placementIndicatorRadius * 2f * pulse
+                this.placementIndicatorRadius * pulse,
+                1f,
+                this.placementIndicatorRadius * pulse
             );
+            this.SetPlacementPreview(this._placementPosition, safeNormal, true);
             this.SetPlacementIndicatorColor(
                 Color.Lerp(
                     new Color(0.1f, 1f, 0.25f, 0.65f),
@@ -526,6 +543,7 @@ namespace ProjectRuntime.Actor
             this._placementStartedFrame = -1;
             this._hasPlacementPoint = false;
             this.SetPlacementIndicatorVisible(false);
+            this.DestroyPlacementPreview();
             this.NotifyPlacementStateChanged();
         }
 
@@ -589,6 +607,12 @@ namespace ProjectRuntime.Actor
                 indicatorRenderer.receiveShadows = false;
             }
 
+            if (this._placementIndicator.TryGetComponent(out MeshFilter indicatorMeshFilter))
+            {
+                this._placementIndicatorRingMesh = CreatePlacementIndicatorRingMesh();
+                indicatorMeshFilter.sharedMesh = this._placementIndicatorRingMesh;
+            }
+
             this.SetPlacementIndicatorVisible(false);
         }
 
@@ -606,9 +630,9 @@ namespace ProjectRuntime.Actor
                 Quaternion.FromToRotation(Vector3.up, safeNormal)
             );
             this._placementIndicator.transform.localScale = new Vector3(
-                this.placementIndicatorRadius * 2f,
-                this.placementIndicatorHeight,
-                this.placementIndicatorRadius * 2f
+                this.placementIndicatorRadius,
+                1f,
+                this.placementIndicatorRadius
             );
         }
 
@@ -625,6 +649,91 @@ namespace ProjectRuntime.Actor
             if (this._placementIndicatorMaterial != null)
             {
                 SetMaterialColor(this._placementIndicatorMaterial, color);
+            }
+        }
+
+        private void ShowCardPlacementPreview(CardEffectType effect)
+        {
+            if (!this.TryResolveCardPlacementPreview(effect, out GameObject prefab, out var offsets))
+            {
+                this.DestroyPlacementPreview();
+                return;
+            }
+
+            this.ShowPlacementPreview(prefab, offsets);
+        }
+
+        private void ShowNemesisPlacementPreview()
+        {
+            if (
+                GameNetworkManager.Instance == null
+                || !GameNetworkManager.Instance.TryGetNemesisPreview(out GameObject prefab)
+            )
+            {
+                this.DestroyPlacementPreview();
+                return;
+            }
+
+            this.ShowPlacementPreview(prefab, null);
+        }
+
+        private void ShowPlacementPreview(GameObject prefab, IReadOnlyList<Vector3> offsets)
+        {
+            this._placementPreview ??= new DungeonMasterPlacementPreview();
+            this._placementPreview.Show(
+                prefab,
+                offsets,
+                this.GetComponent<PlayerVisualAnimator>().AuraMaterial
+            );
+        }
+
+        private bool TryResolveCardPlacementPreview(
+            CardEffectType effect,
+            out GameObject prefab,
+            out IReadOnlyList<Vector3> offsets
+        )
+        {
+            offsets = null;
+            if (
+                BattleManager.Instance != null
+                && BattleManager.Instance.TryGetCardPreview(effect, out prefab, out offsets)
+            )
+            {
+                return true;
+            }
+
+            if (
+                GameNetworkManager.Instance != null
+                && GameNetworkManager.Instance.TryGetCardPreview(effect, out prefab)
+            )
+            {
+                return true;
+            }
+
+            prefab = null;
+            return false;
+        }
+
+        private void SetPlacementPreview(Vector3 position, Vector3 normal, bool isVisible)
+        {
+            if (this._placementPreview == null || !this._placementPreview.IsActive)
+            {
+                return;
+            }
+
+            Vector3 safeNormal = normal.sqrMagnitude > 0.0001f ? normal.normalized : Vector3.up;
+            this._placementPreview.SetTransform(
+                position + safeNormal * this.placementPreviewLift,
+                safeNormal
+            );
+            this._placementPreview.SetVisible(isVisible);
+        }
+
+        private void SetPlacementPreviewVisible(bool isVisible)
+        {
+            if (this._placementPreview != null && this._placementPreview.IsActive)
+            {
+                this._placementPreview.SetVisible(isVisible);
             }
         }
 
@@ -671,11 +780,74 @@ namespace ProjectRuntime.Actor
                 this._placementIndicatorMaterial = null;
             }
 
+            if (this._placementIndicatorRingMesh != null)
+            {
+                Destroy(this._placementIndicatorRingMesh);
+                this._placementIndicatorRingMesh = null;
+            }
+
             if (this._placementIndicator != null)
             {
                 Destroy(this._placementIndicator);
                 this._placementIndicator = null;
             }
+        }
+
+        private static Mesh CreatePlacementIndicatorRingMesh()
+        {
+            const float outerRadius = 1f;
+            const float innerRadius = outerRadius * PlacementIndicatorRingInnerRadius;
+
+            var vertices = new Vector3[PlacementIndicatorRingSegments * 2];
+            var triangles = new int[PlacementIndicatorRingSegments * 12];
+            for (var i = 0; i < PlacementIndicatorRingSegments; i++)
+            {
+                float angle = Mathf.PI * 2f * i / PlacementIndicatorRingSegments;
+                float cos = Mathf.Cos(angle);
+                float sin = Mathf.Sin(angle);
+                int vertexIndex = i * 2;
+
+                vertices[vertexIndex] = new Vector3(cos * outerRadius, 0f, sin * outerRadius);
+                vertices[vertexIndex + 1] = new Vector3(cos * innerRadius, 0f, sin * innerRadius);
+
+                int nextVertexIndex = ((i + 1) % PlacementIndicatorRingSegments) * 2;
+                int triangleIndex = i * 12;
+                triangles[triangleIndex] = vertexIndex;
+                triangles[triangleIndex + 1] = nextVertexIndex;
+                triangles[triangleIndex + 2] = vertexIndex + 1;
+                triangles[triangleIndex + 3] = vertexIndex + 1;
+                triangles[triangleIndex + 4] = nextVertexIndex;
+                triangles[triangleIndex + 5] = nextVertexIndex + 1;
+
+                triangles[triangleIndex + 6] = vertexIndex + 1;
+                triangles[triangleIndex + 7] = nextVertexIndex;
+                triangles[triangleIndex + 8] = vertexIndex;
+                triangles[triangleIndex + 9] = nextVertexIndex + 1;
+                triangles[triangleIndex + 10] = nextVertexIndex;
+                triangles[triangleIndex + 11] = vertexIndex + 1;
+            }
+
+            var mesh = new Mesh
+            {
+                name = "DungeonMasterPlacementIndicatorRing",
+                hideFlags = HideFlags.DontSave,
+                vertices = vertices,
+                triangles = triangles,
+            };
+            mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
+            return mesh;
+        }
+
+        private void DestroyPlacementPreview()
+        {
+            if (this._placementPreview == null)
+            {
+                return;
+            }
+
+            this._placementPreview.Destroy();
+            this._placementPreview = null;
         }
 
         private static bool IsPointerOverUi()
@@ -1003,6 +1175,213 @@ namespace ProjectRuntime.Actor
         private void NotifyPlacementStateChanged()
         {
             this.OnPlacementStateChangedEvent?.Invoke();
+        }
+    }
+
+    public sealed class DungeonMasterPlacementPreview
+    {
+        private static readonly int AuraColorProperty = Shader.PropertyToID("_AuraColor");
+        private static readonly int EdgeColorProperty = Shader.PropertyToID("_EdgeColor");
+        private static readonly int AlphaProperty = Shader.PropertyToID("_Alpha");
+        private static readonly int FresnelAlphaProperty = Shader.PropertyToID("_FresnelAlpha");
+
+        private static readonly Color PlacementAuraColor = new(0.05f, 1f, 0.22f, 0.82f);
+        private static readonly Color PlacementEdgeColor = new(0.92f, 1f, 0.86f, 1f);
+
+        private GameObject _root;
+        private Material _previewMaterial;
+
+        public bool IsActive => this._root != null;
+
+        public bool Show(GameObject prefab, IReadOnlyList<Vector3> offsets, Material sourceMaterial)
+        {
+            this.Destroy();
+            if (prefab == null || sourceMaterial == null)
+            {
+                return false;
+            }
+
+            this._previewMaterial = CreatePreviewMaterial(sourceMaterial);
+            this._root = new GameObject("DungeonMasterPlacementPreview")
+            {
+                hideFlags = HideFlags.DontSave,
+            };
+            this._root.SetActive(false);
+
+            int previewCount = offsets == null || offsets.Count == 0 ? 1 : offsets.Count;
+            for (var i = 0; i < previewCount; i++)
+            {
+                Vector3 offset = offsets == null || offsets.Count == 0 ? Vector3.zero : offsets[i];
+                var previewObject = Object.Instantiate(prefab, this._root.transform);
+                previewObject.name = $"{prefab.name}_Preview";
+                previewObject.transform.localPosition = offset;
+                previewObject.transform.localRotation = Quaternion.identity;
+                previewObject.transform.localScale = Vector3.one;
+                ConfigurePreviewObject(previewObject, this._previewMaterial);
+            }
+
+            return true;
+        }
+
+        public void SetTransform(Vector3 position, Vector3 normal)
+        {
+            if (this._root == null)
+            {
+                return;
+            }
+
+            Vector3 safeNormal = normal.sqrMagnitude > 0.0001f ? normal.normalized : Vector3.up;
+            this._root.transform.SetPositionAndRotation(
+                position,
+                Quaternion.FromToRotation(Vector3.up, safeNormal)
+            );
+        }
+
+        public void SetVisible(bool isVisible)
+        {
+            if (this._root != null)
+            {
+                this._root.SetActive(isVisible);
+            }
+        }
+
+        public void Destroy()
+        {
+            if (this._root != null)
+            {
+                this._root.SetActive(false);
+                Object.Destroy(this._root);
+                this._root = null;
+            }
+
+            if (this._previewMaterial != null)
+            {
+                Object.Destroy(this._previewMaterial);
+                this._previewMaterial = null;
+            }
+        }
+
+        private static Material CreatePreviewMaterial(Material sourceMaterial)
+        {
+            var material = new Material(sourceMaterial)
+            {
+                name = "DungeonMasterPlacementPreviewMaterial",
+                hideFlags = HideFlags.DontSave,
+            };
+
+            if (material.HasProperty(AuraColorProperty))
+            {
+                material.SetColor(AuraColorProperty, PlacementAuraColor);
+            }
+
+            if (material.HasProperty(EdgeColorProperty))
+            {
+                material.SetColor(EdgeColorProperty, PlacementEdgeColor);
+            }
+
+            if (material.HasProperty(AlphaProperty))
+            {
+                material.SetFloat(AlphaProperty, PlacementAuraColor.a);
+            }
+
+            if (material.HasProperty(FresnelAlphaProperty))
+            {
+                material.SetFloat(FresnelAlphaProperty, 1.35f);
+            }
+
+            return material;
+        }
+
+        private static void ConfigurePreviewObject(GameObject previewObject, Material previewMaterial)
+        {
+            foreach (var networkBehaviour in previewObject.GetComponentsInChildren<NetworkBehaviour>(true))
+            {
+                networkBehaviour.enabled = false;
+            }
+
+            foreach (var behaviour in previewObject.GetComponentsInChildren<Behaviour>(true))
+            {
+                behaviour.enabled = false;
+            }
+
+            foreach (var networkIdentity in previewObject.GetComponentsInChildren<NetworkIdentity>(true))
+            {
+                Object.Destroy(networkIdentity);
+            }
+
+            foreach (var collider in previewObject.GetComponentsInChildren<Collider>(true))
+            {
+                collider.enabled = false;
+            }
+
+            foreach (var rigidbody in previewObject.GetComponentsInChildren<Rigidbody>(true))
+            {
+                rigidbody.linearVelocity = Vector3.zero;
+                rigidbody.angularVelocity = Vector3.zero;
+                rigidbody.useGravity = false;
+                rigidbody.isKinematic = true;
+                rigidbody.detectCollisions = false;
+            }
+
+            foreach (var agent in previewObject.GetComponentsInChildren<NavMeshAgent>(true))
+            {
+                agent.enabled = false;
+            }
+
+            foreach (var audioSource in previewObject.GetComponentsInChildren<AudioSource>(true))
+            {
+                audioSource.Stop();
+                audioSource.enabled = false;
+            }
+
+            foreach (var particleSystem in previewObject.GetComponentsInChildren<ParticleSystem>(true))
+            {
+                particleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                particleSystem.gameObject.SetActive(false);
+            }
+
+            foreach (var renderer in previewObject.GetComponentsInChildren<Renderer>(true))
+            {
+                ApplyPreviewMaterial(renderer, previewMaterial);
+                renderer.enabled = true;
+                renderer.shadowCastingMode = ShadowCastingMode.Off;
+                renderer.receiveShadows = false;
+                renderer.lightProbeUsage = LightProbeUsage.Off;
+                renderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
+                renderer.motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
+                renderer.allowOcclusionWhenDynamic = false;
+            }
+        }
+
+        private static void ApplyPreviewMaterial(Renderer renderer, Material previewMaterial)
+        {
+            int slotCount = GetPreviewMaterialSlotCount(renderer);
+            var materials = new Material[slotCount];
+            for (var i = 0; i < materials.Length; i++)
+            {
+                materials[i] = previewMaterial;
+            }
+
+            renderer.sharedMaterials = materials;
+        }
+
+        private static int GetPreviewMaterialSlotCount(Renderer renderer)
+        {
+            int slotCount = renderer.sharedMaterials.Length;
+            if (renderer is SkinnedMeshRenderer skinnedRenderer && skinnedRenderer.sharedMesh != null)
+            {
+                slotCount = Mathf.Max(slotCount, skinnedRenderer.sharedMesh.subMeshCount);
+            }
+            else if (renderer is MeshRenderer)
+            {
+                var meshFilter = renderer.GetComponent<MeshFilter>();
+                if (meshFilter != null && meshFilter.sharedMesh != null)
+                {
+                    slotCount = Mathf.Max(slotCount, meshFilter.sharedMesh.subMeshCount);
+                }
+            }
+
+            return Mathf.Max(1, slotCount);
         }
     }
 }

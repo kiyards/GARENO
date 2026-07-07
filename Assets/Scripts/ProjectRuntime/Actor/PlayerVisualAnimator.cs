@@ -48,6 +48,8 @@ namespace ProjectRuntime.Actor
         private double jumpVisualUntil;
         private bool wasRunning;
 
+        public Material AuraMaterial => auraMaterial;
+
         private void Awake()
         {
             previousPosition = transform.position;

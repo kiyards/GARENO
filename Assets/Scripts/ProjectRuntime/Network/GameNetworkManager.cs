@@ -40,6 +40,27 @@ namespace ProjectRuntime.Network
         public GameObject DungeonMasterSlowingTurretPrefab => dungeonMasterSlowingTurretPrefab;
         public GameObject DungeonMasterNemesisPrefab => dungeonMasterNemesisPrefab;
 
+        public bool TryGetCardPreview(CardEffectType effect, out GameObject prefab)
+        {
+            prefab = effect switch
+            {
+                CardEffectType.PLACE_BEAR_TRAP => this.bearTrapPrefab,
+                CardEffectType.PLACE_C4 => this.c4TrapPrefab,
+                CardEffectType.PLACE_FLASHBANG => this.flashbangPrefab,
+                CardEffectType.DEPLOY_TURRET => this.dungeonMasterTurretPrefab,
+                CardEffectType.DEPLOY_SLOWING_TURRET => this.dungeonMasterSlowingTurretPrefab,
+                _ => null,
+            };
+
+            return prefab != null;
+        }
+
+        public bool TryGetNemesisPreview(out GameObject prefab)
+        {
+            prefab = this.dungeonMasterNemesisPrefab;
+            return prefab != null;
+        }
+
         public CSteamID HostedLobbyId;
 
         private int _expectedGamePlayerCount;

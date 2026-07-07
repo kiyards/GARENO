@@ -135,6 +135,36 @@ namespace ProjectRuntime.Managers
         public int RemainingRoundSeconds => remainingRoundSeconds;
         public bool IsCrystalGuidanceRevealed => crystalGuidanceRevealed;
 
+        public bool TryGetCardPreview(
+            CardEffectType effect,
+            out GameObject prefab,
+            out IReadOnlyList<Vector3> offsets
+        )
+        {
+            offsets = null;
+            switch (effect)
+            {
+                case CardEffectType.SPAWN_BASIC_ZOMBIE:
+                    prefab = this.basicZombiePrefab;
+                    break;
+                case CardEffectType.SPAWN_CREEPER_ZOMBIE:
+                    prefab = this.creeperZombiePrefab;
+                    break;
+                case CardEffectType.SPAWN_GROUP_OF_DOGS:
+                    prefab = this.dogPrefab;
+                    offsets = this.GetDogPackPreviewOffsets();
+                    break;
+                case CardEffectType.SPAWN_MIMIC_ZOMBIE:
+                    prefab = this.mimicZombiePrefab;
+                    break;
+                default:
+                    prefab = null;
+                    return false;
+            }
+
+            return prefab != null;
+        }
+
         private void Awake()
         {
             Startup(this);
@@ -258,6 +288,18 @@ namespace ProjectRuntime.Managers
                     0f,
                     Mathf.Sin(angle) * this.dogPackSpawnSpread
                 );
+        }
+
+        private IReadOnlyList<Vector3> GetDogPackPreviewOffsets()
+        {
+            int count = Mathf.Max(1, this.dogPackCount);
+            var offsets = new Vector3[count];
+            for (var i = 0; i < count; i++)
+            {
+                offsets[i] = this.GetDogPackSpawnPosition(Vector3.zero, i, count);
+            }
+
+            return offsets;
         }
 
         [Server]
