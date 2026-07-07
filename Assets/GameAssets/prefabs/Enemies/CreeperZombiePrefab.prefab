@@ -211,13 +211,14 @@ MonoBehaviour:
   lungeDistance: 1.2
   lungeDuration: 0.18
   animator: {fileID: 3171457768624773604}
-  spawnController: {fileID: 9100000, guid: aac3459e0099b26408ebcce86393989b, type: 2}
-  idleController: {fileID: 9100000, guid: ae7b33ed034717d4f97054736e93e65b, type: 2}
-  walkController: {fileID: 9100000, guid: 4ecc0d99c45dd0a4a86e8da9935844d6, type: 2}
-  runController: {fileID: 0}
-  lungeController: {fileID: 0}
-  deathController: {fileID: 0}
-  explodeController: {fileID: 9100000, guid: bef99cab70687054181c78237a152b12, type: 2}
+  visualController: {fileID: 9100000, guid: 0d44e3e1d4e67714e80611c792baf30e, type: 2}
+  spawnStateName: enemy_creeper_spawn
+  idleStateName: enemy_creeper_idle
+  walkStateName: enemy_creeper_walk
+  runStateName: enemy_creeper_walk
+  lungeStateName: 
+  deathStateName: enemy_creeper_death
+  explodeStateName: enemy_creeper_explode
   attackAnimationHoldDuration: 0.6
   deathDespawnDelay: 3.5
   logVisualStateChanges: 0

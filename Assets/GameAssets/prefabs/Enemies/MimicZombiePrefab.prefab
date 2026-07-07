@@ -349,13 +349,14 @@ MonoBehaviour:
   lungeDistance: 1.2
   lungeDuration: 0.18
   animator: {fileID: 1356018754843027023}
-  spawnController: {fileID: 9100000, guid: 00e40333320cd0847a97ce74a501e707, type: 2}
-  idleController: {fileID: 9100000, guid: 00e40333320cd0847a97ce74a501e707, type: 2}
-  walkController: {fileID: 9100000, guid: d99baeb6883958242b8ee5a3f912dad4, type: 2}
-  runController: {fileID: 9100000, guid: d99baeb6883958242b8ee5a3f912dad4, type: 2}
-  lungeController: {fileID: 9100000, guid: e3df36f7acc7732408cc8c8305f35c17, type: 2}
-  deathController: {fileID: 9100000, guid: bc4b1efbd19afc34a91eddd7caa228bc, type: 2}
-  explodeController: {fileID: 0}
+  visualController: {fileID: 9100000, guid: e3df36f7acc7732408cc8c8305f35c17, type: 2}
+  spawnStateName: enemy_mimic_idle
+  idleStateName: enemy_mimic_idle
+  walkStateName: enemy_mimic_run
+  runStateName: enemy_mimic_run
+  lungeStateName: enemy_mimic_attack
+  deathStateName: enemy_mimic_death
+  explodeStateName: 
   attackAnimationHoldDuration: 0.6
   deathDespawnDelay: 3.5
   logVisualStateChanges: 0

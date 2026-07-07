@@ -8,21 +8,23 @@ namespace ProjectRuntime.Actor
         {
             Idle,
             Run,
+            Jump,
             Death,
         }
-
-        private static readonly int MixamoStateHash = Animator.StringToHash("Base Layer.mixamo_com");
 
         [SerializeField] private GameplayPlayer player;
         [SerializeField] private Animator animator;
         [SerializeField] private Transform normalVisualRoot;
         [SerializeField] private GameObject ghostVisualPrefab;
-        [SerializeField] private RuntimeAnimatorController idleController;
-        [SerializeField] private RuntimeAnimatorController runController;
-        [SerializeField] private RuntimeAnimatorController deathController;
+        [SerializeField] private RuntimeAnimatorController visualController;
+        [SerializeField] private string idleStateName = "player_tsuki_idle";
+        [SerializeField] private string runStateName = "player_tsuki_run";
+        [SerializeField] private string jumpStateName = "player_tsuki_jump";
+        [SerializeField] private string deathStateName = "player_tsuki_death";
         [SerializeField] private float runSpeedThreshold = 0.5f;
         [SerializeField] private float runInputThreshold = 0.1f;
         [SerializeField] private float runMovementGraceTime = 0.15f;
+        [SerializeField] private float jumpTakeoffMinHeightDelta = 0.02f;
 
         private Vector3 previousPosition;
         private Animator activeAnimator;
@@ -36,11 +38,14 @@ namespace ProjectRuntime.Actor
         private bool hasVisualState;
         private bool isGhostVisualActive;
         private double movementRunUntil;
+        private double jumpVisualUntil;
         private bool wasRunning;
+        private bool wasGrounded;
 
         private void Awake()
         {
             previousPosition = transform.position;
+            wasGrounded = player.groundCheck.IsGrounded;
             activeAnimator = animator;
             normalRenderers = normalVisualRoot.GetComponentsInChildren<Renderer>(true);
             normalRendererInitialEnabled = CacheInitialRendererState(normalRenderers);
@@ -74,6 +79,12 @@ namespace ProjectRuntime.Actor
             ApplyLocalOwnerVisibility();
         }
 
+        public void PlayJump()
+        {
+            jumpVisualUntil = Time.timeAsDouble + GetVisualStateAnimationDuration(VisualState.Jump, 0f);
+            ApplyVisualState(VisualState.Jump);
+        }
+
         public void SetGhostVisible(bool isVisible)
         {
             if (!isGhostVisualActive)
@@ -96,7 +107,23 @@ namespace ProjectRuntime.Actor
                 return VisualState.Death;
             }
 
+            var isGrounded = player.groundCheck.IsGrounded;
             var movementDelta = currentPosition - previousPosition;
+            if (
+                wasGrounded
+                && !isGrounded
+                && movementDelta.y > jumpTakeoffMinHeightDelta
+            )
+            {
+                jumpVisualUntil = Time.timeAsDouble + GetVisualStateAnimationDuration(VisualState.Jump, 0f);
+            }
+
+            wasGrounded = isGrounded;
+            if (Time.timeAsDouble < jumpVisualUntil)
+            {
+                return VisualState.Jump;
+            }
+
             var inputSqrMagnitude = player.input.MoveVector.sqrMagnitude;
             movementDelta.y = 0f;
             var horizontalSpeed =
@@ -122,11 +149,10 @@ namespace ProjectRuntime.Actor
 
         private void ApplyVisualState(VisualState state)
         {
-            var controller = GetVisualStateController(state);
             if (
                 hasVisualState
                 && currentState == state
-                && activeAnimator.runtimeAnimatorController == controller
+                && activeAnimator.runtimeAnimatorController == visualController
             )
             {
                 return;
@@ -135,17 +161,22 @@ namespace ProjectRuntime.Actor
             hasVisualState = true;
             currentState = state;
             activeAnimator.speed = 1f;
-            activeAnimator.runtimeAnimatorController = controller;
-            activeAnimator.Rebind();
+            if (activeAnimator.runtimeAnimatorController != visualController)
+            {
+                activeAnimator.runtimeAnimatorController = visualController;
+                activeAnimator.Rebind();
+            }
+
+            activeAnimator.Play(GetVisualStateName(state), 0, 0f);
             activeAnimator.Update(0f);
         }
 
         public void ApplyDeathPose(Animator targetAnimator)
         {
             targetAnimator.speed = 1f;
-            targetAnimator.runtimeAnimatorController = deathController;
+            targetAnimator.runtimeAnimatorController = visualController;
             targetAnimator.Rebind();
-            targetAnimator.Play(MixamoStateHash, 0, 1f);
+            targetAnimator.Play(deathStateName, 0, 1f);
             targetAnimator.Update(0f);
             targetAnimator.speed = 0f;
         }
@@ -157,23 +188,26 @@ namespace ProjectRuntime.Actor
 
         private float GetVisualStateAnimationDuration(VisualState state, float fallbackDuration)
         {
-            var controller = GetVisualStateController(state);
-            var duration = 0f;
-            foreach (var clip in controller.animationClips)
+            var stateName = GetVisualStateName(state);
+            foreach (var clip in visualController.animationClips)
             {
-                duration = Mathf.Max(duration, clip.length);
+                if (clip != null && clip.name == stateName)
+                {
+                    return clip.length;
+                }
             }
 
-            return duration > 0f ? duration : Mathf.Max(0f, fallbackDuration);
+            return Mathf.Max(0f, fallbackDuration);
         }
 
-        private RuntimeAnimatorController GetVisualStateController(VisualState state)
+        private string GetVisualStateName(VisualState state)
         {
             return state switch
             {
-                VisualState.Run => runController,
-                VisualState.Death => deathController,
-                _ => idleController,
+                VisualState.Run => runStateName,
+                VisualState.Jump => jumpStateName,
+                VisualState.Death => deathStateName,
+                _ => idleStateName,
             };
         }
 

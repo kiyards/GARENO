@@ -235,13 +235,14 @@ MonoBehaviour:
   lungeDistance: 1.7
   lungeDuration: 0.14
   animator: {fileID: 9193986055716070673}
-  spawnController: {fileID: 9100000, guid: 35903c5ba75dec047a56507fd8727c22, type: 2}
-  idleController: {fileID: 9100000, guid: 35903c5ba75dec047a56507fd8727c22, type: 2}
-  walkController: {fileID: 9100000, guid: a042b09075b59aa43bc3cce43951035f, type: 2}
-  runController: {fileID: 9100000, guid: aa2f5594cd6f0ba47b516dd6b05f29ec, type: 2}
-  lungeController: {fileID: 9100000, guid: 9d6bd86c130c1544fb65853b82549885, type: 2}
-  deathController: {fileID: 9100000, guid: cf9b6cd0e3e163440ae8fdddddd207ec, type: 2}
-  explodeController: {fileID: 0}
+  visualController: {fileID: 9100000, guid: 9d6bd86c130c1544fb65853b82549885, type: 2}
+  spawnStateName: enemy_dog_idle
+  idleStateName: enemy_dog_idle
+  walkStateName: enemy_dog_walk
+  runStateName: enemy_dog_run
+  lungeStateName: enemy_dog_attack
+  deathStateName: enemy_dog_death
+  explodeStateName: 
   attackAnimationHoldDuration: 0.6
   deathDespawnDelay: 3.5
 --- !u!1001 &6176508357189926301

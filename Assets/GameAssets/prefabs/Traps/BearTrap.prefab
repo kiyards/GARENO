@@ -283,6 +283,7 @@ MonoBehaviour:
   mashShakeAmplitude: 0.08
   mashShakeFrequency: 38
   mashShakeRotationDegrees: 4
+  snapStateName: enemy_trap_attack
 --- !u!114 &8702471953103965153
 MonoBehaviour:
   m_ObjectHideFlags: 0

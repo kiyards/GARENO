@@ -84,9 +84,11 @@ namespace ProjectRuntime.Actor.PlayerStates
             if (_requestedJump)
             {
                 if (player.groundCheck.IsGrounded)
+                {
                     Jump();
-                else
-                    _requestedJump = false;
+                }
+
+                _requestedJump = false;
             }
         }
 
@@ -101,6 +103,7 @@ namespace ProjectRuntime.Actor.PlayerStates
                 player.rb.linearVelocity = vel;
             }
             player.rb.AddForce(Vector3.up * player.jumpForce, ForceMode.VelocityChange);
+            player.GetComponent<PlayerVisualAnimator>().PlayJump();
         }
 
         public void RotateAim()
@@ -813,10 +816,8 @@ namespace ProjectRuntime.Actor.PlayerStates
                 {
                     Jump();
                 }
-                else
-                {
-                    _requestedJump = false;
-                }
+
+                _requestedJump = false;
             }
         }
 
@@ -835,6 +836,7 @@ namespace ProjectRuntime.Actor.PlayerStates
             }
 
             player.rb.AddForce(Vector3.up * player.jumpForce, ForceMode.VelocityChange);
+            player.GetComponent<PlayerVisualAnimator>().PlayJump();
         }
 
         private void RotateAim()

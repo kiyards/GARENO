@@ -211,13 +211,14 @@ MonoBehaviour:
   lungeDistance: 1.2
   lungeDuration: 0.18
   animator: {fileID: 7401329631124251127}
-  spawnController: {fileID: 9100000, guid: 85fa7c4a91f6a904891285550cee8064, type: 2}
-  idleController: {fileID: 9100000, guid: aebc3a5f78429ad4390e92bb84b99627, type: 2}
-  walkController: {fileID: 9100000, guid: 36f7d7036768c1740b748a135a1199c9, type: 2}
-  runController: {fileID: 0}
-  lungeController: {fileID: 9100000, guid: 07aff517ccbd67244a79b2e2467891c9, type: 2}
-  deathController: {fileID: 9100000, guid: 2067a934f526a8e4f8bbc4225da7056f, type: 2}
-  explodeController: {fileID: 0}
+  visualController: {fileID: 9100000, guid: 2067a934f526a8e4f8bbc4225da7056f, type: 2}
+  spawnStateName: enemy_defaultzombie_spawn
+  idleStateName: enemy_defaultzombie_idle
+  walkStateName: enemy_defaultzombie_walk
+  runStateName: enemy_defaultzombie_walk
+  lungeStateName: enemy_defaultzombie_lunge
+  deathStateName: enemy_defaultzombie_death
+  explodeStateName: 
   attackAnimationHoldDuration: 0.6
   deathDespawnDelay: 3.5
   logVisualStateChanges: 0

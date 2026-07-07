@@ -55,6 +55,9 @@ namespace ProjectRuntime.Actor
         [SerializeField]
         private float mashShakeRotationDegrees = 4f;
 
+        [SerializeField]
+        private string snapStateName = "enemy_trap_attack";
+
         [SyncVar(hook = nameof(OnTriggeredSynced))]
         private bool isTriggered;
 
@@ -71,8 +74,6 @@ namespace ProjectRuntime.Actor
         private Quaternion _shakeOriginLocalRotation;
         private Coroutine _mashShakeCoroutine;
         private bool _triggerVisualPlayed;
-
-        private const string SnapAnimationStateName = "Take 001";
 
         public bool IsTriggered => isTriggered;
         public uint TrappedPlayerNetId => trappedPlayerNetId;
@@ -282,7 +283,7 @@ namespace ProjectRuntime.Actor
 
                 _triggerVisualPlayed = true;
                 trapAnimator.enabled = true;
-                trapAnimator.Play(SnapAnimationStateName, 0, 1f);
+                trapAnimator.Play(snapStateName, 0, 1f);
                 trapAnimator.Update(0f);
                 RestoreShakeRoot();
                 return;
@@ -290,7 +291,7 @@ namespace ProjectRuntime.Actor
 
             _triggerVisualPlayed = false;
             trapAnimator.enabled = true;
-            trapAnimator.Play(SnapAnimationStateName, 0, 0f);
+            trapAnimator.Play(snapStateName, 0, 0f);
             trapAnimator.Update(0f);
             trapAnimator.enabled = false;
             RestoreShakeRoot();
@@ -305,7 +306,7 @@ namespace ProjectRuntime.Actor
 
             _triggerVisualPlayed = true;
             trapAnimator.enabled = true;
-            trapAnimator.Play(SnapAnimationStateName, 0, 0f);
+            trapAnimator.Play(snapStateName, 0, 0f);
             trapAnimator.Update(0f);
             RestoreShakeRoot();
         }
