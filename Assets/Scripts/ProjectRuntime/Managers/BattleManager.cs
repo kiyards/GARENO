@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Core;
 using Mirror;
 using ProjectRuntime.Actor;
+using ProjectRuntime.Combat;
 using ProjectRuntime.Network;
 using ProjectRuntime.Objectives;
 using UnityEngine;
@@ -30,33 +31,64 @@ namespace ProjectRuntime.Managers
         public int playersToStart = 1;
 
         [Header("Dungeon Master")]
-        [SerializeField] private GameObject basicZombiePrefab;
-        [SerializeField] private GameObject creeperZombiePrefab;
+        [SerializeField]
+        private GameObject basicZombiePrefab;
+
+        [SerializeField]
+        private GameObject creeperZombiePrefab;
+
         // A single dog. The Group of Dogs card spawns dogPackCount copies of this prefab.
-        [SerializeField] private GameObject dogPrefab;
+        [SerializeField]
+        private GameObject dogPrefab;
+
         // Looks like a survivor with a randomized player name; AI is identical to the basic zombie.
-        [SerializeField] private GameObject mimicZombiePrefab;
+        [SerializeField]
+        private GameObject mimicZombiePrefab;
+
         // Max distance the requested point is snapped onto the navmesh. Kept large so a click
         // that lands off the navmesh (on an obstacle, a wall, or past an edge) still spawns at
         // the nearest valid point instead of silently failing.
-        [SerializeField] private float basicZombieSpawnSampleRadius = 50f;
+        [SerializeField]
+        private float basicZombieSpawnSampleRadius = 50f;
 
         // Group of Dogs spawns dogPackCount independent dogs around the placement point: the first
         // at the click, the rest on a ring of dogPackSpawnSpread radius. Each is NavMesh-sampled.
-        [SerializeField] private int dogPackCount = 3;
-        [SerializeField] private float dogPackSpawnSpread = 2f;
+        [SerializeField]
+        private int dogPackCount = 3;
+
+        [SerializeField]
+        private float dogPackSpawnSpread = 2f;
+
+        [Header("Dungeon Master FX")]
+        [SerializeField]
+        private GameObject spawnVfxPrefab;
+
+        [SerializeField]
+        private float spawnVfxLifetime = 2f;
 
         [Header("Round Timer")]
-        [SerializeField] private int startingRoundSeconds = 600;
-        [SerializeField] private int zombieKillTimeBonusSeconds = 10;
-        [SerializeField] private int survivorDownedTimePenaltySeconds = 15;
-        [SerializeField] private int survivorDeathTimePenaltySeconds = 30;
+        [SerializeField]
+        private int startingRoundSeconds = 600;
+
+        [SerializeField]
+        private int zombieKillTimeBonusSeconds = 10;
+
+        [SerializeField]
+        private int survivorDownedTimePenaltySeconds = 15;
+
+        [SerializeField]
+        private int survivorDeathTimePenaltySeconds = 30;
 
         [Header("Nemesis Availability")]
         // How much the Dungeon Master's Nemesis countdown is shortened by each event.
-        [SerializeField] private float nemesisCrystalShortenSeconds = 60f;
-        [SerializeField] private float nemesisDownedShortenSeconds = 15f;
-        [SerializeField] private float nemesisKilledShortenSeconds = 30f;
+        [SerializeField]
+        private float nemesisCrystalShortenSeconds = 60f;
+
+        [SerializeField]
+        private float nemesisDownedShortenSeconds = 15f;
+
+        [SerializeField]
+        private float nemesisKilledShortenSeconds = 30f;
 
         [Header("Crystal Objective")]
         [SerializeField, SyncVar(hook = nameof(OnObjectiveStateSynced))]
@@ -156,19 +188,34 @@ namespace ProjectRuntime.Managers
         [Server]
         public bool ServerTrySpawnBasicZombie(PlayerManager caster, Vector3 requestedPosition)
         {
-            return this.ServerTrySpawnEnemy(caster, requestedPosition, this.basicZombiePrefab, "Basic Zombie");
+            return this.ServerTrySpawnEnemy(
+                caster,
+                requestedPosition,
+                this.basicZombiePrefab,
+                "Basic Zombie"
+            );
         }
 
         [Server]
         public bool ServerTrySpawnCreeperZombie(PlayerManager caster, Vector3 requestedPosition)
         {
-            return this.ServerTrySpawnEnemy(caster, requestedPosition, this.creeperZombiePrefab, "Creeper Zombie");
+            return this.ServerTrySpawnEnemy(
+                caster,
+                requestedPosition,
+                this.creeperZombiePrefab,
+                "Creeper Zombie"
+            );
         }
 
         [Server]
         public bool ServerTrySpawnMimicZombie(PlayerManager caster, Vector3 requestedPosition)
         {
-            return this.ServerTrySpawnEnemy(caster, requestedPosition, this.mimicZombiePrefab, "Mimic Zombie");
+            return this.ServerTrySpawnEnemy(
+                caster,
+                requestedPosition,
+                this.mimicZombiePrefab,
+                "Mimic Zombie"
+            );
         }
 
         [Server]
@@ -205,10 +252,12 @@ namespace ProjectRuntime.Managers
             }
 
             float angle = Mathf.PI * 2f * (index - 1) / (count - 1);
-            return center + new Vector3(
-                Mathf.Cos(angle) * this.dogPackSpawnSpread,
-                0f,
-                Mathf.Sin(angle) * this.dogPackSpawnSpread);
+            return center
+                + new Vector3(
+                    Mathf.Cos(angle) * this.dogPackSpawnSpread,
+                    0f,
+                    Mathf.Sin(angle) * this.dogPackSpawnSpread
+                );
         }
 
         [Server]
@@ -216,7 +265,8 @@ namespace ProjectRuntime.Managers
             PlayerManager caster,
             Vector3 requestedPosition,
             GameObject prefab,
-            string enemyName)
+            string enemyName
+        )
         {
             if (!this.ServerCanSpawnEnemy(caster, prefab, enemyName))
             {
@@ -251,21 +301,42 @@ namespace ProjectRuntime.Managers
         [Server]
         private bool ServerSpawnEnemyAt(GameObject prefab, Vector3 requestedPosition)
         {
-            if (!NavMesh.SamplePosition(
+            if (
+                !NavMesh.SamplePosition(
                     requestedPosition,
                     out NavMeshHit navMeshHit,
                     this.basicZombieSpawnSampleRadius,
-                    NavMesh.AllAreas))
+                    NavMesh.AllAreas
+                )
+            )
             {
                 return false;
             }
 
-            var enemy = Instantiate(
-                prefab,
-                navMeshHit.position,
-                Quaternion.identity);
+            var enemy = Instantiate(prefab, navMeshHit.position, Quaternion.identity);
             NetworkServer.Spawn(enemy);
+
+            if (this.isClient)
+            {
+                // Host is its own client too — play now rather than via the queued Rpc below.
+                HitVfx.PlayAt(this.spawnVfxPrefab, navMeshHit.position, this.spawnVfxLifetime);
+            }
+
+            this.RpcPlaySpawnVfx(navMeshHit.position);
             return true;
+        }
+
+        [ClientRpc]
+        private void RpcPlaySpawnVfx(Vector3 worldPos)
+        {
+            if (this.isServer)
+            {
+                return; // Host already played this above.
+            }
+
+            Debug.Log("Playing for client");
+
+            HitVfx.PlayAt(this.spawnVfxPrefab, worldPos, this.spawnVfxLifetime);
         }
 
         public override void OnStartServer()
@@ -320,9 +391,11 @@ namespace ProjectRuntime.Managers
         [Server]
         public void ServerReportCrystalDamaged(CrystalObjective crystal)
         {
-            if (crystal == null ||
-                this.crystalGuidanceRevealed ||
-                this.roundPhase != RoundPhase.DestroyCrystals)
+            if (
+                crystal == null
+                || this.crystalGuidanceRevealed
+                || this.roundPhase != RoundPhase.DestroyCrystals
+            )
             {
                 return;
             }
@@ -417,9 +490,11 @@ namespace ProjectRuntime.Managers
             }
 
             this._timerAccumulator += Time.deltaTime;
-            while (this._timerAccumulator >= 1f &&
-                   this.remainingRoundSeconds > 0 &&
-                   this.roundPhase != RoundPhase.RoundComplete)
+            while (
+                this._timerAccumulator >= 1f
+                && this.remainingRoundSeconds > 0
+                && this.roundPhase != RoundPhase.RoundComplete
+            )
             {
                 this._timerAccumulator -= 1f;
                 this.ServerSetRemainingRoundSeconds(this.remainingRoundSeconds - 1);
@@ -562,11 +637,13 @@ namespace ProjectRuntime.Managers
 
             foreach (var player in this.Players)
             {
-                if (player == null ||
-                    player.playerRole != PlayerRole.Survivor ||
-                    player.lives <= 0 ||
-                    player.player == null ||
-                    !player.player.IsDowned)
+                if (
+                    player == null
+                    || player.playerRole != PlayerRole.Survivor
+                    || player.lives <= 0
+                    || player.player == null
+                    || !player.player.IsDowned
+                )
                 {
                     continue;
                 }
@@ -605,11 +682,14 @@ namespace ProjectRuntime.Managers
             this.requiredExtractedSurvivors = this.CountRequiredSurvivors();
             this.extractedSurvivors = Mathf.Min(
                 this._survivorsInExtraction.Count,
-                this.requiredExtractedSurvivors);
+                this.requiredExtractedSurvivors
+            );
 
-            if (this.roundPhase == RoundPhase.CrystalsComplete &&
-                this.requiredExtractedSurvivors > 0 &&
-                this.extractedSurvivors >= this.requiredExtractedSurvivors)
+            if (
+                this.roundPhase == RoundPhase.CrystalsComplete
+                && this.requiredExtractedSurvivors > 0
+                && this.extractedSurvivors >= this.requiredExtractedSurvivors
+            )
             {
                 this.ServerCompleteRound(RoundWinner.Survivors);
             }
@@ -634,26 +714,24 @@ namespace ProjectRuntime.Managers
         {
             // Permanently dead survivors (no lives left) are not required to extract; downed ones
             // (still have lives) are.
-            return player != null &&
-                   player.playerRole == PlayerRole.Survivor &&
-                   player.player != null &&
-                   player.lives > 0;
+            return player != null
+                && player.playerRole == PlayerRole.Survivor
+                && player.player != null
+                && player.lives > 0;
         }
 
         private static bool IsActiveSurvivor(PlayerManager player)
         {
             // "Active" = still in the fight. A downed survivor (lives > 0) counts — the DM only wins
             // once every survivor is permanently dead, not merely downed. Lives is the source of truth.
-            return player != null &&
-                   player.playerRole == PlayerRole.Survivor &&
-                   player.lives > 0;
+            return player != null && player.playerRole == PlayerRole.Survivor && player.lives > 0;
         }
 
         private bool IsTimerPenaltyTarget(PlayerManager player)
         {
-            return this.roundPhase != RoundPhase.RoundComplete &&
-                   player != null &&
-                   player.playerRole == PlayerRole.Survivor;
+            return this.roundPhase != RoundPhase.RoundComplete
+                && player != null
+                && player.playerRole == PlayerRole.Survivor;
         }
 
         private void OnObjectiveStateSynced(int oldValue, int newValue)
@@ -683,8 +761,7 @@ namespace ProjectRuntime.Managers
 
         private void NotifyRoundStateChanged()
         {
-            this.OnRoundStateChanged?.Invoke(
-            );
+            this.OnRoundStateChanged?.Invoke();
         }
     }
 }
