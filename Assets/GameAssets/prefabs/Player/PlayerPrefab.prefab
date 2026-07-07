@@ -1035,6 +1035,8 @@ MonoBehaviour:
   reloadDuration: 1.5
   fireCooldown: 0.25
   damagePopupPrefab: {fileID: 8824996141537536103, guid: 8f299d7398d8b7c48917932052b6b2f6, type: 3}
+  hitVfxPrefab: {fileID: 7015456706586739014, guid: d10879b2dbd9fad4d93438d652ee3afb, type: 3}
+  hitVfxLifetime: 2
 --- !u!114 &6988870576730226306
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1059,7 +1061,7 @@ MonoBehaviour:
   Mana: 0
   nemesisBaseCountdown: 120
   _debugForceCard: 0
-  _debugForcedCardId: CARD_FLASHBANG
+  _debugForcedCardId: CARD_C4
 --- !u!114 &7236363269636559078
 MonoBehaviour:
   m_ObjectHideFlags: 0

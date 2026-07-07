@@ -5,6 +5,7 @@ using ProjectRuntime.Actor;
 using ProjectRuntime.Network;
 using ProjectRuntime.UI;
 using UnityEngine;
+using UnityEngine.VFX;
 
 namespace ProjectRuntime.Combat
 {
@@ -15,6 +16,8 @@ namespace ProjectRuntime.Combat
     /// </summary>
     public class PistolWeapon : NetworkBehaviour
     {
+        private static readonly int BloodVelocityId = Shader.PropertyToID("BloodVelocity");
+
         [Header("Components")]
         [SerializeField]
         private GameplayPlayer player;
@@ -44,6 +47,12 @@ namespace ProjectRuntime.Combat
         [Header("FX")]
         [SerializeField]
         private DamagePopup damagePopupPrefab;
+
+        [SerializeField]
+        private GameObject hitVfxPrefab;
+
+        [SerializeField]
+        private float hitVfxLifetime = 2f;
 
         [SyncVar(hook = nameof(OnAmmoSynced))]
         private int currentAmmo;
@@ -115,7 +124,7 @@ namespace ProjectRuntime.Combat
                     targetNetId = identity.netId;
             }
 
-            CmdFire(targetNetId, hitPoint);
+            CmdFire(targetNetId, hitPoint, dir);
         }
 
         private void TryReload()
@@ -126,7 +135,7 @@ namespace ProjectRuntime.Combat
         }
 
         [Command]
-        private void CmdFire(uint targetNetId, Vector3 hitPoint)
+        private void CmdFire(uint targetNetId, Vector3 hitPoint, Vector3 fireDirection)
         {
             if (player != null && (player.IsDungeonMaster || player.IsBearTrapped))
                 return;
@@ -159,6 +168,7 @@ namespace ProjectRuntime.Combat
                 {
                     damageable.ServerTakeDamage(damage, netId, hitPoint);
                     RpcShowDamageNumber(hitPoint, damage);
+                    RpcPlayHitVfx(hitPoint, fireDirection);
                 }
             }
         }
@@ -202,6 +212,33 @@ namespace ProjectRuntime.Combat
         private void RpcShowDamageNumber(Vector3 worldPos, float amount)
         {
             DamagePopup.Spawn(damagePopupPrefab, worldPos, amount);
+        }
+
+        [ClientRpc]
+        private void RpcPlayHitVfx(Vector3 worldPos, Vector3 fireDirection)
+        {
+            if (hitVfxPrefab == null)
+                return;
+            var vfx = Instantiate(hitVfxPrefab, worldPos, Quaternion.identity);
+
+            // Redirect the graph's authored horizontal spray to point back at the shooter,
+            // keeping its authored horizontal speed and vertical (arc) velocity untouched.
+            var visualEffect = vfx.GetComponentInChildren<VisualEffect>();
+            if (visualEffect != null && visualEffect.HasVector3(BloodVelocityId))
+            {
+                Vector3 authored = visualEffect.GetVector3(BloodVelocityId);
+                float horizontalSpeed = new Vector2(authored.x, authored.z).magnitude;
+
+                Vector3 back = new Vector3(-fireDirection.x, 0f, -fireDirection.z);
+                back = back.sqrMagnitude > 0.0001f ? back.normalized : Vector3.zero;
+
+                visualEffect.SetVector3(
+                    BloodVelocityId,
+                    new Vector3(back.x * horizontalSpeed, authored.y, back.z * horizontalSpeed)
+                );
+            }
+
+            Destroy(vfx, hitVfxLifetime);
         }
 
         private void OnAmmoSynced(int oldValue, int newValue)
