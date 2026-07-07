@@ -119,6 +119,9 @@ namespace ProjectRuntime.Managers
         [field: SerializeField]
         private TextMeshProUGUI ReviveTimerTMP { get; set; }
 
+        [field: SerializeField, Header("Downed")]
+        private GameObject DownedIndicator { get; set; }
+
         [field: SerializeField, Header("Minimap")]
         private MinimapController Minimap { get; set; }
 
@@ -231,6 +234,7 @@ namespace ProjectRuntime.Managers
             this.RefreshNemesisAttackDisplays();
             this.RefreshReviveInteract();
             this.RefreshReviveTimer();
+            this.RefreshDownedIndicator();
         }
 
         public void SetLocalPlayer(PlayerManager player)
@@ -476,6 +480,14 @@ namespace ProjectRuntime.Managers
         private void SetReviveTimerActive(bool active)
         {
             this.ReviveTimerParent.SetActive(active);
+        }
+
+        // Shown while the local survivor is downed (awaiting revive or bleed-out), hidden while alive.
+        // Backed by the same GameplayPlayer.IsDowned state that drives the revive timer above.
+        private void RefreshDownedIndicator()
+        {
+            bool downed = this.BoundGameplayPlayer != null && this.BoundGameplayPlayer.IsDowned;
+            this.DownedIndicator.SetActive(downed);
         }
 
         // Drives the lifetime countdown text + bar inside NemesisControlUI (only visible while
