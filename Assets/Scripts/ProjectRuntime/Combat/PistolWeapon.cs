@@ -41,6 +41,12 @@ namespace ProjectRuntime.Combat
         [SerializeField]
         private float fireCooldown = 0.25f;
 
+        [SerializeField]
+        private float shakeAmplitude = 0.8f;
+
+        [SerializeField]
+        private float shakeDuration = 0.3f;
+
         [Header("FX")]
         [SerializeField]
         private DamagePopup damagePopupPrefab;
@@ -130,6 +136,7 @@ namespace ProjectRuntime.Combat
             }
 
             CmdFire(targetNetId, hitPoint, dir, hitNormal);
+            cam.AddShake(shakeAmplitude, shakeDuration);
         }
 
         private void TryReload()

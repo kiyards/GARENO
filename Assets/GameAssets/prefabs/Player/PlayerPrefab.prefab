@@ -96,6 +96,7 @@ GameObject:
   - component: {fileID: 3755640324832242681}
   - component: {fileID: 8277495380130426580}
   - component: {fileID: 5620791204912389779}
+  - component: {fileID: 8101000000000000123}
   m_Layer: 0
   m_Name: FirstPersonCam
   m_TagString: Untagged
@@ -118,6 +119,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4329926396842036309}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8101000000000000123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1603085157949592150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  NoiseProfile: {fileID: 11400000, guid: f3a7c1e94b2d6058a1c3e5079b2d4f68, type: 2}
+  PivotOffset: {x: 0, y: 0, z: 0}
+  AmplitudeGain: 0
+  FrequencyGain: 1
 --- !u!114 &3755640324832242681
 MonoBehaviour:
   m_ObjectHideFlags: 0

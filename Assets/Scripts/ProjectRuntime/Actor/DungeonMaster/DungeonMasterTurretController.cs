@@ -20,6 +20,14 @@ namespace ProjectRuntime.Actor
         [SerializeField]
         private LayerMask aimTargetMask;
 
+        [Header("Feedback")]
+        // Matches the survivor pistol's shake feel (PistolWeapon shakeAmplitude/shakeDuration).
+        [SerializeField]
+        private float shakeAmplitude = 0.8f;
+
+        [SerializeField]
+        private float shakeDuration = 0.3f;
+
         private GameplayPlayer _player;
         private DungeonMasterTurret _activeTurret;
         private double _clientLastFireTime;
@@ -141,6 +149,7 @@ namespace ProjectRuntime.Actor
             }
 
             player.CmdFireDungeonMasterTurret(targetNetId, hitPoint, fireDirection);
+            player.cam.AddShake(shakeAmplitude, shakeDuration);
         }
 
         [Server]

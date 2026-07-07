@@ -29,6 +29,7 @@ namespace ProjectRuntime.Actor
 
         [SerializeField] float pitchMin = -80f;
         [SerializeField] float pitchMax = 80f;
+        [SerializeField] float maxShakeAmplitude = 2f;
         [SerializeField] float aimFirepointOffset = 0.1f;
         [SerializeField] float topDownHeight = 24f;
         [SerializeField] float topDownPitch = 90f;
@@ -37,6 +38,17 @@ namespace ProjectRuntime.Actor
         [SerializeField] float dungeonMasterConfinerSlowingDistance = 0f;
 
         private CinemachineConfiner3D _dungeonMasterConfiner;
+
+        // Local-only camera shake (fire feedback), driven through Cinemachine's Noise stage
+        // (CinemachineBasicMultiChannelPerlin on firstPersonCam). Because the Perlin noise mutates
+        // the CameraState rather than the vcam transform, it never perturbs the aim raycast
+        // (which reads firstPersonCam.transform.forward) — the shake stays purely cosmetic.
+        // Trauma model: each shot bumps AmplitudeGain, which decays continuously, so a held trigger
+        // reads as repeated settling kicks rather than one sustained buzz. The X/Y-only feel comes
+        // from the noise profile (FireShakeNoise) having no roll or position channels.
+        private CinemachineBasicMultiChannelPerlin _fireShakeNoise;
+        private float _shakeTrauma;
+        private float _shakeDecayRate;
 
         public Vector3 GetAimOrigin() => firstPersonCam.transform.position + firstPersonCam.transform.forward * aimFirepointOffset;
 
@@ -49,6 +61,7 @@ namespace ProjectRuntime.Actor
             if (isLocalPlayer)
             {
                 EnsureGhostLayerRendered();
+                firstPersonCam.TryGetComponent(out _fireShakeNoise);
             }
         }
 
@@ -73,6 +86,8 @@ namespace ProjectRuntime.Actor
         private void Update()
         {
             if (!isLocalPlayer) return;
+
+            UpdateFireShake();
 
             if (characterMode == CharacterMode.TOP_DOWN)
             {
@@ -103,6 +118,32 @@ namespace ProjectRuntime.Actor
             var rot = Quaternion.Euler(_pitch, _yaw, 0f);
 
             transform.SetPositionAndRotation(pos, rot);
+        }
+
+        // Add one kick's worth of trauma. `duration` is how long a lone kick of this amplitude takes
+        // to decay to zero, so held fire adds bumps that settle between shots instead of pinning the
+        // shake at full strength. Local-only feedback — no networking.
+        public void AddShake(float amplitude, float duration)
+        {
+            _shakeTrauma = Mathf.Min(maxShakeAmplitude, _shakeTrauma + amplitude);
+            _shakeDecayRate = amplitude / Mathf.Max(0.0001f, duration);
+        }
+
+        // Decay the current trauma and feed it to the Cinemachine noise as AmplitudeGain. The noise
+        // profile supplies the frequency and X/Y-only shape; trauma just scales its intensity.
+        private void UpdateFireShake()
+        {
+            if (_fireShakeNoise == null)
+            {
+                return;
+            }
+
+            if (_shakeTrauma > 0f)
+            {
+                _shakeTrauma = Mathf.Max(0f, _shakeTrauma - _shakeDecayRate * Time.deltaTime);
+            }
+
+            _fireShakeNoise.AmplitudeGain = _shakeTrauma;
         }
         public void ControlTopDownCamera()
         {
