@@ -228,6 +228,8 @@ MonoBehaviour:
   explosionMask:
     serializedVersion: 2
     m_Bits: 64
+  explosionVfxPrefab: {fileID: 8941579149988819608, guid: 1bec3c9215094074bab05a4724dff734, type: 3}
+  explosionVfxLifetime: 2
 --- !u!1001 &1841799937015486674
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -1,5 +1,6 @@
 using System.Collections;
 using Mirror;
+using ProjectRuntime.Combat;
 using ProjectRuntime.Managers;
 using ProjectRuntime.Network;
 using UnityEngine;
@@ -20,6 +21,10 @@ namespace ProjectRuntime.Actor
         [SerializeField] private float explosionAnimationDuration = 1.25f;
         // Layers checked for survivors caught in the blast. Set to the player layer(s) on the prefab.
         [SerializeField] private LayerMask explosionMask = ~0;
+
+        [Header("FX")]
+        [SerializeField] private GameObject explosionVfxPrefab;
+        [SerializeField] private float explosionVfxLifetime = 2f;
 
         // Guards against attack and death paths firing the explosion more than once.
         private bool _hasExploded;
@@ -90,6 +95,7 @@ namespace ProjectRuntime.Actor
 
             yield return new WaitForSeconds(duration);
             this.ServerExplode();
+            NetworkServer.Destroy(this.gameObject);
         }
 
         [Server]
@@ -145,8 +151,25 @@ namespace ProjectRuntime.Actor
                     this.transform.position);
             }
 
-            // Destroy directly so the delayed blast does not re-enter the Health death path.
-            NetworkServer.Destroy(this.gameObject);
+            if (this.isClient)
+            {
+                // Host is its own client too — play now rather than via the queued Rpc below,
+                // which would otherwise race with NetworkServer.Destroy() unspawning this object.
+                HitVfx.PlayAt(this.explosionVfxPrefab, this.transform.position, this.explosionVfxLifetime);
+            }
+
+            this.RpcPlayExplosionVfx(this.transform.position);
+        }
+
+        [ClientRpc]
+        private void RpcPlayExplosionVfx(Vector3 worldPos)
+        {
+            if (this.isServer)
+            {
+                return; // Host already played this above.
+            }
+
+            HitVfx.PlayAt(this.explosionVfxPrefab, worldPos, this.explosionVfxLifetime);
         }
     }
 }

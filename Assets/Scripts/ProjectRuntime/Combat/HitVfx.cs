@@ -38,6 +38,16 @@ namespace ProjectRuntime.Combat
             Object.Destroy(vfx, lifetime);
         }
 
+        /// <summary>Unoriented VFX (explosions, etc.) instantiated at a world position.</summary>
+        public static void PlayAt(GameObject prefab, Vector3 worldPos, float lifetime)
+        {
+            if (prefab == null)
+                return;
+
+            var vfx = Object.Instantiate(prefab, worldPos, Quaternion.identity);
+            Object.Destroy(vfx, lifetime);
+        }
+
         /// <summary>Non-organic impact VFX (sparks, dust, etc.) oriented along the surface normal
         /// of whatever was hit — traps, turrets, the crystal.</summary>
         public static void PlayImpact(GameObject prefab, Vector3 worldPos, Vector3 surfaceNormal, float lifetime)
