@@ -106,7 +106,10 @@ namespace ProjectRuntime.Actor
             }
 
             var movementDelta = currentPosition - previousPosition;
-            if (Time.timeAsDouble < jumpVisualUntil)
+            if (
+                Time.timeAsDouble < jumpVisualUntil
+                || (currentState == VisualState.Jump && !player.groundCheck.IsGrounded)
+            )
             {
                 return VisualState.Jump;
             }

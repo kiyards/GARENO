@@ -891,7 +891,7 @@ MonoBehaviour:
   <aimRig>k__BackingField: {fileID: 2490783541060357679}
   corpseVisualPrefab: {fileID: 513805921082256991, guid: e32d76a198766014ca0722b6ff4ef6cc, type: 3}
   corpseVisualYawOffset: 180
-  jumpForce: 10
+  jumpForce: 12
   moveSpeed: 8
   dungeonMasterHorizontalSpeed: 18
   dungeonMasterVerticalSpeed: 12
