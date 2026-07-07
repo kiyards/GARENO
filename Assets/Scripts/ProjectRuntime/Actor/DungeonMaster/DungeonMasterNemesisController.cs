@@ -2,6 +2,7 @@ using Mirror;
 using ProjectRuntime.Actor.PlayerStates;
 using ProjectRuntime.Network;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace ProjectRuntime.Actor
 {
@@ -12,6 +13,8 @@ namespace ProjectRuntime.Actor
     // returns the Dungeon Master to top-down placement.
     public class DungeonMasterNemesisController : MonoBehaviour
     {
+        private const float PlacementSampleRadius = 50f;
+
         private GameplayPlayer _player;
         private DungeonMasterNemesis _activeNemesis;
 
@@ -61,9 +64,18 @@ namespace ProjectRuntime.Actor
                 return false;
             }
 
+            if (!NavMesh.SamplePosition(
+                    position,
+                    out NavMeshHit navMeshHit,
+                    PlacementSampleRadius,
+                    NavMesh.AllAreas))
+            {
+                return false;
+            }
+
             GameObject nemesisObject = Instantiate(
                 prefab,
-                position + Vector3.up * 1f,
+                navMeshHit.position,
                 Quaternion.identity
             );
             var nemesis = nemesisObject.GetComponent<DungeonMasterNemesis>();

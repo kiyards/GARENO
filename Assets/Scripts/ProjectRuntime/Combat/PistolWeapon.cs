@@ -216,6 +216,9 @@ namespace ProjectRuntime.Combat
         [ClientRpc]
         private void RpcShowDamageNumber(Vector3 worldPos, float amount)
         {
+            if (PlayerManager.Instance == null || PlayerManager.Instance.playerRole != PlayerRole.Survivor)
+                return;
+
             DamagePopup.Spawn(damagePopupPrefab, worldPos, amount);
         }
 

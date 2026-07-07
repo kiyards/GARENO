@@ -4,28 +4,33 @@ using UnityEngine;
 namespace ProjectRuntime.UI
 {
     /// <summary>
-    /// Non-networked floating damage number. Projects a world hit point into the HUD canvas,
-    /// floats upward in UI space and fades out, then self-destructs.
+    /// Non-networked floating damage number. Spawns in world space, renders over
+    /// non-wall geometry, hides behind Wall line of sight, then self-destructs.
     /// </summary>
-    [RequireComponent(typeof(RectTransform))]
-    [RequireComponent(typeof(TextMeshProUGUI))]
+    [RequireComponent(typeof(TextMeshPro))]
     public class DamagePopup : MonoBehaviour
     {
-        private const string RootName = "DamagePopupRoot";
+        private const string OverlayShaderName = "TextMeshPro/Distance Field Overlay";
 
         [SerializeField] private float lifetime = 0.7f;
-        [SerializeField] private float riseSpeed = 90f;
+        [SerializeField] private float riseSpeed = 1.2f;
+        [SerializeField] private float spawnHeight = 0.75f;
+        [SerializeField] private float scatterRadius = 0.25f;
+        [SerializeField] private float wallFadeSpeed = 16f;
 
-        private RectTransform _rectTransform;
-        private TextMeshProUGUI _text;
+        private static int _wallMask = -1;
+
+        private TextMeshPro _text;
+        private Material _runtimeMaterial;
         private float _elapsed;
         private Color _baseColor;
+        private float _visibility = 1f;
 
         private void Awake()
         {
-            _rectTransform = GetComponent<RectTransform>();
-            _text = GetComponent<TextMeshProUGUI>();
+            _text = GetComponent<TextMeshPro>();
             _baseColor = _text.color;
+            ApplyOverlayMaterial();
         }
 
         /// <summary>Spawn a popup at a world position showing the given amount.</summary>
@@ -36,32 +41,15 @@ namespace ProjectRuntime.UI
             Camera worldCamera = Camera.main;
             if (worldCamera == null) return;
 
-            Vector3 screenPoint = worldCamera.WorldToScreenPoint(worldPos);
-            if (screenPoint.z <= 0f) return;
+            Vector2 scatter = Random.insideUnitCircle * prefab.scatterRadius;
+            Vector3 spawnPosition =
+                worldPos
+                + Vector3.up * prefab.spawnHeight
+                + worldCamera.transform.right * scatter.x
+                + worldCamera.transform.up * scatter.y;
 
-            RectTransform root = FindDamagePopupRoot();
-            if (root == null) return;
-
-            Canvas canvas = root.GetComponentInParent<Canvas>();
-            Camera uiCamera =
-                canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay
-                    ? canvas.worldCamera
-                    : null;
-            if (
-                !RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                    root,
-                    screenPoint,
-                    uiCamera,
-                    out Vector2 anchoredPosition
-                )
-            )
-            {
-                return;
-            }
-
-            root.SetAsLastSibling();
-            var popup = Instantiate(prefab, root);
-            popup.Initialize(anchoredPosition, amount);
+            var popup = Instantiate(prefab, spawnPosition, Quaternion.identity);
+            popup.Initialize(amount);
         }
 
         public void SetAmount(float amount)
@@ -69,61 +57,81 @@ namespace ProjectRuntime.UI
             _text.text = Mathf.RoundToInt(amount).ToString();
         }
 
-        private static RectTransform FindDamagePopupRoot()
+        private void Initialize(float amount)
         {
-            GameObject existing = GameObject.Find(RootName);
-            if (existing != null && existing.TryGetComponent(out RectTransform root))
-            {
-                return root;
-            }
-
-            Canvas[] canvases = Object.FindObjectsByType<Canvas>(
-                FindObjectsInactive.Exclude,
-                FindObjectsSortMode.None
-            );
-            Canvas bestCanvas = null;
-            foreach (Canvas canvas in canvases)
-            {
-                if (!canvas.isRootCanvas)
-                    continue;
-
-                if (bestCanvas == null || canvas.sortingOrder > bestCanvas.sortingOrder)
-                    bestCanvas = canvas;
-            }
-
-            if (bestCanvas == null)
-                return null;
-
-            var rootObject = new GameObject(RootName, typeof(RectTransform));
-            var rootTransform = rootObject.GetComponent<RectTransform>();
-            rootTransform.SetParent(bestCanvas.transform, false);
-            rootTransform.anchorMin = Vector2.zero;
-            rootTransform.anchorMax = Vector2.one;
-            rootTransform.offsetMin = Vector2.zero;
-            rootTransform.offsetMax = Vector2.zero;
-            rootTransform.SetAsLastSibling();
-            return rootTransform;
-        }
-
-        private void Initialize(Vector2 anchoredPosition, float amount)
-        {
-            _rectTransform.anchoredPosition = anchoredPosition;
             SetAmount(amount);
+            BillboardTo(Camera.main);
         }
 
         private void Update()
         {
             _elapsed += Time.deltaTime;
+            transform.position += Vector3.up * (riseSpeed * Time.deltaTime);
 
-            _rectTransform.anchoredPosition += Vector2.up * (riseSpeed * Time.deltaTime);
+            Camera worldCamera = Camera.main;
+            BillboardTo(worldCamera);
 
-            float t = Mathf.Clamp01(_elapsed / lifetime);
+            float lifetimeAlpha = 1f - Mathf.Clamp01(_elapsed / lifetime);
+            float targetVisibility = IsBlockedByWall(worldCamera) ? 0f : 1f;
+            _visibility = Mathf.MoveTowards(
+                _visibility,
+                targetVisibility,
+                wallFadeSpeed * Time.deltaTime
+            );
+
             var c = _baseColor;
-            c.a = Mathf.Lerp(1f, 0f, t);
+            c.a = lifetimeAlpha * _visibility;
             _text.color = c;
 
             if (_elapsed >= lifetime)
                 Destroy(gameObject);
+        }
+
+        private void OnDestroy()
+        {
+            if (_runtimeMaterial != null)
+                Destroy(_runtimeMaterial);
+        }
+
+        private void BillboardTo(Camera worldCamera)
+        {
+            if (worldCamera == null)
+                return;
+
+            transform.rotation = Quaternion.LookRotation(
+                transform.position - worldCamera.transform.position,
+                worldCamera.transform.up
+            );
+        }
+
+        private bool IsBlockedByWall(Camera worldCamera)
+        {
+            if (worldCamera == null)
+                return false;
+
+            if (_wallMask < 0)
+                _wallMask = LayerMask.GetMask("Wall");
+
+            return Physics.Linecast(
+                worldCamera.transform.position,
+                transform.position,
+                _wallMask,
+                QueryTriggerInteraction.Ignore
+            );
+        }
+
+        private void ApplyOverlayMaterial()
+        {
+            Shader overlayShader = Shader.Find(OverlayShaderName);
+            if (overlayShader == null)
+                return;
+
+            Material source = _text.fontSharedMaterial != null
+                ? _text.fontSharedMaterial
+                : _text.fontMaterial;
+            _runtimeMaterial = source != null ? new Material(source) : new Material(overlayShader);
+            _runtimeMaterial.shader = overlayShader;
+            _text.fontMaterial = _runtimeMaterial;
         }
     }
 }

@@ -3,6 +3,7 @@ using Mirror;
 using ProjectRuntime.Actor.PlayerStates;
 using ProjectRuntime.Combat;
 using ProjectRuntime.Managers;
+using ProjectRuntime.Network;
 using ProjectRuntime.UI;
 using UnityEngine;
 
@@ -190,6 +191,9 @@ namespace ProjectRuntime.Actor
         [ClientRpc]
         public void RpcShowDamageNumber(Vector3 worldPos, float amount)
         {
+            if (PlayerManager.Instance == null || PlayerManager.Instance.playerRole != PlayerRole.DungeonMaster)
+                return;
+
             DamagePopup.Spawn(damagePopupPrefab, worldPos, amount);
         }
 
