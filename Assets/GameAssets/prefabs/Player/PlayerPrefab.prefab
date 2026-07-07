@@ -1052,7 +1052,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  manaRegenRate: 0.3
+  manaRegenRate: 0.4
   maxMana: 10
   placementRayDistance: 1000
   placementIndicatorRadius: 1.5

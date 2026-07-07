@@ -158,7 +158,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  maxHealth: 800
+  maxHealth: 600
 --- !u!195 &5278251644888205944
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -196,7 +196,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  moveSpeed: 3.6
+  moveSpeed: 4
   wanderMoveSpeed: 0
   damage: 30
   attackRange: 2

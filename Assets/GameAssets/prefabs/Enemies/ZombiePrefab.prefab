@@ -158,7 +158,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  maxHealth: 1000
+  maxHealth: 800
 --- !u!195 &5278251644888205944
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -196,7 +196,8 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  moveSpeed: 2.4
+  moveSpeed: 3
+  wanderMoveSpeed: 0
   damage: 30
   attackRange: 1.5
   attackCooldown: 1
@@ -213,10 +214,13 @@ MonoBehaviour:
   spawnController: {fileID: 9100000, guid: 85fa7c4a91f6a904891285550cee8064, type: 2}
   idleController: {fileID: 9100000, guid: aebc3a5f78429ad4390e92bb84b99627, type: 2}
   walkController: {fileID: 9100000, guid: 36f7d7036768c1740b748a135a1199c9, type: 2}
+  runController: {fileID: 0}
   lungeController: {fileID: 9100000, guid: 07aff517ccbd67244a79b2e2467891c9, type: 2}
   deathController: {fileID: 9100000, guid: 2067a934f526a8e4f8bbc4225da7056f, type: 2}
+  explodeController: {fileID: 0}
   attackAnimationHoldDuration: 0.6
   deathDespawnDelay: 3.5
+  logVisualStateChanges: 0
 --- !u!1001 &7235210998059178204
 PrefabInstance:
   m_ObjectHideFlags: 0
