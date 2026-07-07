@@ -4,22 +4,27 @@ using UnityEngine;
 namespace ProjectRuntime.UI
 {
     /// <summary>
-    /// Non-networked floating damage number. Instantiated client-side at a world position,
-    /// floats upward and fades out, then self-destructs.
+    /// Non-networked floating damage number. Projects a world hit point into the HUD canvas,
+    /// floats upward in UI space and fades out, then self-destructs.
     /// </summary>
-    [RequireComponent(typeof(TextMeshPro))]
+    [RequireComponent(typeof(RectTransform))]
+    [RequireComponent(typeof(TextMeshProUGUI))]
     public class DamagePopup : MonoBehaviour
     {
-        [SerializeField] private float lifetime = 0.7f;
-        [SerializeField] private float riseSpeed = 1.5f;
+        private const string RootName = "DamagePopupRoot";
 
-        private TextMeshPro _text;
+        [SerializeField] private float lifetime = 0.7f;
+        [SerializeField] private float riseSpeed = 90f;
+
+        private RectTransform _rectTransform;
+        private TextMeshProUGUI _text;
         private float _elapsed;
         private Color _baseColor;
 
         private void Awake()
         {
-            _text = GetComponent<TextMeshPro>();
+            _rectTransform = GetComponent<RectTransform>();
+            _text = GetComponent<TextMeshProUGUI>();
             _baseColor = _text.color;
         }
 
@@ -27,25 +32,90 @@ namespace ProjectRuntime.UI
         public static void Spawn(DamagePopup prefab, Vector3 worldPos, float amount)
         {
             if (prefab == null) return;
-            var popup = Instantiate(prefab, worldPos, Quaternion.identity);
-            popup.SetAmount(amount);
+
+            Camera worldCamera = Camera.main;
+            if (worldCamera == null) return;
+
+            Vector3 screenPoint = worldCamera.WorldToScreenPoint(worldPos);
+            if (screenPoint.z <= 0f) return;
+
+            RectTransform root = FindDamagePopupRoot();
+            if (root == null) return;
+
+            Canvas canvas = root.GetComponentInParent<Canvas>();
+            Camera uiCamera =
+                canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay
+                    ? canvas.worldCamera
+                    : null;
+            if (
+                !RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                    root,
+                    screenPoint,
+                    uiCamera,
+                    out Vector2 anchoredPosition
+                )
+            )
+            {
+                return;
+            }
+
+            root.SetAsLastSibling();
+            var popup = Instantiate(prefab, root);
+            popup.Initialize(anchoredPosition, amount);
         }
 
         public void SetAmount(float amount)
         {
-            if (_text == null) _text = GetComponent<TextMeshPro>();
             _text.text = Mathf.RoundToInt(amount).ToString();
+        }
+
+        private static RectTransform FindDamagePopupRoot()
+        {
+            GameObject existing = GameObject.Find(RootName);
+            if (existing != null && existing.TryGetComponent(out RectTransform root))
+            {
+                return root;
+            }
+
+            Canvas[] canvases = Object.FindObjectsByType<Canvas>(
+                FindObjectsInactive.Exclude,
+                FindObjectsSortMode.None
+            );
+            Canvas bestCanvas = null;
+            foreach (Canvas canvas in canvases)
+            {
+                if (!canvas.isRootCanvas)
+                    continue;
+
+                if (bestCanvas == null || canvas.sortingOrder > bestCanvas.sortingOrder)
+                    bestCanvas = canvas;
+            }
+
+            if (bestCanvas == null)
+                return null;
+
+            var rootObject = new GameObject(RootName, typeof(RectTransform));
+            var rootTransform = rootObject.GetComponent<RectTransform>();
+            rootTransform.SetParent(bestCanvas.transform, false);
+            rootTransform.anchorMin = Vector2.zero;
+            rootTransform.anchorMax = Vector2.one;
+            rootTransform.offsetMin = Vector2.zero;
+            rootTransform.offsetMax = Vector2.zero;
+            rootTransform.SetAsLastSibling();
+            return rootTransform;
+        }
+
+        private void Initialize(Vector2 anchoredPosition, float amount)
+        {
+            _rectTransform.anchoredPosition = anchoredPosition;
+            SetAmount(amount);
         }
 
         private void Update()
         {
             _elapsed += Time.deltaTime;
 
-            transform.position += Vector3.up * (riseSpeed * Time.deltaTime);
-
-            // Always face the active camera.
-            if (Camera.main != null)
-                transform.rotation = Camera.main.transform.rotation;
+            _rectTransform.anchoredPosition += Vector2.up * (riseSpeed * Time.deltaTime);
 
             float t = Mathf.Clamp01(_elapsed / lifetime);
             var c = _baseColor;
