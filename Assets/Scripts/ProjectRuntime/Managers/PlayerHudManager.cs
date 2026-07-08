@@ -134,6 +134,24 @@ namespace ProjectRuntime.Managers
         [field: SerializeField]
         private float CrystalNotificationFadeSeconds { get; set; } = 1.5f;
 
+        [field: SerializeField, Header("Edit Timer")]
+        private CanvasGroup EditTimer { get; set; }
+
+        [field: SerializeField]
+        private TextMeshProUGUI EditTimerTMP { get; set; }
+
+        [field: SerializeField]
+        private Image EditTimerImage { get; set; }
+
+        [field: SerializeField]
+        private float EditTimerFadeInSeconds { get; set; } = 0.25f;
+
+        [field: SerializeField]
+        private float EditTimerHoldSeconds { get; set; } = 1f;
+
+        [field: SerializeField]
+        private float EditTimerFadeOutSeconds { get; set; } = 0.75f;
+
         [field: SerializeField, Header("Minimap")]
         private MinimapController Minimap { get; set; }
 
@@ -193,6 +211,7 @@ namespace ProjectRuntime.Managers
         private int _lastDestroyedCrystals;
         private float _lastKnownHealth = -1f;
         private Coroutine _crystalNotificationRoutine;
+        private Coroutine _editTimerRoutine;
 
         /// <summary>
         /// Returns the scene-authored HUD instance. The HUD must exist in the active scene
@@ -771,6 +790,7 @@ namespace ProjectRuntime.Managers
             this.EnsureMinimap()?.SetBattleManager(battleManager);
             this.EnsureDirectionIndicators()?.SetBattleManager(battleManager);
             this.BoundBattleManager.OnRoundStateChanged += this.OnRoundStateChanged;
+            this.BoundBattleManager.OnRoundTimeEdited += this.OnRoundTimeEdited;
             this.RefreshTimerText();
             this.RefreshObjectiveText();
         }
@@ -783,6 +803,7 @@ namespace ProjectRuntime.Managers
             }
 
             this.BoundBattleManager.OnRoundStateChanged -= this.OnRoundStateChanged;
+            this.BoundBattleManager.OnRoundTimeEdited -= this.OnRoundTimeEdited;
             this.BoundBattleManager = null;
         }
 
@@ -850,6 +871,66 @@ namespace ProjectRuntime.Managers
             color.a = 0f;
             this.CrystalDestroyedNotification.color = color;
             this.CrystalDestroyedNotification.gameObject.SetActive(false);
+        }
+
+        // Fired on every client by BattleManager.RpcRoundTimeEdited with the exact applied delta
+        // whenever the round timer is edited (bonuses/penalties), independent of the natural countdown.
+        private void OnRoundTimeEdited(int deltaSeconds)
+        {
+            if (deltaSeconds != 0)
+            {
+                this.ShowEditTimer(deltaSeconds);
+            }
+        }
+
+        // Colors the text + image green/red and formats "+Xs"/"-Xs", then restarts the fade in/out so a
+        // second edit mid-animation snaps back to the start with the new value.
+        private void ShowEditTimer(int deltaSeconds)
+        {
+            bool gained = deltaSeconds > 0;
+            Color color = gained ? Color.green : Color.red;
+
+            this.EditTimerTMP.text = $"{(gained ? "+" : "-")}{Mathf.Abs(deltaSeconds)}s";
+            this.EditTimerTMP.color = color;
+            this.EditTimerImage.color = color;
+
+            if (this._editTimerRoutine != null)
+            {
+                this.StopCoroutine(this._editTimerRoutine);
+            }
+
+            this._editTimerRoutine = this.StartCoroutine(this.EditTimerCoroutine());
+        }
+
+        private IEnumerator EditTimerCoroutine()
+        {
+            this.EditTimer.gameObject.SetActive(true);
+
+            yield return this.FadeEditTimer(0f, 1f, this.EditTimerFadeInSeconds);
+            yield return new WaitForSecondsRealtime(this.EditTimerHoldSeconds);
+            yield return this.FadeEditTimer(1f, 0f, this.EditTimerFadeOutSeconds);
+
+            this.EditTimer.alpha = 0f;
+            this.EditTimer.gameObject.SetActive(false);
+        }
+
+        private IEnumerator FadeEditTimer(float from, float to, float duration)
+        {
+            if (duration <= 0f)
+            {
+                this.EditTimer.alpha = to;
+                yield break;
+            }
+
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                this.EditTimer.alpha = Mathf.Lerp(from, to, elapsed / duration);
+                yield return null;
+            }
+
+            this.EditTimer.alpha = to;
         }
 
         private void RefreshObjectiveText()

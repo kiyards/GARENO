@@ -129,6 +129,11 @@ namespace ProjectRuntime.Managers
 
         public event Action OnRoundStateChanged;
 
+        // Fires on every client with the exact signed delta whenever the round timer is edited via
+        // ServerAddRoundTime (bonuses/penalties) — distinct from the per-second natural countdown, and
+        // carrying the precise amount that the SyncVar diff alone can't reconstruct.
+        public event Action<int> OnRoundTimeEdited;
+
         public int RequiredCrystals => requiredCrystals;
         public int TotalCrystals => totalCrystals;
         public int DestroyedCrystals => destroyedCrystals;
@@ -574,7 +579,22 @@ namespace ProjectRuntime.Managers
                 return;
             }
 
+            int before = this.remainingRoundSeconds;
             this.ServerSetRemainingRoundSeconds(this.remainingRoundSeconds + seconds);
+
+            // Broadcast the effective delta (after clamping) so the HUD can show the exact amount. A
+            // fully-clamped edit (already at the cap/floor) applies nothing, so nothing is announced.
+            int appliedDelta = this.remainingRoundSeconds - before;
+            if (appliedDelta != 0)
+            {
+                this.RpcRoundTimeEdited(appliedDelta);
+            }
+        }
+
+        [ClientRpc]
+        private void RpcRoundTimeEdited(int deltaSeconds)
+        {
+            this.OnRoundTimeEdited?.Invoke(deltaSeconds);
         }
 
         [Server]
