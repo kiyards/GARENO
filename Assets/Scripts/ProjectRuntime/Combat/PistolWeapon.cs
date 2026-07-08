@@ -119,10 +119,16 @@ namespace ProjectRuntime.Combat
             _clientLastFireTime = NetworkTime.time;
 
             // Fallback hit point along the aim ray when nothing is hit.
-            cam.GetAimData(maxRange, out Vector3 origin, out Vector3 dir, out _);
+            bool occluded = cam.GetAimData(
+                maxRange,
+                out Vector3 origin,
+                out Vector3 dir,
+                out RaycastHit occlusionHit
+            );
             uint targetNetId = 0;
             Vector3 hitPoint = origin + dir * maxRange;
             Vector3 hitNormal = -dir;
+            int hitLayer = -1;
 
             var hits = cam.GetRaycastData(maxRange);
             if (hits.Count > 0)
@@ -130,12 +136,21 @@ namespace ProjectRuntime.Combat
                 var first = hits[0];
                 hitPoint = first.hitPoint;
                 hitNormal = first.hit.normal;
+                hitLayer = first.hit.collider.gameObject.layer;
                 var identity = first.hit.collider.GetComponentInParent<NetworkIdentity>();
                 if (identity != null)
                     targetNetId = identity.netId;
             }
+            else if (occluded)
+            {
+                // Nothing shootable in range, but the aim ray is blocked (e.g. a wall or the
+                // ground) — use that occluder so environment impact VFX still lands correctly.
+                hitPoint = occlusionHit.point;
+                hitNormal = occlusionHit.normal;
+                hitLayer = occlusionHit.collider.gameObject.layer;
+            }
 
-            CmdFire(targetNetId, hitPoint, dir, hitNormal);
+            CmdFire(targetNetId, hitPoint, dir, hitNormal, hitLayer);
             cam.AddShake(shakeAmplitude, shakeDuration);
         }
 
@@ -147,7 +162,13 @@ namespace ProjectRuntime.Combat
         }
 
         [Command]
-        private void CmdFire(uint targetNetId, Vector3 hitPoint, Vector3 fireDirection, Vector3 hitNormal)
+        private void CmdFire(
+            uint targetNetId,
+            Vector3 hitPoint,
+            Vector3 fireDirection,
+            Vector3 hitNormal,
+            int hitLayer
+        )
         {
             if (player != null && (player.IsDungeonMaster || player.IsBearTrapped))
                 return;
@@ -184,7 +205,14 @@ namespace ProjectRuntime.Combat
                         RpcPlayHitVfx(hitPoint, fireDirection);
                     else
                         RpcPlayImpactVfx(hitPoint, hitNormal);
+                    return;
                 }
+            }
+
+            if (hitLayer >= 0)
+            {
+                Debug.Log("Hit wall");
+                RpcPlayImpactVfx(hitPoint, hitNormal);
             }
         }
 
@@ -233,7 +261,10 @@ namespace ProjectRuntime.Combat
         [ClientRpc]
         private void RpcShowDamageNumber(Vector3 worldPos, float amount)
         {
-            if (PlayerManager.Instance == null || PlayerManager.Instance.playerRole != PlayerRole.Survivor)
+            if (
+                PlayerManager.Instance == null
+                || PlayerManager.Instance.playerRole != PlayerRole.Survivor
+            )
                 return;
 
             DamagePopup.Spawn(damagePopupPrefab, worldPos, amount);
