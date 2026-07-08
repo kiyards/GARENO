@@ -368,6 +368,8 @@ MonoBehaviour:
   immobilizeDuration: 3
   flashInterval: 1.25
   flashDuration: 0.5
+  explosionVfxPrefab: {fileID: 8941579149988819608, guid: 1bec3c9215094074bab05a4724dff734, type: 3}
+  explosionVfxLifetime: 3
 --- !u!114 &7324124406378624339
 MonoBehaviour:
   m_ObjectHideFlags: 0

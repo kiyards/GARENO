@@ -37,12 +37,21 @@ namespace ProjectRuntime.Actor
         [SerializeField]
         private float flashDuration = 0.25f;
 
+        [Header("VFX")]
+        [SerializeField]
+        private GameObject explosionVfxPrefab;
+
+        [SerializeField]
+        private float explosionVfxLifetime = 3f;
+
         [SyncVar(hook = nameof(OnArmedSynced))]
         private bool _isArmed;
 
         private Health _health;
         private Renderer[] _renderers;
-        [SyncVar] private bool _exploded;
+
+        [SyncVar]
+        private bool _exploded;
 
         public bool IsArmed => _isArmed;
 
@@ -164,33 +173,26 @@ namespace ProjectRuntime.Actor
                     * falloff;
                 player.ServerApplyKnockback(impulse);
                 player.ServerImmobilize(immobilizeDuration);
-
             }
 
+            if (isClient)
+            {
+                // Host is its own client too — play now rather than via the queued Rpc below,
+                // which would otherwise race with NetworkServer.Destroy() unspawning this object.
+                HitVfx.PlayAt(explosionVfxPrefab, transform.position, explosionVfxLifetime);
+            }
+
+            RpcPlayExplosionVfx(transform.position);
             NetworkServer.Destroy(gameObject);
         }
 
-        public override void OnStopClient()
+        [ClientRpc]
+        private void RpcPlayExplosionVfx(Vector3 worldPos)
         {
-            base.OnStopClient();
-            if (_exploded)
-                SpawnExplosionSphere();
-        }
+            if (isServer)
+                return; // Host already played this above.
 
-        private void SpawnExplosionSphere()
-        {
-            GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            sphere.name = "C4ExplosionRadius";
-            sphere.transform.position = transform.position;
-            sphere.transform.localScale = Vector3.one * explosionRadius * 2f;
-
-            if (sphere.TryGetComponent(out Collider col))
-                Destroy(col);
-
-            if (sphere.TryGetComponent(out Renderer r))
-                r.material.color = new Color(1f, 0.45f, 0f, 1f);
-
-            Destroy(sphere, 0.35f);
+            HitVfx.PlayAt(explosionVfxPrefab, worldPos, explosionVfxLifetime);
         }
 
         [Server]
@@ -237,7 +239,7 @@ namespace ProjectRuntime.Actor
         private void ApplyArmedVisual(bool armed)
         {
             Color targetColor = armed
-                ? new Color(0.55f, 0.45f, 0.1f, 1f)  // dim amber: counting down between flashes
+                ? new Color(0.55f, 0.45f, 0.1f, 1f) // dim amber: counting down between flashes
                 : new Color(0.15f, 0.55f, 0.15f, 1f); // green: unarmed
             SetAllRenderersColor(targetColor);
         }
@@ -246,7 +248,8 @@ namespace ProjectRuntime.Actor
         {
             CacheComponents();
             foreach (Renderer r in _renderers)
-                if (r != null) r.material.color = color;
+                if (r != null)
+                    r.material.color = color;
         }
     }
 }
