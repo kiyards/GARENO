@@ -385,8 +385,15 @@ namespace FMODUnity
         {
             if (RuntimeManager.IsInitialized && RuntimeManager.HaveMasterBanksLoaded)
             {
-                RuntimeManager.GetBus("bus:/").setPaused(EditorApplication.isPaused);
-                RuntimeManager.StudioSystem.update();
+                // HaveMasterBanksLoaded only checks the C# loadedBanks cache, so the master bus can
+                // still be unresolvable here (studio system mid-teardown on play-mode exit, strings
+                // bank not yet applied, etc.). Resolve it via getBus and bail on failure instead of
+                // using RuntimeManager.GetBus, which throws BusNotFoundException.
+                if (RuntimeManager.StudioSystem.getBus("bus:/", out FMOD.Studio.Bus masterBus) == FMOD.RESULT.OK)
+                {
+                    masterBus.setPaused(EditorApplication.isPaused);
+                    RuntimeManager.StudioSystem.update();
+                }
             }
         }
 

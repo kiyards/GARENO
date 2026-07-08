@@ -1304,10 +1304,10 @@ namespace ProjectRuntime.Actor
                 behaviour.enabled = false;
             }
 
-            foreach (var networkIdentity in previewObject.GetComponentsInChildren<NetworkIdentity>(true))
-            {
-                Object.Destroy(networkIdentity);
-            }
+            // NetworkIdentity is a Behaviour, so it's already disabled by the loop above. Don't try to
+            // Destroy it: components with [RequireComponent(typeof(NetworkIdentity))] (e.g. FlashbangTrap)
+            // depend on it, so Unity refuses the removal and logs "Can't remove NetworkIdentity...".
+            // The preview is a local, never-spawned Instantiate, so an inert disabled identity is harmless.
 
             foreach (var collider in previewObject.GetComponentsInChildren<Collider>(true))
             {
