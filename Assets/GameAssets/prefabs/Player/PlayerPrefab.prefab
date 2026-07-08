@@ -119,22 +119,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4329926396842036309}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8101000000000000123
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1603085157949592150}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
-  NoiseProfile: {fileID: 11400000, guid: f3a7c1e94b2d6058a1c3e5079b2d4f68, type: 2}
-  PivotOffset: {x: 0, y: 0, z: 0}
-  AmplitudeGain: 0
-  FrequencyGain: 1
 --- !u!114 &3755640324832242681
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -210,6 +194,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damping: 0
+--- !u!114 &8101000000000000123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1603085157949592150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NoiseProfile: {fileID: 11400000, guid: f3a7c1e94b2d6058a1c3e5079b2d4f68, type: 2}
+  PivotOffset: {x: 0, y: 0, z: 0}
+  AmplitudeGain: 0
+  FrequencyGain: 0.05
+  m_NoiseOffsets: {x: 562.9134, y: -184.23352, z: -719.69055}
 --- !u!1 &1711282041589720540
 GameObject:
   m_ObjectHideFlags: 0
@@ -722,6 +723,7 @@ MonoBehaviour:
   spectateTarget: {fileID: 0}
   pitchMin: -90
   pitchMax: 90
+  maxShakeAmplitude: 2
   aimFirepointOffset: 0.1
   topDownHeight: 24
   topDownPitch: 90
@@ -1051,6 +1053,8 @@ MonoBehaviour:
   maxRange: 100
   reloadDuration: 1.5
   fireCooldown: 0.25
+  shakeAmplitude: 0.8
+  shakeDuration: 0.3
   damagePopupPrefab: {fileID: 8824996141537536103, guid: 8f299d7398d8b7c48917932052b6b2f6, type: 3}
   hitVfxPrefab: {fileID: 7015456706586739014, guid: d10879b2dbd9fad4d93438d652ee3afb, type: 3}
   hitVfxLifetime: 2
@@ -1076,6 +1080,7 @@ MonoBehaviour:
   placementRayDistance: 1000
   placementIndicatorRadius: 1.5
   placementIndicatorHeight: 0.03
+  placementPreviewLift: 0.12
   placementChargeDuration: 1
   Mana: 0
   nemesisBaseCountdown: 120
@@ -1099,6 +1104,8 @@ MonoBehaviour:
   aimTargetMask:
     serializedVersion: 2
     m_Bits: 64
+  shakeAmplitude: 0.8
+  shakeDuration: 0.3
 --- !u!114 &7893470114192060199
 MonoBehaviour:
   m_ObjectHideFlags: 0
