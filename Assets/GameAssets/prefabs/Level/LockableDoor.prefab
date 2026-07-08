@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 910105130100000002}
   - component: {fileID: 910105130100000003}
-  - component: {fileID: 910105130100000004}
   - component: {fileID: 910105130100000005}
   m_Layer: 10
   m_Name: LockableDoor
@@ -54,27 +53,6 @@ MonoBehaviour:
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
---- !u!65 &910105130100000004
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910105130100000001}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 3.4, y: 3.2, z: 2.8}
-  m_Center: {x: 0, y: 1.5, z: 0.75}
 --- !u!114 &910105130100000005
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -93,8 +71,8 @@ MonoBehaviour:
   doorRoot: {fileID: 910105130100000007}
   unlockedPose: {fileID: 910105130100000012}
   lockedPose: {fileID: 910105130100000014}
-  interactionCollider: {fileID: 910105130100000004}
-  pushVolume: {fileID: 910105130100000004}
+  interactionCollider: {fileID: 910105130100000010}
+  pushVolume: {fileID: 910105130100000010}
   lockDuration: 10
   cooldownDuration: 10
   moveDuration: 1
