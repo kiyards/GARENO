@@ -330,7 +330,8 @@ namespace ProjectRuntime.Actor
                 Destroy(corpseCollider);
             }
 
-            GetComponent<PlayerVisualAnimator>().ApplyDeathPose(corpse.GetComponentInChildren<Animator>());
+            GetComponent<PlayerVisualAnimator>()
+                .ApplyDeathPose(corpse.GetComponentInChildren<Animator>());
         }
 
         public void BeginDeadBodyTransition(Vector3 position, Quaternion rotation, float delay)
@@ -345,7 +346,11 @@ namespace ProjectRuntime.Actor
             );
         }
 
-        private IEnumerator ApplyDeadBodyAfterDelay(Vector3 position, Quaternion rotation, float delay)
+        private IEnumerator ApplyDeadBodyAfterDelay(
+            Vector3 position,
+            Quaternion rotation,
+            float delay
+        )
         {
             if (delay > 0f)
             {
@@ -693,8 +698,6 @@ namespace ProjectRuntime.Actor
 
             if (rb != null)
             {
-                rb.linearVelocity = Vector3.zero;
-                rb.angularVelocity = Vector3.zero;
                 rb.position = clampedPosition;
             }
 
@@ -754,7 +757,11 @@ namespace ProjectRuntime.Actor
         }
 
         [Command]
-        public void CmdFireDungeonMasterTurret(uint targetNetId, Vector3 hitPoint, Vector3 fireDirection)
+        public void CmdFireDungeonMasterTurret(
+            uint targetNetId,
+            Vector3 hitPoint,
+            Vector3 fireDirection
+        )
         {
             Turret.ServerFire(targetNetId, hitPoint, fireDirection);
         }
@@ -1035,8 +1042,6 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            rb.linearVelocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
             rb.useGravity = false;
             rb.isKinematic = true;
 

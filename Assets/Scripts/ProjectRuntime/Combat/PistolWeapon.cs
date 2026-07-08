@@ -211,7 +211,6 @@ namespace ProjectRuntime.Combat
 
             if (hitLayer >= 0)
             {
-                Debug.Log("Hit wall");
                 RpcPlayImpactVfx(hitPoint, hitNormal);
             }
         }

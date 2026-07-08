@@ -73,9 +73,6 @@ namespace ProjectRuntime.Actor
 
         [Header("Assembly")]
         [SerializeField]
-        private float assemblyDuration = 2f;
-
-        [SerializeField]
         private float disassemblyDuration = 1.5f;
 
         [SyncVar(hook = nameof(OnOwnerNetIdChanged))]
