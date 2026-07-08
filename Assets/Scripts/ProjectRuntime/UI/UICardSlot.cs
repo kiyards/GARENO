@@ -15,6 +15,9 @@ namespace ProjectRuntime.UI
         [Header("Scene References")]
         [SerializeField] private TextMeshProUGUI cardNameText;
         [SerializeField] private TextMeshProUGUI manaCostText;
+        [SerializeField] private Image cardTypeIcon;
+        [SerializeField] private Sprite zombieTypeIcon;
+        [SerializeField] private Sprite trapTypeIcon;
         [SerializeField] private float hoverLift = 24f;
         [SerializeField] private float hoverMoveDuration = 0.1f;
 
@@ -109,6 +112,8 @@ namespace ProjectRuntime.UI
                 this.cardImage.enabled = true;
             }
 
+            this.cardTypeIcon.sprite = this.GetCardTypeIcon(card.CardType);
+            this.cardTypeIcon.enabled = true;
             this.SetDarkened(!this._isInteractable);
         }
 
@@ -179,6 +184,8 @@ namespace ProjectRuntime.UI
                 this.cardImage.enabled = false;
             }
 
+            this.cardTypeIcon.sprite = null;
+            this.cardTypeIcon.enabled = false;
             this.SetDarkened(true);
         }
 
@@ -281,6 +288,17 @@ namespace ProjectRuntime.UI
             {
                 this.darkenOverlay.SetActive(darkened);
             }
+        }
+
+        private Sprite GetCardTypeIcon(CardType cardType)
+        {
+            return cardType switch
+            {
+                CardType.ZOMBIE => this.zombieTypeIcon,
+                CardType.TRAP => this.trapTypeIcon,
+                CardType.WEAPON => this.trapTypeIcon,
+                _ => this.trapTypeIcon,
+            };
         }
 
         private void EnsureRaycastTarget()

@@ -374,7 +374,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -687,6 +687,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardNameText: {fileID: 7100000000000000013}
   manaCostText: {fileID: 1856932926319647431}
+  cardTypeIcon: {fileID: 1369022126347600018}
+  zombieTypeIcon: {fileID: 21300000, guid: 4d5f74c4ec0ae5945b973c83c45d7aa0, type: 3}
+  trapTypeIcon: {fileID: 21300000, guid: deb7976cbf447c8488b24e2a7e7ef172, type: 3}
   darkenOverlay: {fileID: 7100000000000000030}
   cardImage: {fileID: 3900727689474102592}
 --- !u!1 &7100000000000000010
