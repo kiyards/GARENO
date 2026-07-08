@@ -67,6 +67,12 @@ namespace ProjectRuntime.Actor
         [SerializeField]
         private float hitVfxLifetime = 2f;
 
+        [SerializeField]
+        private GameObject impactVfxPrefab;
+
+        [SerializeField]
+        private float impactVfxLifetime = 2f;
+
         [Header("Lifetime")]
         [SerializeField]
         private float lifetime = 20f;
@@ -199,6 +205,12 @@ namespace ProjectRuntime.Actor
         public void RpcPlayHitVfx(Vector3 worldPos, Vector3 fireDirection)
         {
             HitVfx.Play(hitVfxPrefab, worldPos, fireDirection, hitVfxLifetime);
+        }
+
+        [ClientRpc]
+        public void RpcPlayImpactVfx(Vector3 worldPos, Vector3 hitNormal)
+        {
+            HitVfx.PlayImpact(impactVfxPrefab, worldPos, hitNormal, impactVfxLifetime);
         }
 
         [ClientRpc]

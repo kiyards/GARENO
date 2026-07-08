@@ -823,10 +823,12 @@ namespace ProjectRuntime.Actor
         public void CmdFireDungeonMasterTurret(
             uint targetNetId,
             Vector3 hitPoint,
-            Vector3 fireDirection
+            Vector3 fireDirection,
+            Vector3 hitNormal,
+            int hitLayer
         )
         {
-            Turret.ServerFire(targetNetId, hitPoint, fireDirection);
+            Turret.ServerFire(targetNetId, hitPoint, fireDirection, hitNormal, hitLayer);
         }
 
         [Command]

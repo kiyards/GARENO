@@ -144,12 +144,23 @@ namespace ProjectRuntime.Actor
 
             _clientLastFireTime = NetworkTime.time;
 
-            if (!TryGetCursorAim(out Vector3 hitPoint, out uint targetNetId, out Vector3 fireDirection))
+            if (!TryGetCursorAim(
+                    out Vector3 hitPoint,
+                    out uint targetNetId,
+                    out Vector3 fireDirection,
+                    out Vector3 hitNormal,
+                    out int hitLayer))
             {
                 return;
             }
 
-            player.CmdFireDungeonMasterTurret(targetNetId, hitPoint, fireDirection);
+            player.CmdFireDungeonMasterTurret(
+                targetNetId,
+                hitPoint,
+                fireDirection,
+                hitNormal,
+                hitLayer
+            );
             player.cam.AddShake(shakeAmplitude, shakeDuration);
         }
 
@@ -171,7 +182,13 @@ namespace ProjectRuntime.Actor
         }
 
         [Server]
-        public void ServerFire(uint targetNetId, Vector3 hitPoint, Vector3 fireDirection)
+        public void ServerFire(
+            uint targetNetId,
+            Vector3 hitPoint,
+            Vector3 fireDirection,
+            Vector3 hitNormal,
+            int hitLayer
+        )
         {
             var player = ResolvePlayer();
             if (
@@ -215,12 +232,14 @@ namespace ProjectRuntime.Actor
                 )
             )
             {
+                PlayImpactVfxIfSurfaceHit(hitPoint, hitNormal, hitLayer);
                 return;
             }
 
             var targetManager = targetIdentity.GetComponentInParent<PlayerManager>();
             if (targetManager == null || targetManager.playerRole != PlayerRole.Survivor)
             {
+                PlayImpactVfxIfSurfaceHit(hitPoint, hitNormal, hitLayer);
                 return;
             }
 
@@ -229,6 +248,7 @@ namespace ProjectRuntime.Actor
                 ?? targetIdentity.GetComponentInChildren<IDamageable>();
             if (damageable == null || !damageable.IsAlive)
             {
+                PlayImpactVfxIfSurfaceHit(hitPoint, hitNormal, hitLayer);
                 return;
             }
 
@@ -246,11 +266,27 @@ namespace ProjectRuntime.Actor
             }
         }
 
-        private bool TryGetCursorAim(out Vector3 hitPoint, out uint targetNetId, out Vector3 fireDirection)
+        private void PlayImpactVfxIfSurfaceHit(Vector3 hitPoint, Vector3 hitNormal, int hitLayer)
+        {
+            if (hitLayer >= 0)
+            {
+                _activeTurret.RpcPlayImpactVfx(hitPoint, hitNormal);
+            }
+        }
+
+        private bool TryGetCursorAim(
+            out Vector3 hitPoint,
+            out uint targetNetId,
+            out Vector3 fireDirection,
+            out Vector3 hitNormal,
+            out int hitLayer
+        )
         {
             hitPoint = Vector3.zero;
             targetNetId = 0;
             fireDirection = Vector3.zero;
+            hitNormal = Vector3.zero;
+            hitLayer = -1;
 
             var player = ResolvePlayer();
             if (player == null)
@@ -273,6 +309,11 @@ namespace ProjectRuntime.Actor
                 aimOcclusionMask
             );
             hitPoint = hasOcclusion ? occlusionHit.point : ray.origin + ray.direction * range;
+            if (hasOcclusion)
+            {
+                hitNormal = occlusionHit.normal;
+                hitLayer = occlusionHit.collider.gameObject.layer;
+            }
 
             var hits = Physics.RaycastAll(ray, range, aimTargetMask);
             System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
@@ -304,6 +345,8 @@ namespace ProjectRuntime.Actor
                 }
 
                 hitPoint = hit.point;
+                hitNormal = hit.normal;
+                hitLayer = hit.collider.gameObject.layer;
                 var identity = hit.collider.GetComponentInParent<NetworkIdentity>();
                 if (identity != null)
                 {
