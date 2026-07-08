@@ -426,7 +426,7 @@ MonoBehaviour:
   syncInterval: 0
   player: {fileID: 7578397109688941967}
   lockCursorOnStart: 1
-  sensitivity: 40
+  sensitivity: 20
   moveVec: {x: 0, y: 0, z: 0}
   aimVec: {x: 0, y: 0}
   jump: 0
