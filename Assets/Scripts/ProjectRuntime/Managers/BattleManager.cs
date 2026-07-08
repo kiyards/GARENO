@@ -435,19 +435,23 @@ namespace ProjectRuntime.Managers
         }
 
         [Server]
-        public void ServerReportCrystalDamaged(CrystalObjective crystal)
+        public void ServerReportCrystalDamaged(CrystalObjective crystal, Vector3 hitPoint)
         {
             if (
                 crystal == null
-                || this.crystalGuidanceRevealed
                 || this.roundPhase != RoundPhase.DestroyCrystals
             )
             {
                 return;
             }
 
-            this.crystalGuidanceRevealed = true;
-            this.NotifyRoundStateChanged();
+            this.RpcPlayWorldAudio(AudioEventIds.CrystalShootSfx, hitPoint);
+
+            if (!this.crystalGuidanceRevealed)
+            {
+                this.crystalGuidanceRevealed = true;
+                this.NotifyRoundStateChanged();
+            }
         }
 
         [Server]
@@ -461,11 +465,21 @@ namespace ProjectRuntime.Managers
             this.ServerRefreshCrystalRegistry();
             this.destroyedCrystals = Mathf.Min(this.destroyedCrystals + 1, this.requiredCrystals);
             this.ServerShortenNemesisCountdown(this.nemesisCrystalShortenSeconds);
+            bool completedCrystals = this.destroyedCrystals >= this.requiredCrystals;
+            Vector3 crystalPosition = crystal.transform.position;
+            this.RpcPlayWorldAudio(AudioEventIds.CrystalDestroySfx, crystalPosition);
 
-            if (this.destroyedCrystals >= this.requiredCrystals)
+            if (completedCrystals)
             {
+                this.RpcPlayWorldAudio(AudioEventIds.CrystalAllDownedSfx, crystalPosition);
                 this.ServerCompleteCrystalObjective();
             }
+        }
+
+        [ClientRpc]
+        private void RpcPlayWorldAudio(string eventId, Vector3 worldPos)
+        {
+            AudioManager.Instance?.PlayOneShot(eventId, worldPos);
         }
 
         [Server]

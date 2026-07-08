@@ -86,13 +86,12 @@ namespace ProjectRuntime.Objectives
         [Server]
         private void OnDamaged(float amount, uint sourceNetId, Vector3 hitPoint)
         {
-            if (this.isGuidanceRevealed)
-            {
-                return;
-            }
+            BattleManager.Instance?.ServerReportCrystalDamaged(this, hitPoint);
 
-            this.isGuidanceRevealed = true;
-            BattleManager.Instance?.ServerReportCrystalDamaged(this);
+            if (!this.isGuidanceRevealed)
+            {
+                this.isGuidanceRevealed = true;
+            }
         }
 
         [Server]

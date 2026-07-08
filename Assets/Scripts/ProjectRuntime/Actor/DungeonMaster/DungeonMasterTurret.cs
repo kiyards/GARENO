@@ -201,6 +201,12 @@ namespace ProjectRuntime.Actor
             HitVfx.Play(hitVfxPrefab, worldPos, fireDirection, hitVfxLifetime);
         }
 
+        [ClientRpc]
+        public void RpcPlayFireAudio(string eventId, Vector3 worldPos)
+        {
+            AudioManager.Instance?.PlayOneShot(eventId, worldPos);
+        }
+
         public override void OnStartClient()
         {
             base.OnStartClient();

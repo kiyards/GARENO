@@ -78,6 +78,12 @@ namespace ProjectRuntime.Actor
         private float dungeonMasterMaxY = 40f;
 
         [Header("Effects")]
+        [SerializeField]
+        private float survivorFootstepSpeedThreshold = 0.15f;
+
+        [SerializeField]
+        private float survivorFootstepInterval = 0.45f;
+
         private FlashEffect _flashEffect;
 
         public void SetFlashEffect(FlashEffect effect)
@@ -153,6 +159,9 @@ namespace ProjectRuntime.Actor
         private bool _initialRigidbodyIsKinematic;
         private bool _cachedRoleDefaults;
         private Coroutine _deadBodyTransitionCoroutine;
+        private Vector3 _lastFootstepPosition;
+        private bool _hasFootstepPosition;
+        private float _nextFootstepTime;
 
         public float SpeedMultiplier => _speedMultiplier;
         public bool IsInactive => currentState is BaseInactiveState;
@@ -233,11 +242,56 @@ namespace ProjectRuntime.Actor
         protected override void Update()
         {
             base.Update();
+            this.TickSurvivorFootstepAudio();
 
             if (isLocalPlayer)
             {
                 ClientTickDungeonMasterJumpHotkeys();
             }
+        }
+
+        private void TickSurvivorFootstepAudio()
+        {
+            if (
+                !NetworkClient.active
+                || IsDungeonMaster
+                || IsInactive
+                || Time.deltaTime <= 0f
+            )
+            {
+                this.ResetFootstepAudioTracking();
+                return;
+            }
+
+            Vector3 currentPosition = transform.position;
+            if (!this._hasFootstepPosition)
+            {
+                this._lastFootstepPosition = currentPosition;
+                this._hasFootstepPosition = true;
+                return;
+            }
+
+            Vector3 delta = currentPosition - this._lastFootstepPosition;
+            this._lastFootstepPosition = currentPosition;
+            delta.y = 0f;
+
+            if (
+                !groundCheck.IsGrounded
+                || delta.magnitude / Time.deltaTime < this.survivorFootstepSpeedThreshold
+                || Time.time < this._nextFootstepTime
+            )
+            {
+                return;
+            }
+
+            AudioManager.Instance?.PlayOneShot(AudioEventIds.PlayerFootstepSfx, currentPosition);
+            this._nextFootstepTime = Time.time + this.survivorFootstepInterval;
+        }
+
+        private void ResetFootstepAudioTracking()
+        {
+            this._hasFootstepPosition = false;
+            this._nextFootstepTime = Time.time;
         }
 
         protected override void FixedUpdate()

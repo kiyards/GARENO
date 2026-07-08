@@ -169,6 +169,10 @@ namespace ProjectRuntime.Actor
             {
                 // Host is its own client too — play now rather than via the queued Rpc below,
                 // which would otherwise race with NetworkServer.Destroy() unspawning this object.
+                AudioManager.Instance?.PlayOneShot(
+                    AudioEventIds.ZombieCreeperExplodeSfx,
+                    this.transform.position
+                );
                 HitVfx.PlayAt(
                     this.explosionVfxPrefab,
                     this.transform.position,
@@ -187,6 +191,7 @@ namespace ProjectRuntime.Actor
                 return; // Host already played this above.
             }
 
+            AudioManager.Instance?.PlayOneShot(AudioEventIds.ZombieCreeperExplodeSfx, worldPos);
             HitVfx.PlayAt(this.explosionVfxPrefab, worldPos, this.explosionVfxLifetime);
         }
     }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Mirror;
 using ProjectRuntime.Actor.PlayerStates;
+using ProjectRuntime.Managers;
 using ProjectRuntime.Network;
 using UnityEngine;
 
@@ -114,6 +115,13 @@ namespace ProjectRuntime.Actor
         [SerializeField]
         private float characterCooldownDuration = 0.5f;
 
+        [Header("Audio")]
+        [SerializeField]
+        private float movementAudioSpeedThreshold = 0.05f;
+
+        [SerializeField]
+        private float movementAudioInterval = 0.55f;
+
         [SyncVar(hook = nameof(OnOwnerNetIdChanged))]
         private uint ownerNetId;
 
@@ -147,6 +155,9 @@ namespace ProjectRuntime.Actor
 
         private GameplayPlayer _attachedOwner;
         private Rigidbody _rb;
+        private Vector3 _lastMovementAudioPosition;
+        private bool _hasMovementAudioPosition;
+        private float _nextMovementAudioTime;
 
         // Owner-side lunge dash: the lunge drives the Nemesis forward locally (the owner is authoritative
         // over its NetworkTransform), so the forward motion replicates to every peer like ordinary
@@ -300,7 +311,9 @@ namespace ProjectRuntime.Actor
         [ClientRpc]
         private void RpcAttackPerformed(int attackType)
         {
-            OnAttackPerformedEvent?.Invoke((NemesisAttackType)attackType);
+            var type = (NemesisAttackType)attackType;
+            AudioManager.Instance?.PlayOneShot(GetAttackAudioEventId(type), transform.position);
+            OnAttackPerformedEvent?.Invoke(type);
         }
 
         // Close-range AOE centered on the Nemesis.
@@ -526,6 +539,60 @@ namespace ProjectRuntime.Actor
             {
                 transform.position += delta;
             }
+        }
+
+        private void Update()
+        {
+            this.TickMovementAudio();
+        }
+
+        private void TickMovementAudio()
+        {
+            if (!NetworkClient.active || _status != NemesisStatus.Active || Time.deltaTime <= 0f)
+            {
+                this.ResetMovementAudioTracking();
+                return;
+            }
+
+            Vector3 currentPosition = transform.position;
+            if (!this._hasMovementAudioPosition)
+            {
+                this._lastMovementAudioPosition = currentPosition;
+                this._hasMovementAudioPosition = true;
+                return;
+            }
+
+            Vector3 delta = currentPosition - this._lastMovementAudioPosition;
+            this._lastMovementAudioPosition = currentPosition;
+            delta.y = 0f;
+
+            if (
+                delta.magnitude / Time.deltaTime < this.movementAudioSpeedThreshold
+                || Time.time < this._nextMovementAudioTime
+            )
+            {
+                return;
+            }
+
+            AudioManager.Instance?.PlayOneShot(AudioEventIds.ZombieWalkSfx, currentPosition);
+            this._nextMovementAudioTime = Time.time + this.movementAudioInterval;
+        }
+
+        private void ResetMovementAudioTracking()
+        {
+            this._hasMovementAudioPosition = false;
+            this._nextMovementAudioTime = Time.time;
+        }
+
+        private static string GetAttackAudioEventId(NemesisAttackType type)
+        {
+            return type switch
+            {
+                NemesisAttackType.Punch => AudioEventIds.NemesisPunchSfx,
+                NemesisAttackType.Lunge => AudioEventIds.NemesisLungeSfx,
+                NemesisAttackType.GroundSlam => AudioEventIds.NemesisGroundSlamSfx,
+                _ => string.Empty,
+            };
         }
 
         public override void OnStartClient()

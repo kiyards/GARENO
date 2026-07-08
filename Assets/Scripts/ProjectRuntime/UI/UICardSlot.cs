@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using ProjectRuntime.Managers;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -132,6 +133,7 @@ namespace ProjectRuntime.UI
                 return;
             }
 
+            AudioManager.Instance?.PlayOneShot(AudioEventIds.UiCardClickSfx);
             this._owner.SelectSlot(this._slotIndex);
         }
 
@@ -140,6 +142,11 @@ namespace ProjectRuntime.UI
             if (string.IsNullOrEmpty(this._cardId))
             {
                 return;
+            }
+
+            if (this._owner != null)
+            {
+                AudioManager.Instance?.PlayOneShot(AudioEventIds.UiCardHoverSfx);
             }
 
             this.SetHovered(true);

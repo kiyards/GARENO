@@ -354,6 +354,7 @@ namespace ProjectRuntime.Actor
                 && mouse.rightButton.wasPressedThisFrame
             )
             {
+                AudioManager.Instance?.PlayOneShot(AudioEventIds.UiCardCancelSfx);
                 this.CancelPlacement();
                 return;
             }
@@ -873,6 +874,7 @@ namespace ProjectRuntime.Actor
                 return false;
             }
 
+            this.RpcPlayCardAudio((int)card.Effect, groundPosition);
             this.Mana = Mathf.Max(0f, this.Mana - card.ManaCost);
             this.ServerReplacePlayedCard(handSlot, cardId);
             return true;
@@ -922,9 +924,21 @@ namespace ProjectRuntime.Actor
                 return false;
             }
 
+            this.RpcPlayCardAudio((int)card.Effect, groundPosition);
             this.ServerReplacePlayedCard(handSlot, cardId);
             this.ServerClearCommittedCardCharge();
             return true;
+        }
+
+        [ClientRpc]
+        private void RpcPlayCardAudio(int cardEffect, Vector3 worldPos)
+        {
+            AudioManager.Instance?.PlayOneShot(AudioEventIds.CardSpawnSfx, worldPos);
+
+            if ((CardEffectType)cardEffect == CardEffectType.PLACE_FLASHBANG)
+            {
+                AudioManager.Instance?.PlayOneShot(AudioEventIds.FlashbangSfx, worldPos);
+            }
         }
 
         [Server]

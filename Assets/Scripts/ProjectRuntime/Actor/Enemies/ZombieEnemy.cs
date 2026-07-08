@@ -74,6 +74,10 @@ namespace ProjectRuntime.Actor
         [SerializeField] private float deathDespawnDelay = 3.5f;
         [SerializeField] private bool logVisualStateChanges;
 
+        [Header("Audio")]
+        [SerializeField] private float movementAudioSpeedThreshold = 0.05f;
+        [SerializeField] private float movementAudioInterval = 0.55f;
+
         protected float AttackRange => this.attackRange;
 
         protected bool IsTargetable => this.isTargetable;
@@ -103,6 +107,9 @@ namespace ProjectRuntime.Actor
         private bool _hasWanderDestination;
         private bool _isReorienting;
         private Coroutine _deathDestroyCoroutine;
+        private Vector3 _lastMovementAudioPosition;
+        private bool _hasMovementAudioPosition;
+        private float _nextMovementAudioTime;
 
         private void Awake()
         {
@@ -169,6 +176,7 @@ namespace ProjectRuntime.Actor
         private void Update()
         {
             this.TickLoopingVisualState();
+            this.TickMovementAudio();
         }
 
         [Server]
@@ -331,6 +339,7 @@ namespace ProjectRuntime.Actor
             this._attackDamageApplied = false;
             this._lungeStartPosition = this.transform.position;
             this.ServerSetVisualState(ZombieVisualState.Lunge);
+            this.RpcPlayZombieAttackAudio(this.transform.position);
 
             Vector3 direction = target.transform.position - this.transform.position;
             direction.y = 0f;
@@ -809,6 +818,54 @@ namespace ProjectRuntime.Actor
                    state == ZombieVisualState.Idle ||
                    state == ZombieVisualState.Walk ||
                    state == ZombieVisualState.Run;
+        }
+
+        private void TickMovementAudio()
+        {
+            if (
+                !NetworkClient.active
+                || (this.visualState != ZombieVisualState.Walk && this.visualState != ZombieVisualState.Run)
+                || Time.deltaTime <= 0f
+            )
+            {
+                this.ResetMovementAudioTracking();
+                return;
+            }
+
+            Vector3 currentPosition = transform.position;
+            if (!this._hasMovementAudioPosition)
+            {
+                this._lastMovementAudioPosition = currentPosition;
+                this._hasMovementAudioPosition = true;
+                return;
+            }
+
+            Vector3 delta = currentPosition - this._lastMovementAudioPosition;
+            this._lastMovementAudioPosition = currentPosition;
+            delta.y = 0f;
+
+            if (
+                delta.magnitude / Time.deltaTime < this.movementAudioSpeedThreshold
+                || Time.time < this._nextMovementAudioTime
+            )
+            {
+                return;
+            }
+
+            AudioManager.Instance?.PlayOneShot(AudioEventIds.ZombieWalkSfx, currentPosition);
+            this._nextMovementAudioTime = Time.time + this.movementAudioInterval;
+        }
+
+        private void ResetMovementAudioTracking()
+        {
+            this._hasMovementAudioPosition = false;
+            this._nextMovementAudioTime = Time.time;
+        }
+
+        [ClientRpc]
+        private void RpcPlayZombieAttackAudio(Vector3 worldPos)
+        {
+            AudioManager.Instance?.PlayOneShot(AudioEventIds.ZombieAttackSfx, worldPos);
         }
 
         private void LogVisualStateIssue(ZombieVisualState state, string reason)

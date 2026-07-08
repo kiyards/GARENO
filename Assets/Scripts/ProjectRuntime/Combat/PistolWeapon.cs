@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using Mirror;
 using ProjectRuntime.Actor;
+using ProjectRuntime.Managers;
 using ProjectRuntime.Network;
 using ProjectRuntime.UI;
 using UnityEngine;
@@ -184,6 +185,7 @@ namespace ProjectRuntime.Combat
                 return;
 
             currentAmmo--;
+            RpcPlayShootAudio(transform.position);
 
             if (
                 targetNetId != 0
@@ -244,6 +246,7 @@ namespace ProjectRuntime.Combat
                 return;
             if (_reloadRoutine != null)
                 StopCoroutine(_reloadRoutine);
+            RpcPlayReloadAudio(transform.position);
             _reloadRoutine = StartCoroutine(ServerReloadRoutine());
         }
 
@@ -279,6 +282,18 @@ namespace ProjectRuntime.Combat
         private void RpcPlayImpactVfx(Vector3 worldPos, Vector3 hitNormal)
         {
             HitVfx.PlayImpact(impactVfxPrefab, worldPos, hitNormal, impactVfxLifetime);
+        }
+
+        [ClientRpc]
+        private void RpcPlayShootAudio(Vector3 worldPos)
+        {
+            AudioManager.Instance?.PlayOneShot(AudioEventIds.PlayerShootSfx, worldPos);
+        }
+
+        [ClientRpc]
+        private void RpcPlayReloadAudio(Vector3 worldPos)
+        {
+            AudioManager.Instance?.PlayOneShot(AudioEventIds.PlayerReloadGun, worldPos);
         }
 
         private void OnAmmoSynced(int oldValue, int newValue)

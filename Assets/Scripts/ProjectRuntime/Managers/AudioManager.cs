@@ -3,9 +3,35 @@ using FMODUnity;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace ProjectRuntime.Managers
 {
+    public static class AudioEventIds
+    {
+        public const string GlobalMainBgm = "GLOBAL_MAIN_BGM";
+        public const string GlobalLastMinuteBgm = "GLOBAL_LAST_MINUTE_BGM";
+        public const string PlayerReloadGun = "PLAYER_RELOAD_GUN";
+        public const string PlayerFootstepSfx = "PLAYER_FOOTSTEP_SFX";
+        public const string PlayerShootSfx = "PLAYER_SHOOT_SFX";
+        public const string NemesisPunchSfx = "NEMESIS_PUNCH_SFX";
+        public const string NemesisLungeSfx = "NEMESIS_LUNGE_SFX";
+        public const string NemesisGroundSlamSfx = "NEMESIS_GROUND_SLAM_SFX";
+        public const string ZombieWalkSfx = "ZOMBIE_WALK_SFX";
+        public const string ZombieAttackSfx = "ZOMBIE_ATTACK_SFX";
+        public const string ZombieCreeperExplodeSfx = "ZOMBIE_CREEPER_EXPLODE_SFX";
+        public const string TurretShootSfx = "TURRET_SHOOT_SFX";
+        public const string BlowdartShootSfx = "BLOWDART_SHOOT_SFX";
+        public const string FlashbangSfx = "FLASHBANG_SFX";
+        public const string CardSpawnSfx = "CARD_SPAWN_SFX";
+        public const string CrystalShootSfx = "CRYSTAL_SHOOT_SFX";
+        public const string CrystalDestroySfx = "CRYSTAL_DESTROY_SFX";
+        public const string CrystalAllDownedSfx = "CRYSTAL_ALL_DOWNED_SFX";
+        public const string UiCardHoverSfx = "UI_CARD_HOVER_SFX";
+        public const string UiCardClickSfx = "UI_CARD_CLICK_SFX";
+        public const string UiCardCancelSfx = "UI_CARD_CANCEL_SFX";
+    }
+
     public class AudioManager : NetworkSingleton<AudioManager>
     {
         private const int InvalidLoopHandle = 0;
@@ -30,20 +56,25 @@ namespace ProjectRuntime.Managers
         private readonly Dictionary<int, PooledAudioSource> _activeLoopsByHandle = new();
 
         private int _nextLoopHandle = 1;
+        private int _bgmLoopHandle = InvalidLoopHandle;
+        private string _activeBgmEventId = string.Empty;
 
         private void Awake()
         {
             this.Startup(this);
             this.InitializePool();
+            this.UpdateSceneBgm();
         }
 
         private void Update()
         {
+            this.UpdateSceneBgm();
             this.UpdateActiveSources();
         }
 
         private void OnDestroy()
         {
+            this.StopCurrentBgm(false);
             this.StopAllLoops(false);
             this.ReleaseAllSources();
 
@@ -197,6 +228,65 @@ namespace ProjectRuntime.Managers
             {
                 this.StopLoop(loopHandle, allowFadeout);
             }
+        }
+
+        private void UpdateSceneBgm()
+        {
+            var targetBgmEventId = this.GetTargetBgmEventId();
+            if (this._activeBgmEventId == targetBgmEventId)
+            {
+                return;
+            }
+
+            this.StopCurrentBgm();
+
+            if (string.IsNullOrEmpty(targetBgmEventId))
+            {
+                return;
+            }
+
+            this._bgmLoopHandle = this.StartLoop(targetBgmEventId);
+            if (this._bgmLoopHandle != InvalidLoopHandle)
+            {
+                this._activeBgmEventId = targetBgmEventId;
+            }
+        }
+
+        private string GetTargetBgmEventId()
+        {
+            var sceneName = SceneManager.GetActiveScene().name;
+            if (sceneName == "ScMain")
+            {
+                return AudioEventIds.GlobalMainBgm;
+            }
+
+            if (sceneName != "ScGame")
+            {
+                return string.Empty;
+            }
+
+            var battleManager = BattleManager.Instance;
+            return battleManager != null
+                && battleManager.RemainingRoundSeconds <= 60
+                && (
+                    battleManager.RemainingRoundSeconds > 0
+                    || this._activeBgmEventId == AudioEventIds.GlobalLastMinuteBgm
+                )
+                ? AudioEventIds.GlobalLastMinuteBgm
+                : AudioEventIds.GlobalMainBgm;
+        }
+
+        private void StopCurrentBgm(bool allowFadeout = true)
+        {
+            if (this._bgmLoopHandle == InvalidLoopHandle)
+            {
+                this._activeBgmEventId = string.Empty;
+                return;
+            }
+
+            this.StopLoop(this._bgmLoopHandle, allowFadeout);
+            this._bgmLoopHandle = InvalidLoopHandle;
+            this._activeBgmEventId = string.Empty;
         }
 
         private void InitializePool()

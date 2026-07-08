@@ -1,6 +1,7 @@
 using Mirror;
 using ProjectRuntime.Actor.PlayerStates;
 using ProjectRuntime.Combat;
+using ProjectRuntime.Managers;
 using ProjectRuntime.Network;
 using UnityEngine;
 using UnityEngine.AI;
@@ -199,6 +200,12 @@ namespace ProjectRuntime.Actor
 
             _serverLastFireTime = NetworkTime.time;
             _activeTurret.ServerConsumeAmmo();
+            _activeTurret.RpcPlayFireAudio(
+                _activeTurret.SlowOnHit
+                    ? AudioEventIds.BlowdartShootSfx
+                    : AudioEventIds.TurretShootSfx,
+                _activeTurret.transform.position
+            );
 
             if (
                 targetNetId == 0
