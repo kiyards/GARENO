@@ -220,7 +220,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  moveSpeed: 4.5
+  moveSpeed: 6
   wanderMoveSpeed: 4
   damage: 20
   attackRange: 2
@@ -232,6 +232,7 @@ MonoBehaviour:
   wanderPauseDuration: 0.75
   turnSpeed: 360
   moveAlignmentAngle: 12
+  reorientAngle: 45
   lungeDistance: 1.7
   lungeDuration: 0.14
   animator: {fileID: 9193986055716070673}
@@ -243,8 +244,11 @@ MonoBehaviour:
   lungeStateName: enemy_dog_attack
   deathStateName: enemy_dog_death
   explodeStateName: 
+  locomotionBlendDuration: 0.12
+  actionBlendDuration: 0.05
   attackAnimationHoldDuration: 0.6
   deathDespawnDelay: 3.5
+  logVisualStateChanges: 0
 --- !u!1001 &6176508357189926301
 PrefabInstance:
   m_ObjectHideFlags: 0
