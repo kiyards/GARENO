@@ -73,6 +73,42 @@ MonoBehaviour:
     <PlaybackType>k__BackingField: 0
     <SpatialMode>k__BackingField: 1
     <ReturnMode>k__BackingField: 0
+  - <EventId>k__BackingField: TURRET_SHOOT_SFX
+    <EventPath>k__BackingField: event:/TURRET_SHOOT_SFX
+    <EventReference>k__BackingField:
+      Guid:
+        Data1: -40107439
+        Data2: 1207356661
+        Data3: 52467335
+        Data4: -1975494147
+      Path: event:/TURRET_SHOOT_SFX
+    <PlaybackType>k__BackingField: 0
+    <SpatialMode>k__BackingField: 1
+    <ReturnMode>k__BackingField: 0
+  - <EventId>k__BackingField: BLOWDART_SHOOT_SFX
+    <EventPath>k__BackingField: event:/BLOWDART_SHOOT_SFX
+    <EventReference>k__BackingField:
+      Guid:
+        Data1: -233715051
+        Data2: 1200155941
+        Data3: -440536396
+        Data4: -1304383724
+      Path: event:/BLOWDART_SHOOT_SFX
+    <PlaybackType>k__BackingField: 0
+    <SpatialMode>k__BackingField: 1
+    <ReturnMode>k__BackingField: 0
+  - <EventId>k__BackingField: FLASHBANG_SFX
+    <EventPath>k__BackingField: event:/FLASHBANG_SFX
+    <EventReference>k__BackingField:
+      Guid:
+        Data1: 1463818496
+        Data2: 1315722677
+        Data3: 691285377
+        Data4: 1262234202
+      Path: event:/FLASHBANG_SFX
+    <PlaybackType>k__BackingField: 0
+    <SpatialMode>k__BackingField: 1
+    <ReturnMode>k__BackingField: 0
   - <EventId>k__BackingField: NEMESIS_PUNCH_SFX
     <EventPath>k__BackingField: event:/NEMESIS_PUNCH_SFX
     <EventReference>k__BackingField:

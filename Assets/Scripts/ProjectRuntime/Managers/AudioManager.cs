@@ -32,7 +32,7 @@ namespace ProjectRuntime.Managers
         public const string UiCardCancelSfx = "UI_CARD_CANCEL_SFX";
     }
 
-    public class AudioManager : NetworkSingleton<AudioManager>
+    public class AudioManager : Singleton<AudioManager>
     {
         private const int InvalidLoopHandle = 0;
 
