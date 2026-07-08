@@ -13,6 +13,8 @@ namespace ProjectRuntime.Actor
         public CinemachineThirdPersonAim thirdPersonAim;
         public CinemachineCamera thirdPersonCam;
         public CinemachineCamera firstPersonCam;
+        [SerializeField] private GameObject weaponViewmodel;
+        [SerializeField] private GameObject muzzle;
 
         public LayerMask aimOcclusionMask;
         public LayerMask aimTargetMask;
@@ -52,11 +54,28 @@ namespace ProjectRuntime.Actor
 
         public Vector3 GetAimOrigin() => firstPersonCam.transform.position + firstPersonCam.transform.forward * aimFirepointOffset;
 
+        // Visual-only origin for muzzle VFX (tracers, muzzle flashes). Deliberately offset from the
+        // camera so a shot fired dead-center doesn't produce a tracer collinear with the viewer's own
+        // optical axis — a LineRenderer segment aligned with the camera's view direction renders with
+        // zero apparent width (its camera-facing billboard collapses), making it invisible while stationary.
+        public Vector3 GetWeaponMuzzlePosition() =>
+            muzzle != null ? muzzle.transform.position
+                : weaponViewmodel != null ? weaponViewmodel.transform.position
+                : GetAimOrigin();
+
         public override void OnStartClient()
         {
             base.OnStartClient();
             thirdPersonCam.Priority.Enabled = isLocalPlayer;
             firstPersonCam.Priority.Enabled = isLocalPlayer;
+
+            // Only the owning client should ever see their own viewmodel — remote observers would
+            // otherwise see it as a floating gun glued to this player's head (SetCam's AIM/TOP_DOWN
+            // toggle only runs for isLocalPlayer, so it never corrects this for anyone else).
+            if (weaponViewmodel != null)
+            {
+                weaponViewmodel.SetActive(isLocalPlayer);
+            }
 
             if (isLocalPlayer)
             {
@@ -195,6 +214,13 @@ namespace ProjectRuntime.Actor
                     break;
             }
             characterMode = mode;
+
+            // Only a survivor actively aiming their own pistol should see the viewmodel —
+            // Dungeon Master top-down and turret-aim both reuse firstPersonCam without a pistol.
+            if (weaponViewmodel != null)
+            {
+                weaponViewmodel.SetActive(mode == CharacterMode.AIM && player != null && !player.IsDungeonMaster);
+            }
 
             if (mode == CharacterMode.TOP_DOWN)
             {

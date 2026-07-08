@@ -64,6 +64,18 @@ namespace ProjectRuntime.Combat
         [SerializeField]
         private float impactVfxLifetime = 2f;
 
+        [SerializeField]
+        private float tracerSpeed = 250f;
+
+        [SerializeField]
+        private float tracerSegmentLength = 3f;
+
+        [SerializeField]
+        private float tracerWidth = 0.02f;
+
+        [SerializeField]
+        private Color tracerColor = new Color(1f, 0.9f, 0.4f, 1f);
+
         [SyncVar(hook = nameof(OnAmmoSynced))]
         private int currentAmmo;
 
@@ -151,7 +163,13 @@ namespace ProjectRuntime.Combat
                 hitLayer = occlusionHit.collider.gameObject.layer;
             }
 
-            CmdFire(targetNetId, hitPoint, dir, hitNormal, hitLayer);
+            Vector3 muzzlePosition = cam.GetWeaponMuzzlePosition();
+
+            // Play the shooter's own tracer immediately instead of waiting on the Cmd/Rpc round
+            // trip — RpcPlayTracer (includeOwner = false) still covers everyone else.
+            PlayTracer(muzzlePosition, hitPoint);
+
+            CmdFire(targetNetId, muzzlePosition, hitPoint, dir, hitNormal, hitLayer);
             cam.AddShake(shakeAmplitude, shakeDuration);
         }
 
@@ -165,6 +183,7 @@ namespace ProjectRuntime.Combat
         [Command]
         private void CmdFire(
             uint targetNetId,
+            Vector3 muzzlePosition,
             Vector3 hitPoint,
             Vector3 fireDirection,
             Vector3 hitNormal,
@@ -186,6 +205,7 @@ namespace ProjectRuntime.Combat
 
             currentAmmo--;
             RpcPlayShootAudio(transform.position);
+            RpcPlayTracer(muzzlePosition, hitPoint);
 
             if (
                 targetNetId != 0
@@ -282,6 +302,19 @@ namespace ProjectRuntime.Combat
         private void RpcPlayImpactVfx(Vector3 worldPos, Vector3 hitNormal)
         {
             HitVfx.PlayImpact(impactVfxPrefab, worldPos, hitNormal, impactVfxLifetime);
+        }
+
+        // includeOwner = false: the shooter already played this instantly in TryFire, ahead of the
+        // Cmd/Rpc round trip — this only needs to reach everyone else.
+        [ClientRpc(includeOwner = false)]
+        private void RpcPlayTracer(Vector3 muzzlePosition, Vector3 hitPoint)
+        {
+            PlayTracer(muzzlePosition, hitPoint);
+        }
+
+        private void PlayTracer(Vector3 muzzlePosition, Vector3 hitPoint)
+        {
+            BulletTracer.Spawn(this, muzzlePosition, hitPoint, tracerSpeed, tracerSegmentLength, tracerWidth, tracerColor);
         }
 
         [ClientRpc]

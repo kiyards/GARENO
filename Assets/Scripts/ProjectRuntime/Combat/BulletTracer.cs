@@ -7,29 +7,41 @@ namespace ProjectRuntime.Combat
     {
         private static Material _sharedTracerMaterial;
 
-        public static void Spawn(MonoBehaviour host, Vector3 start, Vector3 end, float duration, float width,
-            Color color, Material material = null, string objectName = "BulletTracer")
+        // Spawns a short bright segment at `start` that flies toward `end` at `speed` and is
+        // destroyed on arrival — a visualized projectile rather than a beam glued to the muzzle,
+        // so it never freezes as a stale line if the shooter moves after firing.
+        public static void Spawn(MonoBehaviour host, Vector3 start, Vector3 end, float speed, float segmentLength,
+            float width, Color color, Material material = null, string objectName = "BulletTracer")
         {
             if (host == null)
             {
                 return;
             }
 
-            host.StartCoroutine(TracerRoutine(start, end, Mathf.Max(0.01f, duration),
-                Mathf.Max(0.001f, width), color, material, objectName));
+            host.StartCoroutine(TracerRoutine(start, end, Mathf.Max(0.01f, speed),
+                Mathf.Max(0.01f, segmentLength), Mathf.Max(0.001f, width), color, material, objectName));
         }
 
-        private static IEnumerator TracerRoutine(Vector3 start, Vector3 end, float duration, float width,
-            Color color, Material material, string objectName)
+        private static IEnumerator TracerRoutine(Vector3 start, Vector3 end, float speed, float segmentLength,
+            float width, Color color, Material material, string objectName)
         {
+            Vector3 travel = end - start;
+            float totalDistance = travel.magnitude;
+            if (totalDistance < 0.001f)
+            {
+                yield break;
+            }
+
+            Vector3 direction = travel / totalDistance;
+
             var tracerObject = new GameObject(objectName);
             var line = tracerObject.AddComponent<LineRenderer>();
             line.useWorldSpace = true;
             line.positionCount = 2;
-            line.SetPosition(0, start);
-            line.SetPosition(1, end);
             line.startWidth = width;
             line.endWidth = width;
+            line.startColor = color;
+            line.endColor = color;
 
             Material resolvedMaterial = ResolveTracerMaterial(material);
             if (resolvedMaterial != null)
@@ -37,15 +49,15 @@ namespace ProjectRuntime.Combat
                 line.material = resolvedMaterial;
             }
 
-            float elapsed = 0f;
-            while (elapsed < duration)
+            float traveled = 0f;
+            while (traveled < totalDistance)
             {
-                float alpha = Mathf.Lerp(1f, 0f, elapsed / duration);
-                Color frameColor = color;
-                frameColor.a *= alpha;
-                line.startColor = frameColor;
-                line.endColor = frameColor;
-                elapsed += Time.deltaTime;
+                traveled += speed * Time.deltaTime;
+                float headDistance = Mathf.Min(traveled, totalDistance);
+                Vector3 head = start + direction * headDistance;
+                Vector3 tail = start + direction * Mathf.Max(0f, headDistance - segmentLength);
+                line.SetPosition(0, tail);
+                line.SetPosition(1, head);
                 yield return null;
             }
 
