@@ -168,6 +168,8 @@ namespace ProjectRuntime.Actor
         public bool IsBearTrapped => currentState is BearTrappedState;
         public bool IsDowned => currentState is DownedState;
         public bool IsDungeonMaster => _currentRole == PlayerRole.DungeonMaster;
+        private bool CanReviveTeammates =>
+            localManager.playerRole == PlayerRole.Survivor && !IsInactive && health.IsAlive;
         public float DungeonMasterHorizontalSpeed => dungeonMasterHorizontalSpeed;
         public float DungeonMasterVerticalSpeed => dungeonMasterVerticalSpeed;
         public override NetworkBaseState StartState =>
@@ -571,7 +573,7 @@ namespace ProjectRuntime.Actor
         [Command]
         public void CmdReviveTeammate(uint downedNetId)
         {
-            if (IsDungeonMaster || IsInactive)
+            if (!CanReviveTeammates)
             {
                 return;
             }
@@ -597,16 +599,16 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            target.ServerRegisterReviveContact();
+            target.ServerRegisterReviveContact(this);
         }
 
         // Called on the downed survivor each time a teammate channels a valid revive. The hold is
         // measured as continuous real-time contact: a gap longer than the grace restarts the streak,
         // and reviveHoldTime seconds of unbroken contact completes the revive.
         [Server]
-        public void ServerRegisterReviveContact()
+        public void ServerRegisterReviveContact(GameplayPlayer reviver)
         {
-            if (!IsDowned)
+            if (!IsDowned || reviver == null || reviver == this || !reviver.CanReviveTeammates)
             {
                 return;
             }
@@ -681,7 +683,7 @@ namespace ProjectRuntime.Actor
 
         private void ClientTickRevive()
         {
-            if (IsDungeonMaster || IsInactive || input == null || !input.InteractHold)
+            if (!CanReviveTeammates || input == null || !input.InteractHold)
             {
                 return;
             }
@@ -785,6 +787,11 @@ namespace ProjectRuntime.Actor
         // would revive, without duplicating the range/eligibility logic.
         public GameplayPlayer FindReviveTarget()
         {
+            if (!CanReviveTeammates)
+            {
+                return null;
+            }
+
             var battleManager = BattleManager.Instance;
             if (battleManager == null)
             {
