@@ -326,8 +326,12 @@ namespace ProjectRuntime.Actor.PlayerStates
         {
             if (player.rb != null)
             {
-                player.rb.linearVelocity = Vector3.zero;
-                player.rb.angularVelocity = Vector3.zero;
+                if (!player.rb.isKinematic)
+                {
+                    player.rb.linearVelocity = Vector3.zero;
+                    player.rb.angularVelocity = Vector3.zero;
+                }
+
                 player.rb.MovePosition(m_anchorPosition);
                 return;
             }
@@ -341,7 +345,7 @@ namespace ProjectRuntime.Actor.PlayerStates
             float closestSqDist = float.MaxValue;
             foreach (var gp in UnityEngine.Object.FindObjectsByType<GameplayPlayer>(FindObjectsSortMode.None))
             {
-                if (gp == player || gp.IsDungeonMaster || gp.IsGhost || gp.IsInactive)
+                if (gp == player || gp.IsDungeonMaster || gp.IsInactive)
                     continue;
                 float sqDist = (gp.transform.position - from).sqrMagnitude;
                 if (sqDist < closestSqDist)
@@ -583,8 +587,12 @@ namespace ProjectRuntime.Actor.PlayerStates
         {
             if (player.rb != null)
             {
-                player.rb.linearVelocity = Vector3.zero;
-                player.rb.angularVelocity = Vector3.zero;
+                if (!player.rb.isKinematic)
+                {
+                    player.rb.linearVelocity = Vector3.zero;
+                    player.rb.angularVelocity = Vector3.zero;
+                }
+
                 player.rb.MovePosition(m_anchorPosition);
                 return;
             }
@@ -665,8 +673,12 @@ namespace ProjectRuntime.Actor.PlayerStates
         {
             if (player.rb != null)
             {
-                player.rb.linearVelocity = Vector3.zero;
-                player.rb.angularVelocity = Vector3.zero;
+                if (!player.rb.isKinematic)
+                {
+                    player.rb.linearVelocity = Vector3.zero;
+                    player.rb.angularVelocity = Vector3.zero;
+                }
+
                 player.rb.MovePosition(m_anchorPosition);
                 return;
             }
@@ -707,11 +719,15 @@ namespace ProjectRuntime.Actor.PlayerStates
             player.transform.rotation = Quaternion.identity;
             if (player.isLocalPlayer && player.rb != null)
             {
+                if (!player.rb.isKinematic)
+                {
+                    player.rb.linearVelocity = Vector3.zero;
+                    player.rb.angularVelocity = Vector3.zero;
+                }
+
                 player.rb.isKinematic = true;
                 player.rb.position = m_respawnPos;
                 player.rb.rotation = Quaternion.identity;
-                player.rb.linearVelocity = Vector3.zero;
-                player.rb.angularVelocity = Vector3.zero;
             }
         }
 
@@ -733,142 +749,4 @@ namespace ProjectRuntime.Actor.PlayerStates
     // revivable (revive targeting only accepts IsDowned) and, being a BaseInactiveState, can't shoot and
     // is ignored by zombies and traps. It is visible only to the Dungeon Master and to other dead
     // survivors — RefreshGhostVisibility enforces that per client. Movement mirrors BaseMovementState.
-    public class DeadState : BaseInactiveState
-    {
-        public Vector3 m_anchorPosition;
-        private bool _deathPresentationQueued;
-        private bool _requestedJump;
-
-        public DeadState(GameplayPlayer sm)
-            : base(sm) { }
-
-        public override void OnSerialize(NetworkWriter writer)
-        {
-            base.OnSerialize(writer);
-            writer.Write(m_anchorPosition);
-        }
-
-        public override void OnDeserialize(NetworkReader reader)
-        {
-            base.OnDeserialize(reader);
-            m_anchorPosition = reader.Read<Vector3>();
-        }
-
-        public override void OnEnter()
-        {
-            base.OnEnter();
-
-            if (!_deathPresentationQueued)
-            {
-                var visualAnimator = player.GetComponent<PlayerVisualAnimator>();
-                var deathPresentationDelay =
-                    player.currentState is DownedState
-                        ? 0f
-                        : visualAnimator.GetDeathAnimationDuration(0f);
-                player.BeginDeadBodyTransition(
-                    m_anchorPosition,
-                    player.transform.rotation,
-                    deathPresentationDelay
-                );
-                _deathPresentationQueued = true;
-            }
-
-            if (player.isLocalPlayer)
-            {
-                if (player.cam != null)
-                {
-                    player.cam.SetCam(CharacterMode.AIM);
-                }
-            }
-        }
-
-        public override void Update()
-        {
-            base.Update();
-            if (!_requestedJump && player.input != null)
-            {
-                _requestedJump = player.input.jump;
-            }
-        }
-
-        public override void LateUpdate()
-        {
-            base.LateUpdate();
-            RotateAim();
-        }
-
-        public override void FixedUpdate()
-        {
-            base.FixedUpdate();
-            Vector3 moveDir = GetMoveDir(
-                player.input != null ? player.input.moveVec : Vector3.zero
-            );
-            Vector3 moveDelta = player.moveSpeed * Time.fixedDeltaTime * moveDir;
-            player.rb.MovePosition(player.rb.position + moveDelta);
-        }
-
-        public override void StateUpdate()
-        {
-            base.StateUpdate();
-            if (_requestedJump)
-            {
-                if (player.groundCheck.IsGrounded)
-                {
-                    Jump();
-                }
-
-                _requestedJump = false;
-            }
-        }
-
-        private void Jump()
-        {
-            if (!player.isLocalPlayer)
-            {
-                return;
-            }
-
-            if (player.rb.linearVelocity.y < 0)
-            {
-                var vel = player.rb.linearVelocity;
-                vel.y = 0;
-                player.rb.linearVelocity = vel;
-            }
-
-            player.rb.AddForce(Vector3.up * player.jumpForce, ForceMode.VelocityChange);
-            player.PlayAcceptedJumpVisual();
-        }
-
-        private void RotateAim()
-        {
-            if (!player.isLocalPlayer || player.cam == null || player.aimRig == null)
-            {
-                return;
-            }
-
-            player.transform.localEulerAngles = new Vector3(
-                0f,
-                player.cam.transform.localEulerAngles.y,
-                0f
-            );
-            player.aimRig.localEulerAngles = new Vector3(
-                player.cam.transform.localEulerAngles.x,
-                0f,
-                0f
-            );
-        }
-
-        private Vector3 GetMoveDir(Vector3 inputVec)
-        {
-            Vector3 up =
-                player.groundCheck != null ? player.groundCheck.GroundedNormal : Vector3.up;
-            Vector3 aimForwardFlat =
-                Quaternion.Euler(0f, player.cam.transform.eulerAngles.y, 0f) * Vector3.forward;
-
-            Vector3 forward = Vector3.ProjectOnPlane(aimForwardFlat, up).normalized;
-            Vector3 right = Vector3.Cross(up, forward).normalized;
-
-            return Vector3.ClampMagnitude(right * inputVec.x + forward * inputVec.z, 1f);
-        }
-    }
 }

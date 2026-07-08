@@ -19,6 +19,12 @@ namespace ProjectRuntime.Actor
         TOP_DOWN,
     }
 
+    public enum DownedResolution
+    {
+        Revived,
+        TimedOut,
+    }
+
     public class GameplayPlayer : NetworkStateMachine
     {
         [Header("Components")]
@@ -118,13 +124,10 @@ namespace ProjectRuntime.Actor
         // Guards against re-resolving while the downed→respawn state transition round-trips back from
         // the owning client (the state authority), which would otherwise re-fire every physics frame.
         private bool _downedResolved;
+        private bool _downedReported;
         private Coroutine _downedPresentationCoroutine;
 
-        // True once this survivor has permanently died and become a ghost. Set when the ghost body is
-        // configured — which happens inside DeadState.OnEnter, before the state machine assigns
-        // currentState — so ghost visibility can be applied without depending on that timing.
         private bool _isGhost;
-
         private float _speedMultiplier = 1f;
         private int _slowStackCount;
 
@@ -155,11 +158,6 @@ namespace ProjectRuntime.Actor
         public bool IsInactive => currentState is BaseInactiveState;
         public bool IsBearTrapped => currentState is BearTrappedState;
         public bool IsDowned => currentState is DownedState;
-        public bool IsDead => currentState is DeadState;
-
-        // Set the moment a survivor becomes a ghost (before currentState flips), so it stays reliable
-        // even mid-transition. Used to keep ghosts from blocking shots and to drive ghost visibility.
-        public bool IsGhost => _isGhost;
         public bool IsDungeonMaster => _currentRole == PlayerRole.DungeonMaster;
         public float DungeonMasterHorizontalSpeed => dungeonMasterHorizontalSpeed;
         public float DungeonMasterVerticalSpeed => dungeonMasterVerticalSpeed;
@@ -290,7 +288,7 @@ namespace ProjectRuntime.Actor
         // Sets up the ghost body: a permanently-dead survivor still walks and collides with the world
         // (normal survivor physics), but passes through every other player. The normal model is swapped
         // to the ghost visual; per-viewer visibility is handled by RefreshGhostVisibility.
-        public void EnterGhostBody()
+        private void EnterGhostBody()
         {
             CacheRoleDefaults();
             _isGhost = true;
@@ -303,8 +301,12 @@ namespace ProjectRuntime.Actor
 
             if (rb != null)
             {
-                rb.linearVelocity = Vector3.zero;
-                rb.angularVelocity = Vector3.zero;
+                if (!rb.isKinematic)
+                {
+                    rb.linearVelocity = Vector3.zero;
+                    rb.angularVelocity = Vector3.zero;
+                }
+
                 rb.isKinematic = _initialRigidbodyIsKinematic;
                 rb.useGravity = _initialRigidbodyUseGravity;
             }
@@ -319,7 +321,7 @@ namespace ProjectRuntime.Actor
                 SetLayerRecursive(child.gameObject, layer);
         }
 
-        public void SpawnCorpse(Vector3 position, Quaternion rotation)
+        private void SpawnCorpse(Vector3 position, Quaternion rotation)
         {
             var corpseRotation = rotation * Quaternion.Euler(0f, corpseVisualYawOffset, 0f);
             var corpse = Instantiate(corpseVisualPrefab, position, corpseRotation);
@@ -334,7 +336,7 @@ namespace ProjectRuntime.Actor
                 .ApplyDeathPose(corpse.GetComponentInChildren<Animator>());
         }
 
-        public void BeginDeadBodyTransition(Vector3 position, Quaternion rotation, float delay)
+        private void BeginDeadBodyTransition(Vector3 position, Quaternion rotation, float delay)
         {
             if (_deadBodyTransitionCoroutine != null)
             {
@@ -369,7 +371,7 @@ namespace ProjectRuntime.Actor
 
         // A ghost (permanently dead survivor) is visible only to the Dungeon Master and to other dead
         // survivors — never to living survivors. Each client decides locally from its own viewer.
-        public void RefreshGhostVisibility()
+        private void RefreshGhostVisibility()
         {
             if (!_isGhost)
             {
@@ -378,7 +380,6 @@ namespace ProjectRuntime.Actor
 
             bool canSee = LocalViewerCanSeeGhosts();
             GetComponent<PlayerVisualAnimator>().SetGhostVisible(canSee);
-            localManager?.RefreshGhostNameVisibility(canSee);
         }
 
         private static bool LocalViewerCanSeeGhosts()
@@ -402,7 +403,7 @@ namespace ProjectRuntime.Actor
 
         // Re-evaluate every ghost's visibility on this client. Call when the local viewer's eligibility
         // changes — e.g. the local survivor just died and can now see ghosts.
-        public static void RefreshAllGhostVisibility()
+        private static void RefreshAllGhostVisibility()
         {
             var battleManager = BattleManager.Instance;
             if (battleManager == null)
@@ -427,15 +428,6 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            // On their last life even a successful revive (−1 life) would leave them at 0, so skip the
-            // downed/revive window and die outright — no point making a teammate revive a friend who dies
-            // anyway.
-            if (localManager != null && localManager.lives <= 1)
-            {
-                ServerDieOutright(sourceNetId);
-                return;
-            }
-
             var downedPresentationDelay = GetComponent<PlayerVisualAnimator>()
                 .GetDeathAnimationDuration(0f);
             _downedStartTime = NetworkTime.time + downedPresentationDelay;
@@ -445,6 +437,7 @@ namespace ProjectRuntime.Actor
             _lastReviveContactTime = double.NegativeInfinity;
             _reviveContactStartTime = 0d;
             _downedResolved = false;
+            _downedReported = false;
 
             ServerForceState(
                 new DownedState(this)
@@ -476,19 +469,20 @@ namespace ProjectRuntime.Actor
                 yield break;
             }
 
-            BattleManager.Instance?.ServerReportSurvivorDowned(localManager, sourceNetId);
+            ServerReportDownedIfNeeded(sourceNetId);
             BattleManager.Instance?.ServerRefreshSurvivorDefeatState();
         }
 
-        // Permanently kills the survivor without a downed/revive window (used when they're already on
-        // their last life). Spends the final life and sends everyone into the ghost state.
         [Server]
-        private void ServerDieOutright(uint sourceNetId)
+        private void ServerReportDownedIfNeeded(uint sourceNetId)
         {
-            localManager?.ServerLoseLives(1);
-            BattleManager.Instance?.ServerReportSurvivorDied(localManager, sourceNetId);
-            RpcEnterDeadState(transform.position);
-            BattleManager.Instance?.ServerRefreshSurvivorDefeatState();
+            if (_downedReported)
+            {
+                return;
+            }
+
+            _downedReported = true;
+            BattleManager.Instance?.ServerReportSurvivorDowned(localManager, sourceNetId);
         }
 
         [Server]
@@ -514,8 +508,7 @@ namespace ProjectRuntime.Actor
 
             if (NetworkTime.time - _downedStartTime >= reviveWindow)
             {
-                // Window expired with no revive: costs 2 lives.
-                ServerResolveDowned(2);
+                ServerResolveDowned(DownedResolution.TimedOut);
             }
         }
 
@@ -578,39 +571,47 @@ namespace ProjectRuntime.Actor
             _lastReviveContactTime = now;
             if (now - _reviveContactStartTime >= reviveHoldTime)
             {
-                // Revived by a teammate: costs 1 life.
-                ServerResolveDowned(1);
+                ServerResolveDowned(DownedResolution.Revived);
             }
         }
 
-        // Single resolution point for both revive-completed and revive-window-expired. livesLost is the
-        // life cost of this resolution (1 for a revive, 2 for a timeout). If it empties the survivor's
-        // lives they stay permanently dead and spectate; otherwise they respawn at the start point.
+        // Single resolution point for both revive-completed and revive-window-expired.
         [Server]
-        public void ServerResolveDowned(int livesLost)
+        public bool ServerCanResolveDowned()
+        {
+            return IsDowned && NetworkTime.time >= _downedPresentationEndTime;
+        }
+
+        [Server]
+        public void ServerResolveDowned(DownedResolution resolution)
         {
             if (!IsDowned || _downedResolved)
             {
                 return;
             }
 
-            if (NetworkTime.time < _downedPresentationEndTime)
+            if (!ServerCanResolveDowned())
             {
                 return;
             }
 
             _downedResolved = true;
+            ServerReportDownedIfNeeded(_downedSourceNetId);
 
-            localManager?.ServerLoseLives(livesLost);
-
-            if (localManager != null && localManager.IsPermanentlyDead)
+            if (resolution == DownedResolution.Revived)
             {
-                // Out of lives: stay where they fell and spectate instead of respawning.
-                BattleManager.Instance?.ServerReportSurvivorDied(localManager, _downedSourceNetId);
-                RpcEnterDeadState(transform.position);
+                BattleManager.Instance?.ServerReportSurvivorRevived(localManager, _downedSourceNetId);
+                if (health != null)
+                {
+                    health.ServerResetHealth();
+                }
+
+                Vector3 respawnPos = GameNetworkManager.Instance.GetStartPosition().position;
+                RpcEnterRespawnState(respawnPos);
             }
             else
             {
+                BattleManager.Instance?.ServerReportSurvivorTimedOut(localManager, _downedSourceNetId);
                 if (health != null)
                 {
                     health.ServerResetHealth();
@@ -698,6 +699,12 @@ namespace ProjectRuntime.Actor
 
             if (rb != null)
             {
+                if (!rb.isKinematic)
+                {
+                    rb.linearVelocity = Vector3.zero;
+                    rb.angularVelocity = Vector3.zero;
+                }
+
                 rb.position = clampedPosition;
             }
 
@@ -706,11 +713,6 @@ namespace ProjectRuntime.Actor
 
         private static Vector3 GetDungeonMasterJumpTargetPosition(GameplayPlayer target)
         {
-            if (target.currentState is DeadState deadState)
-            {
-                return deadState.m_anchorPosition;
-            }
-
             return target.transform.position;
         }
 
@@ -969,18 +971,6 @@ namespace ProjectRuntime.Actor
             QueueState(respawnState);
         }
 
-        [ClientRpc]
-        public void RpcEnterDeadState(Vector3 deathPos)
-        {
-            if (IsDungeonMaster)
-            {
-                return;
-            }
-
-            var deadState = new DeadState(this) { m_anchorPosition = deathPos };
-            QueueState(deadState);
-        }
-
         private void QueueRoleState(NetworkBaseState roleState)
         {
             if (!authority)
@@ -1040,6 +1030,12 @@ namespace ProjectRuntime.Actor
             if (rb == null)
             {
                 return;
+            }
+
+            if (!rb.isKinematic)
+            {
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
             }
 
             rb.useGravity = false;

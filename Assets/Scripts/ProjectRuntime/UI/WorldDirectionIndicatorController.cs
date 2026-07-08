@@ -96,7 +96,6 @@ namespace ProjectRuntime.UI
             return _hudVisible &&
                    _role == PlayerRole.Survivor &&
                    _localPlayer != null &&
-                   _localPlayer.lives > 0 &&
                    _localPlayer.player != null &&
                    _localPlayer.player.input != null &&
                    _localPlayer.player.input.TeammateIndicatorsTogglePress;
@@ -110,7 +109,6 @@ namespace ProjectRuntime.UI
             if (!_hudVisible ||
                 _role != PlayerRole.Survivor ||
                 _localPlayer == null ||
-                _localPlayer.lives <= 0 ||
                 _localPlayer.player == null ||
                 battleManager == null)
             {
@@ -128,8 +126,7 @@ namespace ProjectRuntime.UI
                 if (player == null ||
                     player == _localPlayer ||
                     player.playerRole != PlayerRole.Survivor ||
-                    player.player == null ||
-                    player.lives <= 0)
+                    player.player == null)
                 {
                     continue;
                 }
@@ -204,7 +201,6 @@ namespace ProjectRuntime.UI
             if (!_hudVisible ||
                 _role != PlayerRole.Survivor ||
                 _localPlayer == null ||
-                _localPlayer.lives <= 0 ||
                 _localPlayer.player == null ||
                 worldCamera == null)
             {

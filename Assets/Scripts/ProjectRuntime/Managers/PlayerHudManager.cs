@@ -511,11 +511,12 @@ namespace ProjectRuntime.Managers
             this.DownedIndicator.SetActive(downed);
         }
 
-        // Shown once the local player is permanently dead (in DeadState), hidden while alive.
         private void RefreshDeadIndicator()
         {
-            bool dead = this.BoundGameplayPlayer != null && this.BoundGameplayPlayer.IsDead;
-            this.DeadIndicator.SetActive(dead);
+            if (this.DeadIndicator != null)
+            {
+                this.DeadIndicator.SetActive(false);
+            }
         }
 
         // Drives the lifetime countdown text + bar inside NemesisControlUI (only visible while

@@ -47,16 +47,6 @@ namespace ProjectRuntime.Network
         public PlayerRole playerRole = PlayerRole.Unassigned;
         public Action<string> OnPlayerNameChanged;
         public Action<PlayerRole> OnPlayerRoleChanged;
-        public Action<int> OnPlayerLivesChanged;
-
-        [Header("Lives")]
-        [SerializeField] private int maxLives = 3;
-        // Server-authoritative remaining lives. A survivor is permanently dead at 0 (resolution lives
-        // in GameplayPlayer.ServerResolveDowned).
-        [SyncVar(hook = nameof(OnLivesSynced))] public int lives = 3;
-
-        public int MaxLives => maxLives;
-        public bool IsPermanentlyDead => lives <= 0;
 
         [Header("Variables")]
         [SyncVar(hook = nameof(OnCharacterDataSynced))]
@@ -85,18 +75,6 @@ namespace ProjectRuntime.Network
         {
             base.OnStartClient();
             ApplyRole(this.playerRole);
-        }
-
-        public override void OnStartServer()
-        {
-            base.OnStartServer();
-            lives = maxLives;
-        }
-
-        [Server]
-        public void ServerLoseLives(int amount)
-        {
-            lives = Mathf.Max(0, lives - amount);
         }
 
         [TargetRpc]
@@ -145,12 +123,6 @@ namespace ProjectRuntime.Network
             ApplyRole(newValue);
         }
 
-        void OnLivesSynced(int oldValue, int newValue)
-        {
-            lives = newValue;
-            OnPlayerLivesChanged?.Invoke(newValue);
-        }
-
         void OnCharacterDataSynced(CharacterData _, CharacterData newData)
         {
             characterData = newData;
@@ -171,7 +143,6 @@ namespace ProjectRuntime.Network
             {
                 player?.input?.SetCursorLockedForRole(role);
                 PlayerHudManager.EnsureInstance()?.SetRole(role);
-                GameplayPlayer.RefreshAllGhostVisibility();
             }
 
             OnPlayerRoleChanged?.Invoke(role);
@@ -186,22 +157,6 @@ namespace ProjectRuntime.Network
 
             playerCanvas.gameObject.SetActive(
                 !isLocalPlayer && playerRole != PlayerRole.DungeonMaster
-            );
-        }
-
-        // For a ghost (permanently dead survivor) the name plate follows ghost visibility: shown only to
-        // viewers who can see the ghost (the Dungeon Master and other dead players), hidden from living
-        // survivors. Honours the same base rule as RefreshPlayerCanvasVisibility (never the local owner
-        // or the DM).
-        public void RefreshGhostNameVisibility(bool viewerCanSeeGhost)
-        {
-            if (playerCanvas == null)
-            {
-                return;
-            }
-
-            playerCanvas.gameObject.SetActive(
-                viewerCanSeeGhost && !isLocalPlayer && playerRole != PlayerRole.DungeonMaster
             );
         }
 

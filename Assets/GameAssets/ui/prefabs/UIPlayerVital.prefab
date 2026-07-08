@@ -62,12 +62,7 @@ MonoBehaviour:
   PlayerStatusImage: {fileID: 3366053325836430073}
   DownedPlayerObject: {fileID: 3220746224244686908}
   DownedTimerTMP: {fileID: 8774337929155989883}
-  DeadPlayerObject: {fileID: 3547985394750698441}
   DungeonMasterObject: {fileID: 1115309708849493007}
-  PlayerLivesIcons:
-  - {fileID: 2703034962228786855}
-  - {fileID: 4645248627075002868}
-  - {fileID: 6205599079717446274}
   HealthySurvivorColor: {r: 0.23954973, g: 1, b: 0.066037595, a: 1}
   WarningSurvivorColor: {r: 1, g: 0.9015107, b: 0.31760997, a: 1}
   DownedSurvivorColor: {r: 1, g: 0.122641385, b: 0.122641385, a: 1}
@@ -552,7 +547,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6974337073975768229
 RectTransform:
   m_ObjectHideFlags: 0

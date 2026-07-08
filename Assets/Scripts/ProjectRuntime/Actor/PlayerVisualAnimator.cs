@@ -258,8 +258,6 @@ namespace ProjectRuntime.Actor
         private bool IsAuraTarget()
         {
             return player.localManager.playerRole == PlayerRole.Survivor
-                && player.localManager.lives > 0
-                && !player.IsGhost
                 && (!player.IsInactive || player.IsDowned);
         }
 
@@ -271,9 +269,7 @@ namespace ProjectRuntime.Actor
             }
 
             return viewer.playerRole == PlayerRole.Survivor
-                && viewer.lives > 0
                 && viewer.player != null
-                && !viewer.player.IsGhost
                 && (!viewer.player.IsInactive || viewer.player.IsDowned);
         }
 
@@ -321,7 +317,7 @@ namespace ProjectRuntime.Actor
 
         private VisualState ResolveVisualState(Vector3 currentPosition)
         {
-            if (player.IsDowned || (player.IsDead && !player.IsGhost))
+            if (player.IsDowned)
             {
                 return VisualState.Death;
             }

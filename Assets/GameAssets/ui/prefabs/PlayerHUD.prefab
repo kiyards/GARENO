@@ -1117,7 +1117,7 @@ MonoBehaviour:
   <ReviveTimerParent>k__BackingField: {fileID: 7163601983245085801}
   <ReviveTimerTMP>k__BackingField: {fileID: 2434371896855730943}
   <DownedIndicator>k__BackingField: {fileID: 3436171461952640757}
-  <DeadIndicator>k__BackingField: {fileID: 2921211703007494793}
+  <DeadIndicator>k__BackingField: {fileID: 0}
   <CrystalDestroyedNotification>k__BackingField: {fileID: 7923225711629032814}
   <CrystalNotificationHoldSeconds>k__BackingField: 1
   <CrystalNotificationFadeSeconds>k__BackingField: 1

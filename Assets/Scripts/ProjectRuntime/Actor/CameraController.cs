@@ -60,7 +60,6 @@ namespace ProjectRuntime.Actor
 
             if (isLocalPlayer)
             {
-                EnsureGhostLayerRendered();
                 firstPersonCam.TryGetComponent(out _fireShakeNoise);
             }
         }
@@ -214,7 +213,6 @@ namespace ProjectRuntime.Actor
             {
                 if (hit.collider == player.col) continue;
                 // Ghosts (permanently dead survivors) never block or absorb shots — pass through them.
-                if (IsGhostCollider(hit.collider)) continue;
                 if (blocked && hit.distance > occlusionHit.distance) break;
                 results.Add(new RaycastData
                 {
@@ -241,7 +239,6 @@ namespace ProjectRuntime.Actor
             Array.Sort(occluders, (a, b) => a.distance.CompareTo(b.distance));
             foreach (var hit in occluders)
             {
-                if (IsGhostCollider(hit.collider)) continue;
                 occlusionHit = hit;
                 return true;
             }
@@ -251,15 +248,14 @@ namespace ProjectRuntime.Actor
 
         // Ghosts (permanently dead survivors) must never block or absorb shots — shared by the survivor
         // pistol (above) and the Dungeon Master turret.
-        public static bool IsGhostCollider(Collider hitCollider)
+        private static bool IsGhostCollider(Collider hitCollider)
         {
             if (hitCollider == null)
             {
                 return false;
             }
 
-            var gameplayPlayer = hitCollider.GetComponentInParent<GameplayPlayer>();
-            return gameplayPlayer != null && gameplayPlayer.IsGhost;
+            return false;
         }
 
         private void ConfigureDungeonMasterConfiner(bool isEnabled)

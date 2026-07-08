@@ -60,8 +60,6 @@ MonoBehaviour:
   playerSteamId: 0
   playerIndex: 0
   playerRole: 0
-  maxLives: 3
-  lives: 3
   characterData:
     colid: 0
   dungeonMasterPlacementMask:

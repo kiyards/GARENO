@@ -8,6 +8,7 @@ using ProjectRuntime.Network;
 using ProjectRuntime.Objectives;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Serialization;
 
 namespace ProjectRuntime.Managers
 {
@@ -77,7 +78,10 @@ namespace ProjectRuntime.Managers
         private int survivorDownedTimePenaltySeconds = 15;
 
         [SerializeField]
-        private int survivorDeathTimePenaltySeconds = 30;
+        private int survivorRevivedTimePenaltySeconds = 10;
+
+        [SerializeField, FormerlySerializedAs("survivorDeathTimePenaltySeconds")]
+        private int survivorTimeoutTimePenaltySeconds = 30;
 
         [Header("Nemesis Availability")]
         // How much the Dungeon Master's Nemesis countdown is shortened by each event.
@@ -87,8 +91,8 @@ namespace ProjectRuntime.Managers
         [SerializeField]
         private float nemesisDownedShortenSeconds = 15f;
 
-        [SerializeField]
-        private float nemesisKilledShortenSeconds = 30f;
+        [SerializeField, FormerlySerializedAs("nemesisKilledShortenSeconds")]
+        private float nemesisTimeoutShortenSeconds = 30f;
 
         [Header("Crystal Objective")]
         [SerializeField, SyncVar(hook = nameof(OnObjectiveStateSynced))]
@@ -583,15 +587,26 @@ namespace ProjectRuntime.Managers
         }
 
         [Server]
-        public void ServerReportSurvivorDied(PlayerManager survivor, uint sourceNetId)
+        public void ServerReportSurvivorRevived(PlayerManager survivor, uint sourceNetId)
         {
             if (!this.IsTimerPenaltyTarget(survivor))
             {
                 return;
             }
 
-            this.ServerAddRoundTime(-this.survivorDeathTimePenaltySeconds);
-            this.ServerShortenNemesisCountdown(this.nemesisKilledShortenSeconds);
+            this.ServerAddRoundTime(-this.survivorRevivedTimePenaltySeconds);
+        }
+
+        [Server]
+        public void ServerReportSurvivorTimedOut(PlayerManager survivor, uint sourceNetId)
+        {
+            if (!this.IsTimerPenaltyTarget(survivor))
+            {
+                return;
+            }
+
+            this.ServerAddRoundTime(-this.survivorTimeoutTimePenaltySeconds);
+            this.ServerShortenNemesisCountdown(this.nemesisTimeoutShortenSeconds);
         }
 
         // Forwards a Nemesis-countdown reduction to the Dungeon Master's card manager. The
@@ -637,8 +652,8 @@ namespace ProjectRuntime.Managers
             }
 
             bool hasSurvivor = false;
-            bool hasLivingSurvivor = false;
-            bool allLivingSurvivorsDowned = true;
+            bool allSurvivorsDowned = true;
+            bool allDownedSurvivorsReady = true;
             foreach (var player in this.Players)
             {
                 if (player == null || player.playerRole != PlayerRole.Survivor)
@@ -647,28 +662,21 @@ namespace ProjectRuntime.Managers
                 }
 
                 hasSurvivor = true;
-                if (player.lives <= 0)
-                {
-                    continue;
-                }
-
-                hasLivingSurvivor = true;
                 if (player.player == null || !player.player.IsDowned)
                 {
-                    allLivingSurvivorsDowned = false;
+                    allSurvivorsDowned = false;
                     return;
+                }
+
+                if (!player.player.ServerCanResolveDowned())
+                {
+                    allDownedSurvivorsReady = false;
                 }
             }
 
-            if (hasLivingSurvivor && allLivingSurvivorsDowned)
+            if (hasSurvivor && allSurvivorsDowned && allDownedSurvivorsReady)
             {
                 this.ServerResolveAllDownedSurvivors();
-                return;
-            }
-
-            if (hasSurvivor && !hasLivingSurvivor)
-            {
-                this.ServerCompleteRound(RoundWinner.DungeonMaster);
             }
         }
 
@@ -682,7 +690,6 @@ namespace ProjectRuntime.Managers
                 if (
                     player == null
                     || player.playerRole != PlayerRole.Survivor
-                    || player.lives <= 0
                     || player.player == null
                     || !player.player.IsDowned
                 )
@@ -691,7 +698,7 @@ namespace ProjectRuntime.Managers
                 }
 
                 // Resolve everyone as if their revive window timed out.
-                player.player.ServerResolveDowned(2);
+                player.player.ServerResolveDowned(DownedResolution.TimedOut);
             }
 
             this._resolvingAllDownedSurvivors = false;
@@ -754,19 +761,16 @@ namespace ProjectRuntime.Managers
 
         private static bool IsRequiredForExtraction(PlayerManager player)
         {
-            // Permanently dead survivors (no lives left) are not required to extract; downed ones
-            // (still have lives) are.
             return player != null
                 && player.playerRole == PlayerRole.Survivor
-                && player.player != null
-                && player.lives > 0;
+                && player.player != null;
         }
 
         private static bool IsActiveSurvivor(PlayerManager player)
         {
             // "Active" = still in the fight. A downed survivor (lives > 0) counts — the DM only wins
             // once every survivor is permanently dead, not merely downed. Lives is the source of truth.
-            return player != null && player.playerRole == PlayerRole.Survivor && player.lives > 0;
+            return player != null && player.playerRole == PlayerRole.Survivor;
         }
 
         private bool IsTimerPenaltyTarget(PlayerManager player)

@@ -15,9 +15,7 @@ namespace ProjectRuntime.UI
         [SerializeField] private Image PlayerStatusImage;
         [SerializeField] private GameObject DownedPlayerObject;
         [SerializeField] private TextMeshProUGUI DownedTimerTMP;
-        [SerializeField] private GameObject DeadPlayerObject;
         [SerializeField] private GameObject DungeonMasterObject;
-        [SerializeField] private List<GameObject> PlayerLivesIcons;
 
         [Header("Status Colours")]
         [SerializeField] private Color HealthySurvivorColor;
@@ -72,7 +70,6 @@ namespace ProjectRuntime.UI
             {
                 _boundPlayer.OnPlayerNameChanged += OnPlayerNameChanged;
                 _boundPlayer.OnPlayerRoleChanged += OnPlayerRoleChanged;
-                _boundPlayer.OnPlayerLivesChanged += OnPlayerLivesChanged;
             }
 
             BindHealthIfNeeded();
@@ -91,7 +88,6 @@ namespace ProjectRuntime.UI
             {
                 _boundPlayer.OnPlayerNameChanged -= OnPlayerNameChanged;
                 _boundPlayer.OnPlayerRoleChanged -= OnPlayerRoleChanged;
-                _boundPlayer.OnPlayerLivesChanged -= OnPlayerLivesChanged;
             }
 
             if (_boundHealth != null)
@@ -128,7 +124,6 @@ namespace ProjectRuntime.UI
 
         private void OnPlayerNameChanged(string playerName) => Refresh();
         private void OnPlayerRoleChanged(PlayerRole role) => Refresh();
-        private void OnPlayerLivesChanged(int lives) => Refresh();
         private void OnHealthChanged(float current, float max) => Refresh();
 
         private void Refresh()
@@ -155,24 +150,17 @@ namespace ProjectRuntime.UI
 
             bool isDungeonMaster = _boundPlayer.playerRole == PlayerRole.DungeonMaster;
             bool isDowned = _boundPlayer.player != null && _boundPlayer.player.IsDowned;
-            bool isDead = _boundPlayer.IsPermanentlyDead ||
-                          (_boundPlayer.player != null && _boundPlayer.player.IsDead);
 
             if (DownedPlayerObject != null)
             {
-                DownedPlayerObject.SetActive(isDowned && !isDead);
+                DownedPlayerObject.SetActive(isDowned);
             }
 
             if (DownedTimerTMP != null)
             {
-                DownedTimerTMP.text = isDowned && !isDead
+                DownedTimerTMP.text = isDowned
                     ? $"{_boundPlayer.player.DownedTimeRemaining:0.0}s"
                     : string.Empty;
-            }
-
-            if (DeadPlayerObject != null)
-            {
-                DeadPlayerObject.SetActive(isDead);
             }
 
             if (DungeonMasterObject != null)
@@ -180,11 +168,10 @@ namespace ProjectRuntime.UI
                 DungeonMasterObject.SetActive(isDungeonMaster);
             }
 
-            RefreshStatusColor(isDungeonMaster, isDowned, isDead);
-            RefreshLives(isDungeonMaster);
+            RefreshStatusColor(isDungeonMaster, isDowned);
         }
 
-        private void RefreshStatusColor(bool isDungeonMaster, bool isDowned, bool isDead)
+        private void RefreshStatusColor(bool isDungeonMaster, bool isDowned)
         {
             if (PlayerStatusImage == null)
             {
@@ -197,7 +184,7 @@ namespace ProjectRuntime.UI
                 return;
             }
 
-            if (isDowned || isDead || _boundHealth == null)
+            if (isDowned || _boundHealth == null)
             {
                 PlayerStatusImage.color = DownedSurvivorColor;
                 return;
@@ -209,26 +196,6 @@ namespace ProjectRuntime.UI
             PlayerStatusImage.color = healthPercent > 0.5f
                 ? HealthySurvivorColor
                 : WarningSurvivorColor;
-        }
-
-        private void RefreshLives(bool isDungeonMaster)
-        {
-            if (PlayerLivesIcons == null)
-            {
-                return;
-            }
-
-            int spentLives = isDungeonMaster || _boundPlayer == null
-                ? 0
-                : Mathf.Clamp(_boundPlayer.MaxLives - _boundPlayer.lives, 0, PlayerLivesIcons.Count);
-
-            for (int i = 0; i < PlayerLivesIcons.Count; i++)
-            {
-                if (PlayerLivesIcons[i] != null)
-                {
-                    PlayerLivesIcons[i].SetActive(i < spentLives);
-                }
-            }
         }
 
         private void CacheOptionalReferences()
