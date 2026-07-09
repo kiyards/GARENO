@@ -392,7 +392,10 @@ namespace ProjectRuntime.Managers
 
             if (this.NemesisDarkenOverlay != null)
             {
-                this.NemesisDarkenOverlay.SetActive(!available || active);
+                // The not-ready deploy PNG conveys the unavailable state on its own and the charge
+                // fill (ready PNG) reveals over it during cooldown, so only darken while the Nemesis
+                // is actually deployed.
+                this.NemesisDarkenOverlay.SetActive(active);
             }
 
             // Side-card tracks the cooldown until the Nemesis can next be deployed: "READY"/full when
