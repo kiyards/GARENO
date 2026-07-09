@@ -15,12 +15,24 @@ namespace ProjectRuntime.UI
     /// </summary>
     public class WorldDirectionIndicatorController : MonoBehaviour
     {
-        [Header("Layout")]
+        [Header("Standard Marker Layout")]
         [SerializeField] private RectTransform indicatorRoot;
         [SerializeField] private float edgePadding = 48f;
         [SerializeField] private float markerWidth = 108f;
         [SerializeField] private float markerHeight = 32f;
         [SerializeField] private float refreshInterval = 0.2f;
+
+        [Header("Downed Marker Layout")]
+        [SerializeField] private Vector2 downedDiamondSize = new(84f, 84f);
+        [SerializeField] private Vector2 downedIconSize = new(40f, 40f);
+        [SerializeField] private float downedDistanceOffsetY = -56f;
+        [SerializeField] private float downedDistanceWidth = 120f;
+        [SerializeField] private float downedDistanceFontSize = 16f;
+
+        [Header("Downed Marker Sprites")]
+        [SerializeField] private Sprite downedDiamondFillSprite;
+        [SerializeField] private Sprite downedDiamondIconSprite;
+        [SerializeField] private Sprite downedDiamondBorderSprite;
 
         [Header("Colors")]
         [SerializeField] private Color teammateColor = new(0.35f, 0.8f, 1f, 0.9f);
@@ -133,13 +145,25 @@ namespace ProjectRuntime.UI
 
                 if (player.player.IsDowned)
                 {
-                    AddTarget(player.player.transform, "DOWN", downedColor, 100);
+                    AddTarget(
+                        player.player.transform,
+                        "DOWN",
+                        downedColor,
+                        100,
+                        IndicatorVisualType.Downed
+                    );
                     continue;
                 }
 
                 if (_showTeammates && !player.player.IsInactive)
                 {
-                    AddTarget(player.player.transform, "TEAM", teammateColor, 110);
+                    AddTarget(
+                        player.player.transform,
+                        "TEAM",
+                        teammateColor,
+                        110,
+                        IndicatorVisualType.Standard
+                    );
                 }
             }
         }
@@ -153,7 +177,13 @@ namespace ProjectRuntime.UI
                 {
                     if (crystal != null && !crystal.IsDespawned && crystal.IsGuidanceRevealed)
                     {
-                        AddTarget(crystal.transform, "CRYSTAL", crystalColor, 200);
+                        AddTarget(
+                            crystal.transform,
+                            "CRYSTAL",
+                            crystalColor,
+                            200,
+                            IndicatorVisualType.Standard
+                        );
                     }
                 }
             }
@@ -167,12 +197,24 @@ namespace ProjectRuntime.UI
             {
                 if (extractionZone != null)
                 {
-                    AddTarget(extractionZone.transform, "EXIT", extractionColor, 300);
+                    AddTarget(
+                        extractionZone.transform,
+                        "EXIT",
+                        extractionColor,
+                        300,
+                        IndicatorVisualType.Standard
+                    );
                 }
             }
         }
 
-        private void AddTarget(Transform target, string label, Color color, int category)
+        private void AddTarget(
+            Transform target,
+            string label,
+            Color color,
+            int category,
+            IndicatorVisualType visualType
+        )
         {
             if (target == null)
             {
@@ -185,6 +227,7 @@ namespace ProjectRuntime.UI
                 Target = target,
                 Label = label,
                 Color = color,
+                VisualType = visualType,
             });
         }
 
@@ -219,8 +262,7 @@ namespace ProjectRuntime.UI
                 var view = GetOrCreateView(target.Id);
                 _visibleViews.Add(target.Id);
                 view.Root.gameObject.SetActive(true);
-                view.Background.color = target.Color;
-                view.Label.text = ComposeLabel(target);
+                ConfigureView(view, target);
                 view.Root.anchoredPosition = WorldToIndicatorPosition(worldCamera, target.Target.position);
             }
 
@@ -238,7 +280,15 @@ namespace ProjectRuntime.UI
             float distance = 0f;
             if (_localPlayer != null && _localPlayer.player != null && target.Target != null)
             {
-                distance = Vector3.Distance(_localPlayer.player.transform.position, target.Target.position);
+                distance = Vector3.Distance(
+                    _localPlayer.player.transform.position,
+                    target.Target.position
+                );
+            }
+
+            if (target.VisualType == IndicatorVisualType.Downed)
+            {
+                return $"{Mathf.RoundToInt(distance)}m";
             }
 
             return $"{target.Label} {Mathf.RoundToInt(distance)}m";
@@ -286,39 +336,136 @@ namespace ProjectRuntime.UI
                 return existing;
             }
 
-            var rootObject = new GameObject($"WorldIndicator_{id}", typeof(RectTransform), typeof(Image));
+            var rootObject = new GameObject($"WorldIndicator_{id}", typeof(RectTransform));
             rootObject.layer = indicatorRoot.gameObject.layer;
             var rootRect = rootObject.GetComponent<RectTransform>();
             rootRect.SetParent(indicatorRoot, false);
-            rootRect.sizeDelta = new Vector2(markerWidth, markerHeight);
             rootRect.pivot = new Vector2(0.5f, 0.5f);
 
-            var background = rootObject.GetComponent<Image>();
-            background.raycastTarget = false;
+            var background = CreateImageChild("StandardBackground", rootRect);
+            background.rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+            background.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+            background.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            background.rectTransform.sizeDelta = new Vector2(markerWidth, markerHeight);
 
-            var textObject = new GameObject("Label", typeof(RectTransform), typeof(TextMeshProUGUI));
-            textObject.layer = rootObject.layer;
-            var textRect = textObject.GetComponent<RectTransform>();
-            textRect.SetParent(rootRect, false);
-            textRect.anchorMin = Vector2.zero;
-            textRect.anchorMax = Vector2.one;
-            textRect.offsetMin = new Vector2(6f, 2f);
-            textRect.offsetMax = new Vector2(-6f, -2f);
-
-            var label = textObject.GetComponent<TextMeshProUGUI>();
-            label.alignment = TextAlignmentOptions.Center;
-            label.color = Color.white;
+            var label = CreateTextChild("StandardLabel", background.rectTransform);
+            label.rectTransform.anchorMin = Vector2.zero;
+            label.rectTransform.anchorMax = Vector2.one;
+            label.rectTransform.offsetMin = new Vector2(6f, 2f);
+            label.rectTransform.offsetMax = new Vector2(-6f, -2f);
             label.fontSize = 16f;
-            label.raycastTarget = false;
+            label.color = Color.white;
+
+            var downedFill = CreateImageChild("DownedFill", rootRect);
+            downedFill.rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+            downedFill.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+            downedFill.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+
+            var downedIcon = CreateImageChild("DownedIcon", rootRect);
+            downedIcon.rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+            downedIcon.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+            downedIcon.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+
+            var downedBorder = CreateImageChild("DownedBorder", rootRect);
+            downedBorder.rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+            downedBorder.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+            downedBorder.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+
+            var downedDistanceLabel = CreateTextChild("DownedDistanceLabel", rootRect);
+            downedDistanceLabel.rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+            downedDistanceLabel.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+            downedDistanceLabel.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            downedDistanceLabel.color = Color.white;
+            downedDistanceLabel.fontSize = downedDistanceFontSize;
 
             var view = new IndicatorView
             {
                 Root = rootRect,
-                Background = background,
-                Label = label,
+                StandardBackground = background,
+                StandardLabel = label,
+                DownedFill = downedFill,
+                DownedIcon = downedIcon,
+                DownedBorder = downedBorder,
+                DownedDistanceLabel = downedDistanceLabel,
             };
             _views[id] = view;
             return view;
+        }
+
+        private void ConfigureView(IndicatorView view, IndicatorTarget target)
+        {
+            bool isDowned = target.VisualType == IndicatorVisualType.Downed;
+
+            view.StandardBackground.gameObject.SetActive(!isDowned);
+            view.StandardLabel.gameObject.SetActive(!isDowned);
+            view.DownedFill.gameObject.SetActive(isDowned);
+            view.DownedIcon.gameObject.SetActive(isDowned);
+            view.DownedBorder.gameObject.SetActive(isDowned);
+            view.DownedDistanceLabel.gameObject.SetActive(isDowned);
+
+            if (!isDowned)
+            {
+                view.Root.sizeDelta = new Vector2(markerWidth, markerHeight);
+                view.StandardBackground.rectTransform.sizeDelta = new Vector2(markerWidth, markerHeight);
+                view.StandardBackground.color = target.Color;
+                view.StandardLabel.text = ComposeLabel(target);
+                return;
+            }
+
+            float rootHeight = downedDiamondSize.y + Mathf.Abs(downedDistanceOffsetY) + 24f;
+            view.Root.sizeDelta = new Vector2(Mathf.Max(downedDiamondSize.x, downedDistanceWidth), rootHeight);
+
+            view.DownedFill.sprite = downedDiamondFillSprite;
+            view.DownedIcon.sprite = downedDiamondIconSprite;
+            view.DownedBorder.sprite = downedDiamondBorderSprite;
+
+            view.DownedFill.rectTransform.sizeDelta = downedDiamondSize;
+            view.DownedIcon.rectTransform.sizeDelta = downedIconSize;
+            view.DownedBorder.rectTransform.sizeDelta = downedDiamondSize;
+            view.DownedFill.rectTransform.anchoredPosition = Vector2.zero;
+            view.DownedIcon.rectTransform.anchoredPosition = Vector2.zero;
+            view.DownedBorder.rectTransform.anchoredPosition = Vector2.zero;
+
+            view.DownedFill.preserveAspect = true;
+            view.DownedIcon.preserveAspect = true;
+            view.DownedBorder.preserveAspect = true;
+            view.DownedDistanceLabel.fontSize = downedDistanceFontSize;
+            view.DownedDistanceLabel.text = ComposeLabel(target);
+            view.DownedDistanceLabel.rectTransform.anchoredPosition = new Vector2(
+                0f,
+                downedDistanceOffsetY
+            );
+            view.DownedDistanceLabel.rectTransform.sizeDelta = new Vector2(downedDistanceWidth, 24f);
+        }
+
+        private static Image CreateImageChild(string name, RectTransform parent)
+        {
+            var imageObject = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+            imageObject.layer = parent.gameObject.layer;
+            var imageRect = imageObject.GetComponent<RectTransform>();
+            imageRect.SetParent(parent, false);
+
+            var image = imageObject.GetComponent<Image>();
+            image.raycastTarget = false;
+            return image;
+        }
+
+        private static TextMeshProUGUI CreateTextChild(string name, RectTransform parent)
+        {
+            var textObject = new GameObject(
+                name,
+                typeof(RectTransform),
+                typeof(CanvasRenderer),
+                typeof(TextMeshProUGUI)
+            );
+            textObject.layer = parent.gameObject.layer;
+            var textRect = textObject.GetComponent<RectTransform>();
+            textRect.SetParent(parent, false);
+
+            var label = textObject.GetComponent<TextMeshProUGUI>();
+            label.alignment = TextAlignmentOptions.Center;
+            label.raycastTarget = false;
+            return label;
         }
 
         private void HideAll()
@@ -370,13 +517,24 @@ namespace ProjectRuntime.UI
             public Transform Target;
             public string Label;
             public Color Color;
+            public IndicatorVisualType VisualType;
         }
 
         private struct IndicatorView
         {
             public RectTransform Root;
-            public Image Background;
-            public TextMeshProUGUI Label;
+            public Image StandardBackground;
+            public TextMeshProUGUI StandardLabel;
+            public Image DownedFill;
+            public Image DownedIcon;
+            public Image DownedBorder;
+            public TextMeshProUGUI DownedDistanceLabel;
+        }
+
+        private enum IndicatorVisualType
+        {
+            Standard,
+            Downed,
         }
     }
 }
