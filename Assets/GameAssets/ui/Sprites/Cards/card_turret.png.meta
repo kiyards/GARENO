@@ -1,0 +1,1183 @@
+fileFormatVersion: 2
+guid: 28a641eb3fa51064fa1c3b5cb66eaefa
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -8319496023558916154
+    second: enemy turret icon_0
+  - first:
+      213: 1799169234382394224
+    second: enemy turret icon_1
+  - first:
+      213: -1328072285779953029
+    second: enemy turret icon_2
+  - first:
+      213: 8154924542380665996
+    second: enemy turret icon_3
+  - first:
+      213: -3497438628399856172
+    second: enemy turret icon_4
+  - first:
+      213: 7284292610965549342
+    second: enemy turret icon_5
+  - first:
+      213: -685339960283827960
+    second: enemy turret icon_6
+  - first:
+      213: 7172406273885240000
+    second: enemy turret icon_7
+  - first:
+      213: -4555113566428020445
+    second: enemy turret icon_8
+  - first:
+      213: 8625313411845152847
+    second: enemy turret icon_9
+  - first:
+      213: -8722374435960227254
+    second: enemy turret icon_10
+  - first:
+      213: -2237484602308565592
+    second: enemy turret icon_11
+  - first:
+      213: 8154763114430275039
+    second: enemy turret icon_12
+  - first:
+      213: -4903853194405409230
+    second: enemy turret icon_13
+  - first:
+      213: 5312544102401312819
+    second: enemy turret icon_14
+  - first:
+      213: -375929616527187151
+    second: enemy turret icon_15
+  - first:
+      213: -3408999261873855647
+    second: enemy turret icon_16
+  - first:
+      213: 8513721109428233115
+    second: enemy turret icon_17
+  - first:
+      213: -4131012036241761063
+    second: enemy turret icon_18
+  - first:
+      213: -148402059742203909
+    second: enemy turret icon_19
+  - first:
+      213: 5187960017258593765
+    second: enemy turret icon_20
+  - first:
+      213: 7142896648447191738
+    second: enemy turret icon_21
+  - first:
+      213: 8903665457956036728
+    second: enemy turret icon_22
+  - first:
+      213: -8342108952642812279
+    second: enemy turret icon_23
+  - first:
+      213: -4682177127540140425
+    second: enemy turret icon_24
+  - first:
+      213: 1268566937894669583
+    second: enemy turret icon_25
+  - first:
+      213: -8549365503118568752
+    second: enemy turret icon_26
+  - first:
+      213: 4201085717460787971
+    second: enemy turret icon_27
+  - first:
+      213: -5279172670756745866
+    second: enemy turret icon_28
+  - first:
+      213: 4069212665741770025
+    second: enemy turret icon_29
+  - first:
+      213: 5493642472745767821
+    second: enemy turret icon_30
+  - first:
+      213: 367775800375390775
+    second: enemy turret icon_31
+  - first:
+      213: 6577895280450402286
+    second: enemy turret icon_32
+  - first:
+      213: -4443869708651147833
+    second: enemy turret icon_33
+  - first:
+      213: -2231950575769223927
+    second: enemy turret icon_34
+  - first:
+      213: -4956908887840405419
+    second: enemy turret icon_35
+  - first:
+      213: -304111843103287654
+    second: enemy turret icon_36
+  - first:
+      213: 3086766675314825454
+    second: enemy turret icon_37
+  - first:
+      213: -8463435455556128946
+    second: enemy turret icon_38
+  - first:
+      213: 3751035214065507277
+    second: enemy turret icon_39
+  - first:
+      213: -235391100535366488
+    second: enemy turret icon_40
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: enemy turret icon_0
+      rect:
+        serializedVersion: 2
+        x: 201
+        y: 505
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c7fe75f1763b8c80800000000000000
+      internalID: -8319496023558916154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_1
+      rect:
+        serializedVersion: 2
+        x: 107
+        y: 327
+        width: 18
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0739c22e2eee7f810800000000000000
+      internalID: 1799169234382394224
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_2
+      rect:
+        serializedVersion: 2
+        x: 169
+        y: 388
+        width: 11
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b7a7b02ea4db19de0800000000000000
+      internalID: -1328072285779953029
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_3
+      rect:
+        serializedVersion: 2
+        x: 169
+        y: 382
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8ce6b62aac1c2170800000000000000
+      internalID: 8154924542380665996
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_4
+      rect:
+        serializedVersion: 2
+        x: 172
+        y: 352
+        width: 39
+        height: 151
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d54f72091a967fc0800000000000000
+      internalID: -3497438628399856172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_5
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 313
+        width: 87
+        height: 142
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e11ba9c2981071560800000000000000
+      internalID: 7284292610965549342
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_6
+      rect:
+        serializedVersion: 2
+        x: 283
+        y: 293
+        width: 75
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 801f6ecefee2d76f0800000000000000
+      internalID: -685339960283827960
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_7
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 341
+        width: 15
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ca76bb4181898360800000000000000
+      internalID: 7172406273885240000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_8
+      rect:
+        serializedVersion: 2
+        x: 328
+        y: 298
+        width: 63
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 321ce79685cf8c0c0800000000000000
+      internalID: -4555113566428020445
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_9
+      rect:
+        serializedVersion: 2
+        x: 392
+        y: 354
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f40617569d443b770800000000000000
+      internalID: 8625313411845152847
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_10
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 206
+        width: 190
+        height: 114
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4a74a2e9a6e3f680800000000000000
+      internalID: -8722374435960227254
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_11
+      rect:
+        serializedVersion: 2
+        x: 237
+        y: 307
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a5edf0eb9bd2f0e0800000000000000
+      internalID: -2237484602308565592
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_12
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 312
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fdd1317c8d98b2170800000000000000
+      internalID: 8154763114430275039
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_13
+      rect:
+        serializedVersion: 2
+        x: 321
+        y: 164
+        width: 171
+        height: 140
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 23e0dcc508302fbb0800000000000000
+      internalID: -4903853194405409230
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_14
+      rect:
+        serializedVersion: 2
+        x: 426
+        y: 295
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3380a3dc6b2f9b940800000000000000
+      internalID: 5312544102401312819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_15
+      rect:
+        serializedVersion: 2
+        x: 444
+        y: 303
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 133295a610e68caf0800000000000000
+      internalID: -375929616527187151
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_16
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 229
+        width: 26
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 163a074ab3dc0b0d0800000000000000
+      internalID: -3408999261873855647
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_17
+      rect:
+        serializedVersion: 2
+        x: 195
+        y: 266
+        width: 38
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b93e63ccd30d62670800000000000000
+      internalID: 8513721109428233115
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_18
+      rect:
+        serializedVersion: 2
+        x: 225
+        y: 256
+        width: 78
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9dc52f8a072bba6c0800000000000000
+      internalID: -4131012036241761063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_19
+      rect:
+        serializedVersion: 2
+        x: 298
+        y: 212
+        width: 25
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bff2129ec15c0fdf0800000000000000
+      internalID: -148402059742203909
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_20
+      rect:
+        serializedVersion: 2
+        x: 318
+        y: 253
+        width: 17
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5edb0a116265ff740800000000000000
+      internalID: 5187960017258593765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_21
+      rect:
+        serializedVersion: 2
+        x: 49
+        y: 141
+        width: 129
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: abae50638aaa02360800000000000000
+      internalID: 7142896648447191738
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_22
+      rect:
+        serializedVersion: 2
+        x: 221
+        y: 237
+        width: 76
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 870a2647f8c209b70800000000000000
+      internalID: 8903665457956036728
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_23
+      rect:
+        serializedVersion: 2
+        x: 315
+        y: 234
+        width: 17
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9868e102b10ea3c80800000000000000
+      internalID: -8342108952642812279
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_24
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 189
+        width: 31
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 776d281b5b0950fb0800000000000000
+      internalID: -4682177127540140425
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_25
+      rect:
+        serializedVersion: 2
+        x: 197
+        y: 195
+        width: 36
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f0d440ba8eada9110800000000000000
+      internalID: 1268566937894669583
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_26
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 218
+        width: 74
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d293a31f5d8a5980800000000000000
+      internalID: -8549365503118568752
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_27
+      rect:
+        serializedVersion: 2
+        x: 318
+        y: 218
+        width: 14
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 303a734a3314d4a30800000000000000
+      internalID: 4201085717460787971
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_28
+      rect:
+        serializedVersion: 2
+        x: 177
+        y: 190
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67d089b1d6c9cb6b0800000000000000
+      internalID: -5279172670756745866
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_29
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 150
+        width: 52
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92dfe012c5fb87830800000000000000
+      internalID: 4069212665741770025
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_30
+      rect:
+        serializedVersion: 2
+        x: 199
+        y: 170
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d83920fe8b65d3c40800000000000000
+      internalID: 5493642472745767821
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_31
+      rect:
+        serializedVersion: 2
+        x: 255
+        y: 155
+        width: 41
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7323c52542a9a1500800000000000000
+      internalID: 367775800375390775
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_32
+      rect:
+        serializedVersion: 2
+        x: 310
+        y: 124
+        width: 83
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee7f6f808e0694b50800000000000000
+      internalID: 6577895280450402286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_33
+      rect:
+        serializedVersion: 2
+        x: 123
+        y: 10
+        width: 222
+        height: 146
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7cdcabb6b043452c0800000000000000
+      internalID: -4443869708651147833
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_34
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 155
+        width: 13
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 90dfb07d6c48601e0800000000000000
+      internalID: -2231950575769223927
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_35
+      rect:
+        serializedVersion: 2
+        x: 294
+        y: 142
+        width: 25
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 558cb4c11a5853bb0800000000000000
+      internalID: -4956908887840405419
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_36
+      rect:
+        serializedVersion: 2
+        x: 108
+        y: 116
+        width: 17
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a96d6d3d3e397cbf0800000000000000
+      internalID: -304111843103287654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_37
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 131
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee857a2dfe566da20800000000000000
+      internalID: 3086766675314825454
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_38
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 102
+        width: 17
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e4f612c5b46db8a80800000000000000
+      internalID: -8463435455556128946
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_39
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 108
+        width: 12
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dcb1b5247aa5e0430800000000000000
+      internalID: 3751035214065507277
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy turret icon_40
+      rect:
+        serializedVersion: 2
+        x: 254
+        y: 1
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ac1d4d8a09bbbcf0800000000000000
+      internalID: -235391100535366488
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      enemy turret icon_0: -8319496023558916154
+      enemy turret icon_1: 1799169234382394224
+      enemy turret icon_10: -8722374435960227254
+      enemy turret icon_11: -2237484602308565592
+      enemy turret icon_12: 8154763114430275039
+      enemy turret icon_13: -4903853194405409230
+      enemy turret icon_14: 5312544102401312819
+      enemy turret icon_15: -375929616527187151
+      enemy turret icon_16: -3408999261873855647
+      enemy turret icon_17: 8513721109428233115
+      enemy turret icon_18: -4131012036241761063
+      enemy turret icon_19: -148402059742203909
+      enemy turret icon_2: -1328072285779953029
+      enemy turret icon_20: 5187960017258593765
+      enemy turret icon_21: 7142896648447191738
+      enemy turret icon_22: 8903665457956036728
+      enemy turret icon_23: -8342108952642812279
+      enemy turret icon_24: -4682177127540140425
+      enemy turret icon_25: 1268566937894669583
+      enemy turret icon_26: -8549365503118568752
+      enemy turret icon_27: 4201085717460787971
+      enemy turret icon_28: -5279172670756745866
+      enemy turret icon_29: 4069212665741770025
+      enemy turret icon_3: 8154924542380665996
+      enemy turret icon_30: 5493642472745767821
+      enemy turret icon_31: 367775800375390775
+      enemy turret icon_32: 6577895280450402286
+      enemy turret icon_33: -4443869708651147833
+      enemy turret icon_34: -2231950575769223927
+      enemy turret icon_35: -4956908887840405419
+      enemy turret icon_36: -304111843103287654
+      enemy turret icon_37: 3086766675314825454
+      enemy turret icon_38: -8463435455556128946
+      enemy turret icon_39: 3751035214065507277
+      enemy turret icon_4: -3497438628399856172
+      enemy turret icon_40: -235391100535366488
+      enemy turret icon_5: 7284292610965549342
+      enemy turret icon_6: -685339960283827960
+      enemy turret icon_7: 7172406273885240000
+      enemy turret icon_8: -4555113566428020445
+      enemy turret icon_9: 8625313411845152847
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

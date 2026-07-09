@@ -1,0 +1,1183 @@
+fileFormatVersion: 2
+guid: 2c27bb5254880494a8a7e8c439eaad0e
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2655748465343686961
+    second: enemy dart turret icon_0
+  - first:
+      213: -6006870318339295707
+    second: enemy dart turret icon_1
+  - first:
+      213: 5116345324608678748
+    second: enemy dart turret icon_2
+  - first:
+      213: 3083254243196610180
+    second: enemy dart turret icon_3
+  - first:
+      213: 1285140102080205670
+    second: enemy dart turret icon_4
+  - first:
+      213: 942413892838547668
+    second: enemy dart turret icon_5
+  - first:
+      213: -4379690880629741395
+    second: enemy dart turret icon_6
+  - first:
+      213: -4614402365952665281
+    second: enemy dart turret icon_7
+  - first:
+      213: -1681828312345209651
+    second: enemy dart turret icon_8
+  - first:
+      213: 4088692958756709887
+    second: enemy dart turret icon_9
+  - first:
+      213: 6114758336563613042
+    second: enemy dart turret icon_10
+  - first:
+      213: 2128204547492362016
+    second: enemy dart turret icon_11
+  - first:
+      213: -3637846414147472202
+    second: enemy dart turret icon_12
+  - first:
+      213: 6327822329150903202
+    second: enemy dart turret icon_13
+  - first:
+      213: 2472707555463546737
+    second: enemy dart turret icon_14
+  - first:
+      213: 9084760120143215031
+    second: enemy dart turret icon_15
+  - first:
+      213: 2826675557719922955
+    second: enemy dart turret icon_16
+  - first:
+      213: 3506372424890705743
+    second: enemy dart turret icon_17
+  - first:
+      213: -2160458182214906555
+    second: enemy dart turret icon_18
+  - first:
+      213: -8265178806164788644
+    second: enemy dart turret icon_19
+  - first:
+      213: -929002723537523894
+    second: enemy dart turret icon_20
+  - first:
+      213: -1585096173587176590
+    second: enemy dart turret icon_21
+  - first:
+      213: 107750991119078856
+    second: enemy dart turret icon_22
+  - first:
+      213: 2876616422120707314
+    second: enemy dart turret icon_23
+  - first:
+      213: -7686316766367393178
+    second: enemy dart turret icon_24
+  - first:
+      213: 5921018692209499653
+    second: enemy dart turret icon_25
+  - first:
+      213: 6232321982581785047
+    second: enemy dart turret icon_26
+  - first:
+      213: 2855015792194675289
+    second: enemy dart turret icon_27
+  - first:
+      213: 1481736879661401298
+    second: enemy dart turret icon_28
+  - first:
+      213: 6593544313072821487
+    second: enemy dart turret icon_29
+  - first:
+      213: 6907240482438687518
+    second: enemy dart turret icon_30
+  - first:
+      213: -5960387033088921197
+    second: enemy dart turret icon_31
+  - first:
+      213: 6159130601402242035
+    second: enemy dart turret icon_32
+  - first:
+      213: -2321319820273697580
+    second: enemy dart turret icon_33
+  - first:
+      213: -4286089918756643191
+    second: enemy dart turret icon_34
+  - first:
+      213: -5066821832037115051
+    second: enemy dart turret icon_35
+  - first:
+      213: 322210090860899783
+    second: enemy dart turret icon_36
+  - first:
+      213: 6547619876831181638
+    second: enemy dart turret icon_37
+  - first:
+      213: -3309486804384336103
+    second: enemy dart turret icon_38
+  - first:
+      213: -1339627593433791718
+    second: enemy dart turret icon_39
+  - first:
+      213: -7966203820411010762
+    second: enemy dart turret icon_40
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: enemy dart turret icon_0
+      rect:
+        serializedVersion: 2
+        x: 201
+        y: 505
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc6966e67d2e42bd0800000000000000
+      internalID: -2655748465343686961
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_1
+      rect:
+        serializedVersion: 2
+        x: 107
+        y: 327
+        width: 18
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5267c8f654f43aca0800000000000000
+      internalID: -6006870318339295707
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_2
+      rect:
+        serializedVersion: 2
+        x: 169
+        y: 388
+        width: 11
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5be78517f8e00740800000000000000
+      internalID: 5116345324608678748
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_3
+      rect:
+        serializedVersion: 2
+        x: 169
+        y: 382
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48623fdf56be9ca20800000000000000
+      internalID: 3083254243196610180
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_4
+      rect:
+        serializedVersion: 2
+        x: 172
+        y: 352
+        width: 39
+        height: 151
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66399172d1cb5d110800000000000000
+      internalID: 1285140102080205670
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_5
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 313
+        width: 87
+        height: 142
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d0e8024170241d00800000000000000
+      internalID: 942413892838547668
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_6
+      rect:
+        serializedVersion: 2
+        x: 283
+        y: 293
+        width: 75
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da8eb0249563833c0800000000000000
+      internalID: -4379690880629741395
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_7
+      rect:
+        serializedVersion: 2
+        x: 149
+        y: 341
+        width: 15
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f395bae0f7956ffb0800000000000000
+      internalID: -4614402365952665281
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_8
+      rect:
+        serializedVersion: 2
+        x: 328
+        y: 298
+        width: 63
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc418758f02f8a8e0800000000000000
+      internalID: -1681828312345209651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_9
+      rect:
+        serializedVersion: 2
+        x: 392
+        y: 354
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff5a55a4594fdb830800000000000000
+      internalID: 4088692958756709887
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_10
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 206
+        width: 190
+        height: 114
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27d8b3a4f4cfbd450800000000000000
+      internalID: 6114758336563613042
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_11
+      rect:
+        serializedVersion: 2
+        x: 237
+        y: 307
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 02737ae92c6e88d10800000000000000
+      internalID: 2128204547492362016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_12
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 312
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b4bf41e5f5c38dc0800000000000000
+      internalID: -3637846414147472202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_13
+      rect:
+        serializedVersion: 2
+        x: 321
+        y: 164
+        width: 178
+        height: 140
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a313d2d1e0f0d750800000000000000
+      internalID: 6327822329150903202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_14
+      rect:
+        serializedVersion: 2
+        x: 426
+        y: 295
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17744d4bb62d05220800000000000000
+      internalID: 2472707555463546737
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_15
+      rect:
+        serializedVersion: 2
+        x: 444
+        y: 303
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b975c6323d831e70800000000000000
+      internalID: 9084760120143215031
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_16
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 229
+        width: 26
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b09dc21817e5a3720800000000000000
+      internalID: 2826675557719922955
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_17
+      rect:
+        serializedVersion: 2
+        x: 195
+        y: 266
+        width: 38
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f47e5d3942329a030800000000000000
+      internalID: 3506372424890705743
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_18
+      rect:
+        serializedVersion: 2
+        x: 225
+        y: 256
+        width: 78
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 54d8ef8dab28402e0800000000000000
+      internalID: -2160458182214906555
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_19
+      rect:
+        serializedVersion: 2
+        x: 298
+        y: 212
+        width: 25
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5ae575aaaf2c4d80800000000000000
+      internalID: -8265178806164788644
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_20
+      rect:
+        serializedVersion: 2
+        x: 318
+        y: 253
+        width: 17
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4bec2ce1f48b13f0800000000000000
+      internalID: -929002723537523894
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_21
+      rect:
+        serializedVersion: 2
+        x: 49
+        y: 141
+        width: 129
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2736186ad6b900ae0800000000000000
+      internalID: -1585096173587176590
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_22
+      rect:
+        serializedVersion: 2
+        x: 221
+        y: 237
+        width: 76
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c559dd94fece7100800000000000000
+      internalID: 107750991119078856
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_23
+      rect:
+        serializedVersion: 2
+        x: 315
+        y: 234
+        width: 17
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f45f8b156bcbe720800000000000000
+      internalID: 2876616422120707314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_24
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 189
+        width: 31
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66ada85ff97b45590800000000000000
+      internalID: -7686316766367393178
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_25
+      rect:
+        serializedVersion: 2
+        x: 197
+        y: 195
+        width: 36
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50e5891312fab2250800000000000000
+      internalID: 5921018692209499653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_26
+      rect:
+        serializedVersion: 2
+        x: 224
+        y: 218
+        width: 74
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d145a9a2d7ad7650800000000000000
+      internalID: 6232321982581785047
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_27
+      rect:
+        serializedVersion: 2
+        x: 318
+        y: 218
+        width: 14
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 952e4e98cbd0f9720800000000000000
+      internalID: 2855015792194675289
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_28
+      rect:
+        serializedVersion: 2
+        x: 177
+        y: 190
+        width: 14
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2d440da67df209410800000000000000
+      internalID: 1481736879661401298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_29
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 150
+        width: 52
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe4a08f5e99f08b50800000000000000
+      internalID: 6593544313072821487
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_30
+      rect:
+        serializedVersion: 2
+        x: 199
+        y: 170
+        width: 18
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1ba4f56f927bdf50800000000000000
+      internalID: 6907240482438687518
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_31
+      rect:
+        serializedVersion: 2
+        x: 255
+        y: 155
+        width: 41
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 391f3e8a293784da0800000000000000
+      internalID: -5960387033088921197
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_32
+      rect:
+        serializedVersion: 2
+        x: 310
+        y: 124
+        width: 83
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f391d546a0a97550800000000000000
+      internalID: 6159130601402242035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_33
+      rect:
+        serializedVersion: 2
+        x: 123
+        y: 10
+        width: 222
+        height: 146
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4dc338e1ce309cfd0800000000000000
+      internalID: -2321319820273697580
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_34
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 155
+        width: 13
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98e90257defb484c0800000000000000
+      internalID: -4286089918756643191
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_35
+      rect:
+        serializedVersion: 2
+        x: 294
+        y: 142
+        width: 25
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55bdb3193680fa9b0800000000000000
+      internalID: -5066821832037115051
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_36
+      rect:
+        serializedVersion: 2
+        x: 108
+        y: 116
+        width: 17
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7cd6fc8de58b87400800000000000000
+      internalID: 322210090860899783
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_37
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 131
+        width: 10
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 64b3fc25691ddda50800000000000000
+      internalID: 6547619876831181638
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_38
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 102
+        width: 17
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 91734db29475212d0800000000000000
+      internalID: -3309486804384336103
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_39
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 108
+        width: 12
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a13411a2dcfa86de0800000000000000
+      internalID: -1339627593433791718
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy dart turret icon_40
+      rect:
+        serializedVersion: 2
+        x: 254
+        y: 1
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 631ca0405db527190800000000000000
+      internalID: -7966203820411010762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      enemy dart turret icon_0: -2655748465343686961
+      enemy dart turret icon_1: -6006870318339295707
+      enemy dart turret icon_10: 6114758336563613042
+      enemy dart turret icon_11: 2128204547492362016
+      enemy dart turret icon_12: -3637846414147472202
+      enemy dart turret icon_13: 6327822329150903202
+      enemy dart turret icon_14: 2472707555463546737
+      enemy dart turret icon_15: 9084760120143215031
+      enemy dart turret icon_16: 2826675557719922955
+      enemy dart turret icon_17: 3506372424890705743
+      enemy dart turret icon_18: -2160458182214906555
+      enemy dart turret icon_19: -8265178806164788644
+      enemy dart turret icon_2: 5116345324608678748
+      enemy dart turret icon_20: -929002723537523894
+      enemy dart turret icon_21: -1585096173587176590
+      enemy dart turret icon_22: 107750991119078856
+      enemy dart turret icon_23: 2876616422120707314
+      enemy dart turret icon_24: -7686316766367393178
+      enemy dart turret icon_25: 5921018692209499653
+      enemy dart turret icon_26: 6232321982581785047
+      enemy dart turret icon_27: 2855015792194675289
+      enemy dart turret icon_28: 1481736879661401298
+      enemy dart turret icon_29: 6593544313072821487
+      enemy dart turret icon_3: 3083254243196610180
+      enemy dart turret icon_30: 6907240482438687518
+      enemy dart turret icon_31: -5960387033088921197
+      enemy dart turret icon_32: 6159130601402242035
+      enemy dart turret icon_33: -2321319820273697580
+      enemy dart turret icon_34: -4286089918756643191
+      enemy dart turret icon_35: -5066821832037115051
+      enemy dart turret icon_36: 322210090860899783
+      enemy dart turret icon_37: 6547619876831181638
+      enemy dart turret icon_38: -3309486804384336103
+      enemy dart turret icon_39: -1339627593433791718
+      enemy dart turret icon_4: 1285140102080205670
+      enemy dart turret icon_40: -7966203820411010762
+      enemy dart turret icon_5: 942413892838547668
+      enemy dart turret icon_6: -4379690880629741395
+      enemy dart turret icon_7: -4614402365952665281
+      enemy dart turret icon_8: -1681828312345209651
+      enemy dart turret icon_9: 4088692958756709887
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

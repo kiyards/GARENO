@@ -109,7 +109,12 @@ namespace ProjectRuntime.UI
 
             if (this.cardImage != null)
             {
-                this.cardImage.enabled = true;
+                var cardSprite = DCardArt.GetSpriteByCardId(card.CardId);
+                this.cardImage.sprite = cardSprite;
+                this.cardImage.enabled = cardSprite != null;
+                this.cardImage.color = cardSprite != null
+                    ? Color.white
+                    : new Color(1f, 1f, 1f, 0f);
             }
 
             this.cardTypeIcon.sprite = this.GetCardTypeIcon(card.CardType);
@@ -181,7 +186,9 @@ namespace ProjectRuntime.UI
 
             if (this.cardImage != null)
             {
+                this.cardImage.sprite = null;
                 this.cardImage.enabled = false;
+                this.cardImage.color = new Color(1f, 1f, 1f, 0f);
             }
 
             this.cardTypeIcon.sprite = null;

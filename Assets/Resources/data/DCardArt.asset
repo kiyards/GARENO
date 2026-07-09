@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c92e8905e30423ea0f8a9001d6d09de, type: 3}
+  m_Name: DCardArt
+  m_EditorClassIdentifier: 
+  <Data>k__BackingField:
+  - <CardId>k__BackingField: CARD_BEAR_TRAP
+    <Sprite>k__BackingField: {fileID: 21300000, guid: af4ebd780b467014bbe263a36941f970, type: 3}
+  - <CardId>k__BackingField: CARD_GROUP_OF_DOGS
+    <Sprite>k__BackingField: {fileID: 21300000, guid: 93d767eebaa938749b60a0e377d38582, type: 3}
+  - <CardId>k__BackingField: CARD_TURRET
+    <Sprite>k__BackingField: {fileID: 21300000, guid: 28a641eb3fa51064fa1c3b5cb66eaefa, type: 3}
+  - <CardId>k__BackingField: CARD_SLOWING_DART_TURRET
+    <Sprite>k__BackingField: {fileID: 21300000, guid: 2c27bb5254880494a8a7e8c439eaad0e, type: 3}
