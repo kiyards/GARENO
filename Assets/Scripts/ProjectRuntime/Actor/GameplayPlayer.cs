@@ -637,7 +637,7 @@ namespace ProjectRuntime.Actor
                     health.ServerResetHealth();
                 }
 
-                Vector3 respawnPos = GameNetworkManager.Instance.GetStartPosition().position;
+                Vector3 respawnPos = GameNetworkManager.Instance.GetGameplaySpawnPosition(localManager);
                 RpcEnterRespawnState(respawnPos);
             }
             else
@@ -648,7 +648,7 @@ namespace ProjectRuntime.Actor
                     health.ServerResetHealth();
                 }
 
-                Vector3 respawnPos = GameNetworkManager.Instance.GetStartPosition().position;
+                Vector3 respawnPos = GameNetworkManager.Instance.GetGameplaySpawnPosition(localManager);
                 RpcEnterRespawnState(respawnPos);
             }
 

@@ -27,6 +27,9 @@ namespace ProjectRuntime.Network
         [SerializeField] private GameObject dungeonMasterSlowingTurretPrefab;
         [SerializeField] private GameObject dungeonMasterNemesisPrefab;
 
+        [Header("Gameplay Spawn")]
+        [SerializeField] private float survivorSpawnRadius = 2f;
+
         public List<LobbyPlayer> LobbyPlayers { get; } = new List<LobbyPlayer>();
         public Dictionary<NetworkConnectionToClient, PlayerManager> ConnectedPlayersCurrent = new();
         public Dictionary<(uint, int), NetworkStateMachine> NetId2SM { get; private set; } = new();
@@ -209,6 +212,74 @@ namespace ProjectRuntime.Network
         }
         #endregion
 
+        private Transform GetSpawnCenterTransform()
+        {
+            startPositions.RemoveAll(t => t == null);
+            return startPositions.Count > 0 ? startPositions[0] : transform;
+        }
+
+        private int GetConfiguredSpawnSlotCount()
+        {
+            if (this._expectedGamePlayerCount > 0)
+            {
+                return this._expectedGamePlayerCount;
+            }
+
+            return Mathf.Max(1, this.ConnectedPlayersCurrent.Count);
+        }
+
+        private int GetActivePlayerSlotCount()
+        {
+            int highestPlayerIndex = this.ConnectedPlayersCurrent.Values
+                .Where(playerManager => playerManager != null)
+                .Select(playerManager => playerManager.playerIndex)
+                .DefaultIfEmpty(-1)
+                .Max();
+
+            return Mathf.Max(this.GetConfiguredSpawnSlotCount(), highestPlayerIndex + 1);
+        }
+
+        private static int WrapSpawnSlotIndex(int playerIndex, int slotCount)
+        {
+            if (slotCount <= 0)
+            {
+                return 0;
+            }
+
+            int wrappedIndex = playerIndex % slotCount;
+            return wrappedIndex < 0 ? wrappedIndex + slotCount : wrappedIndex;
+        }
+
+        private Vector3 GetSpawnPosition(int playerIndex, int slotCount)
+        {
+            Transform spawnCenter = this.GetSpawnCenterTransform();
+
+            if (slotCount <= 1)
+            {
+                return spawnCenter.position;
+            }
+
+            int slotIndex = WrapSpawnSlotIndex(playerIndex, slotCount);
+            float angle = (Mathf.PI * 2f * slotIndex) / slotCount;
+            Vector3 radialOffset = new Vector3(
+                Mathf.Cos(angle) * this.survivorSpawnRadius,
+                0f,
+                Mathf.Sin(angle) * this.survivorSpawnRadius);
+
+            return spawnCenter.position + radialOffset;
+        }
+
+        [Server]
+        public Vector3 GetGameplaySpawnPosition(PlayerManager playerManager)
+        {
+            if (playerManager == null)
+            {
+                return this.GetSpawnCenterTransform().position;
+            }
+
+            return this.GetSpawnPosition(playerManager.playerIndex, this.GetActivePlayerSlotCount());
+        }
+
         public void StartGame(string sceneName)
         {
             if (sceneName == "ScGame")
@@ -299,27 +370,37 @@ namespace ProjectRuntime.Network
 
         void SpawnGamePlayer(NetworkConnectionToClient conn)
         {
-            Transform startPos = GetStartPosition();
-            GameObject player = startPos != null
-                ? Instantiate(playerPrefab, startPos.position, startPos.rotation)
-                : Instantiate(playerPrefab);
+            Transform spawnCenter = this.GetSpawnCenterTransform();
+            int playerIndex;
+            string playerName;
+            ulong playerSteamId;
+
+            if (SteamAuth != null && SteamAuth.TryGetIdentity(conn, out PlayerIdentityData identity))
+            {
+                playerIndex = identity.playerIndex;
+                playerName = identity.playerName;
+                playerSteamId = identity.steamId;
+            }
+            else
+            {
+                playerIndex = ConnectedPlayersCurrent.Count;
+                playerName = $"Player {playerIndex}";
+                playerSteamId = 0;
+            }
+
+            int slotCount = Mathf.Max(
+                this.GetConfiguredSpawnSlotCount(),
+                playerIndex + 1,
+                this.ConnectedPlayersCurrent.Count + 1);
+            Vector3 spawnPosition = this.GetSpawnPosition(playerIndex, slotCount);
+            GameObject player = Instantiate(playerPrefab, spawnPosition, spawnCenter.rotation);
 
             player.name = $"{playerPrefab.name} [connId={conn.connectionId}]";
 
             var pm = player.GetComponent<PlayerManager>();
-
-            if (SteamAuth != null && SteamAuth.TryGetIdentity(conn, out PlayerIdentityData identity))
-            {
-                pm.playerName = identity.playerName;
-                pm.playerSteamId = identity.steamId;
-                pm.playerIndex = identity.playerIndex;
-            }
-            else
-            {
-                pm.playerIndex = ConnectedPlayersCurrent.Count;
-                pm.playerName = $"Player {pm.playerIndex}";
-                pm.playerSteamId = 0;
-            }
+            pm.playerName = playerName;
+            pm.playerSteamId = playerSteamId;
+            pm.playerIndex = playerIndex;
 
             pm.ServerSetRole(this._rolesAssignedForCurrentGame
                 ? PlayerRole.Survivor
