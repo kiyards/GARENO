@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace ProjectRuntime.Actor
 {
+    [DefaultExecutionOrder(-2)]
     [DisallowMultipleComponent]
     [RequireComponent(typeof(NetworkIdentity))]
     [RequireComponent(typeof(Health))]
@@ -82,11 +83,11 @@ namespace ProjectRuntime.Actor
 
         private void Awake()
         {
-            EnsureNetworkAnimator();
             CacheComponents();
             ConfigureComponents();
             CacheVisualOrigin();
             ApplyTriggeredVisual(isTriggered, false);
+            EnsureNetworkAnimator();
         }
 
         protected override void OnValidate()
@@ -256,17 +257,7 @@ namespace ProjectRuntime.Actor
 
         private void EnsureNetworkAnimator()
         {
-            if (trapAnimator == null)
-            {
-                return;
-            }
-
             _networkAnimator ??= GetComponent<NetworkAnimator>();
-            if (_networkAnimator == null)
-            {
-                _networkAnimator = gameObject.AddComponent<NetworkAnimator>();
-            }
-
             _networkAnimator.animator = trapAnimator;
             _networkAnimator.clientAuthority = false;
             _networkAnimator.syncDirection = SyncDirection.ServerToClient;

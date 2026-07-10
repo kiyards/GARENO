@@ -8,6 +8,7 @@ using UnityEngine.AI;
 
 namespace ProjectRuntime.Actor
 {
+    [DefaultExecutionOrder(-2)]
     public class ZombieEnemy : NetworkBehaviour
     {
         private enum ZombieAiState
@@ -114,10 +115,10 @@ namespace ProjectRuntime.Actor
 
         private void Awake()
         {
-            this.EnsureNetworkAnimator();
             this.CacheComponents();
             this.ConfigureAgent();
             this.ApplyVisualState(this.visualState);
+            this.EnsureNetworkAnimator();
         }
 
         public override void OnStartServer()
@@ -501,20 +502,17 @@ namespace ProjectRuntime.Actor
 
         private void EnsureNetworkAnimator()
         {
-            if (this.animator == null)
-            {
-                return;
-            }
-
             this._networkAnimator ??= this.GetComponent<NetworkAnimator>();
-            if (this._networkAnimator == null)
-            {
-                this._networkAnimator = this.gameObject.AddComponent<NetworkAnimator>();
-            }
-
             this._networkAnimator.animator = this.animator;
             this._networkAnimator.clientAuthority = false;
             this._networkAnimator.syncDirection = SyncDirection.ServerToClient;
+        }
+
+        private void ReinitializeNetworkAnimator()
+        {
+            bool wasEnabled = this._networkAnimator.enabled;
+            this._networkAnimator.enabled = false;
+            this._networkAnimator.enabled = wasEnabled;
         }
 
         private void ConfigureAgent()
@@ -717,6 +715,7 @@ namespace ProjectRuntime.Actor
         {
             this.animator = runtimeAnimator;
             this.EnsureNetworkAnimator();
+            this.ReinitializeNetworkAnimator();
             this.ApplyVisualState(this.visualState);
         }
 

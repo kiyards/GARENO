@@ -437,6 +437,10 @@ namespace ProjectRuntime.Actor.PlayerStates
             {
                 nemesis.OwnerBeginLunge();
             }
+            else if (type == NemesisAttackType.GroundSlam)
+            {
+                nemesis.OwnerBeginGroundSlam();
+            }
 
             player.CmdNemesisAttack((int)type);
         }

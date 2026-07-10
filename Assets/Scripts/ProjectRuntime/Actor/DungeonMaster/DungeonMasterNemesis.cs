@@ -37,6 +37,12 @@ namespace ProjectRuntime.Actor
         [SerializeField]
         private Transform nemesisRoot;
 
+        [Header("Spawn")]
+        // While the spawn animation plays the Nemesis materializes and can't be moved or attack with.
+        // Sized to the spawn clip (~30 frames). Control is handed to the Dungeon Master once it elapses.
+        [SerializeField]
+        private float spawnDuration = 1f;
+
         [Header("Movement")]
         // Speed as a multiple of the possessing player's survivor moveSpeed.
         // Resolved from the owner at runtime so it tracks the real survivor speed rather than a
@@ -55,6 +61,8 @@ namespace ProjectRuntime.Actor
         [SerializeField]
         private float lifetime = 60f;
 
+        // Fallback despawn delay used only if the death clip length can't be resolved; normally the
+        // disassemble waits for the death animation to finish (see DisassembleCoroutine).
         [SerializeField]
         private float disassemblyDuration = 0.5f;
 
@@ -109,6 +117,12 @@ namespace ProjectRuntime.Actor
         [SerializeField]
         private float groundSlamActionDuration = 0.5f;
 
+        // How long the owner is rooted (no move/turn) after firing a ground slam. Sized to the ground
+        // slam animation clip (~89 frames) so control returns only once the whole slam has played out,
+        // rather than at the impact frame (groundSlamActionDuration).
+        [SerializeField]
+        private float groundSlamRootDuration = 3f;
+
         // Shared post-attack lock: briefly blocks every ability, regardless
         // of which one was just used, before each ability's own longer cooldown takes over.
         [Header("Attack Shared")]
@@ -127,6 +141,11 @@ namespace ProjectRuntime.Actor
 
         [SyncVar(hook = nameof(OnStatusChanged))]
         private NemesisStatus _status;
+
+        // Server time when the spawn (materialize) window ends. Replicated so every peer agrees on when
+        // the Nemesis becomes controllable, and the visual layer can play the spawn animation until then.
+        [SyncVar]
+        private double _spawnEndNetworkTime;
 
         // Server time when the 60s lifetime expires. Exposed for the (later) Nemesis HUD lifetime bar.
         [SyncVar]
@@ -149,8 +168,13 @@ namespace ProjectRuntime.Actor
         [SyncVar]
         private double _groundSlamReadyNetworkTime;
 
-        // Fired on every peer after an attack resolves. No animator/VFX exists yet — this is the hook
-        // future art/audio work subscribes to; the HUD also uses it to refresh cooldown displays.
+        // Fired on every peer as an attack's action window opens (before the wind-up delay). The
+        // NemesisVisualAnimator subscribes to this to start the swing so it lines up with the
+        // impact-frame damage the server applies after the action duration.
+        public event Action<NemesisAttackType> OnAttackStartedEvent;
+
+        // Fired on every peer after an attack resolves (at impact). Drives impact sfx (see
+        // RpcAttackPerformed) and the HUD cooldown-display refresh.
         public event Action<NemesisAttackType> OnAttackPerformedEvent;
 
         private GameplayPlayer _attachedOwner;
@@ -165,6 +189,9 @@ namespace ProjectRuntime.Actor
         // sweeps for damage in ServerApplyLunge.
         private float _lungeDashTimeRemaining;
         private Vector3 _lungeDashDirection;
+
+        // Owner-side ground-slam root window: while > 0 the owner cannot move or steer the Nemesis.
+        private float _groundSlamRootTimeRemaining;
 
         public uint OwnerNetId => ownerNetId;
         public NemesisStatus Status => _status;
@@ -183,12 +210,16 @@ namespace ProjectRuntime.Actor
         public bool IsAttacking => _isAttacking;
         public bool IsCharacterCoolingDown => NetworkTime.time < _characterCooldownEndNetworkTime;
 
+        // True while the spawn animation is materializing the Nemesis; movement and attacks are locked
+        // out until it ends. Replicated to every peer via _spawnEndNetworkTime.
+        public bool IsSpawning => NetworkTime.time < _spawnEndNetworkTime;
+
         // Every peer already has these SyncVars replicated (no client-side prediction clock needed,
         // unlike the Turret's high-frequency fire cooldown), so the owner can gate input locally with
         // the same check the server re-validates.
         public bool IsAttackAvailable(NemesisAttackType type)
         {
-            if (_status != NemesisStatus.Active || _isAttacking || IsCharacterCoolingDown)
+            if (_status != NemesisStatus.Active || IsSpawning || _isAttacking || IsCharacterCoolingDown)
             {
                 return false;
             }
@@ -240,6 +271,9 @@ namespace ProjectRuntime.Actor
             }
 
             _isAttacking = true;
+            // Broadcast the swing start now so the animation plays across the action window and its
+            // impact frame lands with the server-applied damage (after the per-attack action delay).
+            RpcAttackStarted((int)type);
             switch (type)
             {
                 case NemesisAttackType.Punch:
@@ -306,6 +340,12 @@ namespace ProjectRuntime.Actor
             }
 
             RpcAttackPerformed((int)type);
+        }
+
+        [ClientRpc]
+        private void RpcAttackStarted(int attackType)
+        {
+            OnAttackStartedEvent?.Invoke((NemesisAttackType)attackType);
         }
 
         [ClientRpc]
@@ -426,6 +466,7 @@ namespace ProjectRuntime.Actor
             ownerNetId = owner != null ? owner.netId : 0;
             RegisterWithOwner();
             _status = NemesisStatus.Active;
+            _spawnEndNetworkTime = NetworkTime.time + spawnDuration;
             _lifetimeEndNetworkTime = NetworkTime.time + lifetime;
             StartCoroutine(LifetimeCoroutine());
         }
@@ -453,7 +494,11 @@ namespace ProjectRuntime.Actor
         [Server]
         private IEnumerator DisassembleCoroutine()
         {
-            yield return new WaitForSeconds(disassemblyDuration);
+            // Hold the Nemesis on screen until the death animation has played out, then despawn.
+            // disassemblyDuration is only a fallback for when the clip length can't be resolved.
+            float deathDuration = GetComponent<NemesisVisualAnimator>()
+                .GetDeathAnimationDuration(disassemblyDuration);
+            yield return new WaitForSeconds(deathDuration);
             NetworkServer.Destroy(gameObject);
         }
 
@@ -463,6 +508,20 @@ namespace ProjectRuntime.Actor
         {
             if (!isOwned || _status != NemesisStatus.Active)
             {
+                return;
+            }
+
+            // The spawn (materialize) animation plays before control is handed over — no move/turn yet.
+            if (IsSpawning)
+            {
+                return;
+            }
+
+            // A ground slam roots the Nemesis for its whole action window — the owner can neither move
+            // nor turn it until the slam resolves.
+            if (_groundSlamRootTimeRemaining > 0f)
+            {
+                _groundSlamRootTimeRemaining -= Time.fixedDeltaTime;
                 return;
             }
 
@@ -521,6 +580,20 @@ namespace ProjectRuntime.Actor
 
             _lungeDashDirection = forward.normalized;
             _lungeDashTimeRemaining = lungeActionDuration;
+        }
+
+        // Called on the owning client the moment it fires a Ground Slam. Roots the Nemesis for the
+        // slam's action window so the owner can't move or turn it until the slam resolves. Owner-driven
+        // (like the lunge dash) so it takes hold immediately rather than waiting on the server's
+        // _isAttacking SyncVar to replicate back.
+        public void OwnerBeginGroundSlam()
+        {
+            if (!isOwned || _status != NemesisStatus.Active)
+            {
+                return;
+            }
+
+            _groundSlamRootTimeRemaining = groundSlamRootDuration;
         }
 
         // Advances the forward dash one fixed step. Speed is sized so the dash covers lungeDistance over

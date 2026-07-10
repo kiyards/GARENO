@@ -5,6 +5,7 @@ using UnityEngine.Rendering;
 
 namespace ProjectRuntime.Actor
 {
+    [DefaultExecutionOrder(-2)]
     public class PlayerVisualAnimator : MonoBehaviour
     {
         private enum VisualState
@@ -54,7 +55,6 @@ namespace ProjectRuntime.Actor
 
         private void Awake()
         {
-            EnsureNetworkAnimator();
             previousPosition = transform.position;
             activeAnimator = animator;
             normalRenderers = normalVisualRoot.GetComponentsInChildren<Renderer>(true);
@@ -62,6 +62,7 @@ namespace ProjectRuntime.Actor
             CreateAuraOverlays();
             localOwnerHiddenRenderers = normalRenderers;
             ApplyVisualState(VisualState.Idle);
+            EnsureNetworkAnimator();
         }
 
         private void LateUpdate()
@@ -110,17 +111,7 @@ namespace ProjectRuntime.Actor
 
         private void EnsureNetworkAnimator()
         {
-            if (animator == null)
-            {
-                return;
-            }
-
-            networkAnimator = GetComponent<NetworkAnimator>();
-            if (networkAnimator == null)
-            {
-                networkAnimator = gameObject.AddComponent<NetworkAnimator>();
-            }
-
+            networkAnimator ??= GetComponent<NetworkAnimator>();
             networkAnimator.animator = animator;
             networkAnimator.clientAuthority = true;
             networkAnimator.syncDirection = SyncDirection.ClientToServer;
