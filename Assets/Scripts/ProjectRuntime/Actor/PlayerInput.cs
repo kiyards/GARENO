@@ -75,10 +75,7 @@ namespace ProjectRuntime.Actor
         public bool ReloadPress => reloadPress;
         public bool TurretExitPress => Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame;
         public bool TeammateIndicatorsTogglePress => Keyboard.current != null && Keyboard.current.tabKey.wasPressedThisFrame;
-        public bool HealCirclePress => Keyboard.current != null && Keyboard.current.hKey.wasPressedThisFrame;
-        public bool MolotovPress => Keyboard.current != null && Keyboard.current.jKey.wasPressedThisFrame;
-        public bool SteroidPress => Keyboard.current != null && Keyboard.current.kKey.wasPressedThisFrame;
-        public bool EmpPress => Keyboard.current != null && Keyboard.current.lKey.wasPressedThisFrame;
+        public bool AbilityPress => Keyboard.current != null && Keyboard.current.fKey.wasPressedThisFrame;
 
         public bool TryGetDungeonMasterJumpSlot(out int slotIndex)
         {

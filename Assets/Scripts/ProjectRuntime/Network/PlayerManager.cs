@@ -18,6 +18,15 @@ namespace ProjectRuntime.Network
         DungeonMaster,
     }
 
+    public enum SurvivorAbilityType
+    {
+        None,
+        HealCircle,
+        Molotov,
+        Steroid,
+        Emp,
+    }
+
     /// <summary>
     /// This is a server to client class, server authoritative variables should be stored here instead of on player
     /// </summary>
@@ -45,6 +54,9 @@ namespace ProjectRuntime.Network
 
         [SyncVar(hook = nameof(OnPlayerRoleSynced))]
         public PlayerRole playerRole = PlayerRole.Unassigned;
+
+        [SyncVar(hook = nameof(OnAssignedAbilitySynced))]
+        public SurvivorAbilityType assignedAbility = SurvivorAbilityType.None;
         public Action<string> OnPlayerNameChanged;
         public Action<PlayerRole> OnPlayerRoleChanged;
 
@@ -69,12 +81,14 @@ namespace ProjectRuntime.Network
             StartupSpawned(this);
             PlayerHudManager.EnsureInstance()?.SetLocalPlayer(this);
             ApplyRole(this.playerRole);
+            ApplyAssignedAbility(this.assignedAbility);
         }
 
         public override void OnStartClient()
         {
             base.OnStartClient();
             ApplyRole(this.playerRole);
+            ApplyAssignedAbility(this.assignedAbility);
         }
 
         [TargetRpc]
@@ -109,6 +123,13 @@ namespace ProjectRuntime.Network
             ApplyRole(role);
         }
 
+        [Server]
+        public void ServerSetAbility(SurvivorAbilityType ability)
+        {
+            assignedAbility = ability;
+            ApplyAssignedAbility(ability);
+        }
+
         void OnPlayerNameSynced(string oldValue, string newValue)
         {
             playerName = newValue;
@@ -121,6 +142,11 @@ namespace ProjectRuntime.Network
         void OnPlayerRoleSynced(PlayerRole oldValue, PlayerRole newValue)
         {
             ApplyRole(newValue);
+        }
+
+        void OnAssignedAbilitySynced(SurvivorAbilityType oldValue, SurvivorAbilityType newValue)
+        {
+            ApplyAssignedAbility(newValue);
         }
 
         void OnCharacterDataSynced(CharacterData _, CharacterData newData)
@@ -146,6 +172,16 @@ namespace ProjectRuntime.Network
             }
 
             OnPlayerRoleChanged?.Invoke(role);
+        }
+
+        private void ApplyAssignedAbility(SurvivorAbilityType ability)
+        {
+            assignedAbility = ability;
+
+            if (isLocalPlayer)
+            {
+                PlayerHudManager.EnsureInstance()?.SetAssignedAbility(ability);
+            }
         }
 
         private void RefreshPlayerCanvasVisibility()

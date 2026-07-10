@@ -366,6 +366,40 @@ namespace ProjectRuntime.Network
 
             Debug.Log(
                 $"Assigned {dungeonMaster.playerName} (index {dungeonMaster.playerIndex}, netId {dungeonMaster.netId}) as Dungeon Master.");
+
+            var survivors = players.Where(player => player != dungeonMaster).ToList();
+            AssignAbilitiesToSurvivors(survivors);
+        }
+
+        [Server]
+        private void AssignAbilitiesToSurvivors(List<PlayerManager> survivors)
+        {
+            var abilities = new List<SurvivorAbilityType>
+            {
+                SurvivorAbilityType.HealCircle,
+                SurvivorAbilityType.Molotov,
+                SurvivorAbilityType.Steroid,
+                SurvivorAbilityType.Emp,
+            };
+
+            for (int i = abilities.Count - 1; i > 0; i--)
+            {
+                int swapIndex = UnityEngine.Random.Range(0, i + 1);
+                (abilities[i], abilities[swapIndex]) = (abilities[swapIndex], abilities[i]);
+            }
+
+            if (survivors.Count > abilities.Count)
+            {
+                Debug.LogWarning(
+                    $"[GameNetworkManager] {survivors.Count} survivors but only {abilities.Count} unique abilities exist; some survivors will not get an ability.");
+            }
+
+            for (int i = 0; i < survivors.Count && i < abilities.Count; i++)
+            {
+                survivors[i].ServerSetAbility(abilities[i]);
+                Debug.Log(
+                    $"Assigned {abilities[i]} to {survivors[i].playerName} (index {survivors[i].playerIndex}, netId {survivors[i].netId}).");
+            }
         }
 
         void SpawnGamePlayer(NetworkConnectionToClient conn)

@@ -60,6 +60,7 @@ MonoBehaviour:
   playerSteamId: 0
   playerIndex: 0
   playerRole: 0
+  assignedAbility: 0
   characterData:
     colid: 0
   dungeonMasterPlacementMask:
@@ -1131,22 +1132,22 @@ MonoBehaviour:
   healCircleHealPerTick: 12
   healCircleTickInterval: 1
   healCircleTickCount: 5
-  healCircleCooldown: 0
+  healCircleCooldown: 10
   molotovProjectilePrefab: {fileID: 7602222199317621573, guid: 294693db8cd93a042b85f38b26df3dd7, type: 3}
-  molotovRange: 16
+  molotovRange: 8
   molotovThrowSpeed: 30
   molotovUpwardVelocity: 20
   molotovSpawnHeightOffset: 1.35
   molotovSpawnForwardOffset: 2
-  molotovCooldown: 0
-  steroidSpeedMultiplier: 4
+  molotovCooldown: 10
+  steroidSpeedMultiplier: 1.8
   steroidDuration: 5
-  steroidCooldown: 0
+  steroidCooldown: 10
   empRadius: 8
   empLayers:
     serializedVersion: 2
     m_Bits: 64
-  empCooldown: 0
+  empCooldown: 10
 --- !u!114 &7236363269636559078
 MonoBehaviour:
   m_ObjectHideFlags: 0

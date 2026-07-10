@@ -81,14 +81,6 @@ namespace ProjectRuntime.Actor
         private readonly Dictionary<SurvivorAbilityType, double> _clientNextReadyTimes = new();
         private readonly Dictionary<SurvivorAbilityType, double> _serverNextReadyTimes = new();
 
-        private enum SurvivorAbilityType
-        {
-            HealCircle,
-            Molotov,
-            Steroid,
-            Emp,
-        }
-
         private void Awake()
         {
             CacheReferences();
@@ -101,29 +93,31 @@ namespace ProjectRuntime.Actor
 
         private void Update()
         {
-            if (!CanUseAbilitiesLocally())
+            if (!CanUseAbilitiesLocally() || !input.AbilityPress)
             {
                 return;
             }
 
-            if (input.HealCirclePress && TryStartLocalCooldown(SurvivorAbilityType.HealCircle))
+            SurvivorAbilityType ability = player.localManager.assignedAbility;
+            if (!TryStartLocalCooldown(ability))
             {
-                player.CmdActivateHealCircle();
+                return;
             }
 
-            if (input.MolotovPress && TryStartLocalCooldown(SurvivorAbilityType.Molotov))
+            switch (ability)
             {
-                player.CmdActivateMolotov(GetLocalMolotovTargetPoint());
-            }
-
-            if (input.SteroidPress && TryStartLocalCooldown(SurvivorAbilityType.Steroid))
-            {
-                player.CmdActivateSteroid();
-            }
-
-            if (input.EmpPress && TryStartLocalCooldown(SurvivorAbilityType.Emp))
-            {
-                player.CmdActivateEmp();
+                case SurvivorAbilityType.HealCircle:
+                    player.CmdActivateHealCircle();
+                    break;
+                case SurvivorAbilityType.Molotov:
+                    player.CmdActivateMolotov(GetLocalMolotovTargetPoint());
+                    break;
+                case SurvivorAbilityType.Steroid:
+                    player.CmdActivateSteroid();
+                    break;
+                case SurvivorAbilityType.Emp:
+                    player.CmdActivateEmp();
+                    break;
             }
         }
 
@@ -274,7 +268,10 @@ namespace ProjectRuntime.Actor
         [Server]
         private bool TryConsumeServerCooldown(SurvivorAbilityType abilityType)
         {
-            if (!CanUseAbilitiesOnServer())
+            if (
+                !CanUseAbilitiesOnServer()
+                || player.localManager.assignedAbility != abilityType
+            )
             {
                 return false;
             }

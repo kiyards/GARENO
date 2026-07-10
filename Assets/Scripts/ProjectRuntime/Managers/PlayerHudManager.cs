@@ -32,6 +32,9 @@ namespace ProjectRuntime.Managers
         [field: SerializeField]
         private TextMeshProUGUI RoleMessageTMP { get; set; }
 
+        [field: SerializeField]
+        private TextMeshProUGUI AssignedAbilityTMP { get; set; }
+
         [field: SerializeField, Header("Player Health")]
         private FlashFillBar PlayerHealthBar { get; set; }
 
@@ -621,6 +624,14 @@ namespace ProjectRuntime.Managers
             this.RefreshRoleMessage();
             this.RefreshTimerText();
             this.RefreshObjectiveText();
+        }
+
+        public void SetAssignedAbility(SurvivorAbilityType ability)
+        {
+            if (this.AssignedAbilityTMP != null)
+            {
+                this.AssignedAbilityTMP.text = ability.ToString();
+            }
         }
 
         public void SetTurretModeActive(bool active)
