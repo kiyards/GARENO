@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 37dd5cf8a03582c48a594446a53d41d1
+guid: 8f46216be94350f4197d2c35308b0116
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -32,10 +32,10 @@ ModelImporter:
     clipAnimations:
     - serializedVersion: 16
       name: enemy_nemesis_groundslam
-      takeName: mixamo.com
-      internalID: -203655887218126122
+      takeName: Take 001
+      internalID: 1827226128182048838
       firstFrame: 0
-      lastFrame: 89
+      lastFrame: 64
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
