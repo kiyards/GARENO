@@ -7189,6 +7189,7 @@ MonoBehaviour:
   dungeonMasterTurretPrefab: {fileID: 7487658207218452854, guid: 50462a344c15d8346855aaa878e75bfe, type: 3}
   dungeonMasterSlowingTurretPrefab: {fileID: 0}
   dungeonMasterNemesisPrefab: {fileID: 0}
+  survivorSpawnRadius: 2
   HostedLobbyId:
     m_SteamID: 0
 --- !u!114 &1272274657
@@ -14476,38 +14477,8 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3779796441593870483, guid: 0fb7923c7654a6b4aa327d766c96d98b, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 8736122186490793698}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0fb7923c7654a6b4aa327d766c96d98b, type: 3}
---- !u!1 &8736122186490793697 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3779796441593870483, guid: 0fb7923c7654a6b4aa327d766c96d98b, type: 3}
-  m_PrefabInstance: {fileID: 8736122186490793696}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &8736122186490793698
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8736122186490793697}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 470fcfb6f3adcb44eb882fca753cdae3, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &9124769436393853700
 PrefabInstance:
   m_ObjectHideFlags: 0
