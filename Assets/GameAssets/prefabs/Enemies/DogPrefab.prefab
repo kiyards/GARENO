@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 551117912467803985}
   - component: {fileID: 3480026947523648799}
   - component: {fileID: 3986929587281264618}
+  - component: {fileID: 9101000000000000003}
   - component: {fileID: 7967992191340708230}
   - component: {fileID: 2155470731190198989}
   - component: {fileID: 5278251644888205944}
@@ -133,6 +134,23 @@ MonoBehaviour:
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
+--- !u!114 &9101000000000000003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4025126144443318060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f6f3bf89aa97405989c802ba270f815, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  clientAuthority: 0
+  animator: {fileID: 9193986055716070673}
 --- !u!114 &7967992191340708230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -232,7 +250,7 @@ MonoBehaviour:
   wanderPauseDuration: 0.75
   turnSpeed: 360
   moveAlignmentAngle: 12
-  reorientAngle: 45
+  reorientAngle: 20
   lungeDistance: 1.7
   lungeDuration: 0.14
   animator: {fileID: 9193986055716070673}

@@ -52,7 +52,7 @@ namespace ProjectRuntime.Actor
         [SerializeField] private float moveAlignmentAngle = 12f;
         // Once walking the zombie holds its heading and only stops to turn in place again if the
         // direction it needs to travel swings past this angle. Keeps it from pivoting mid-stride.
-        [SerializeField] private float reorientAngle = 45f;
+        [SerializeField] private float reorientAngle = 20f;
 
         [Header("Lunge")]
         [SerializeField] private float lungeDistance = 1.2f;
@@ -110,9 +110,11 @@ namespace ProjectRuntime.Actor
         private Vector3 _lastMovementAudioPosition;
         private bool _hasMovementAudioPosition;
         private float _nextMovementAudioTime;
+        private NetworkAnimator _networkAnimator;
 
         private void Awake()
         {
+            this.EnsureNetworkAnimator();
             this.CacheComponents();
             this.ConfigureAgent();
             this.ApplyVisualState(this.visualState);
@@ -152,6 +154,7 @@ namespace ProjectRuntime.Actor
         public override void OnStartClient()
         {
             base.OnStartClient();
+            this.EnsureNetworkAnimator();
             this.CacheComponents();
             this.ApplyTargetable(this.isTargetable);
             this.ApplyVisualState(this.visualState);
@@ -496,6 +499,24 @@ namespace ProjectRuntime.Actor
             }
         }
 
+        private void EnsureNetworkAnimator()
+        {
+            if (this.animator == null)
+            {
+                return;
+            }
+
+            this._networkAnimator ??= this.GetComponent<NetworkAnimator>();
+            if (this._networkAnimator == null)
+            {
+                this._networkAnimator = this.gameObject.AddComponent<NetworkAnimator>();
+            }
+
+            this._networkAnimator.animator = this.animator;
+            this._networkAnimator.clientAuthority = false;
+            this._networkAnimator.syncDirection = SyncDirection.ServerToClient;
+        }
+
         private void ConfigureAgent()
         {
             if (this._agent != null)
@@ -671,7 +692,10 @@ namespace ProjectRuntime.Actor
 
         private void OnVisualStateSynced(ZombieVisualState oldValue, ZombieVisualState newValue)
         {
-            this.ApplyVisualState(newValue);
+            if (!this.isServer && this._networkAnimator == null)
+            {
+                this.ApplyVisualState(newValue);
+            }
         }
 
         [Server]
@@ -692,6 +716,7 @@ namespace ProjectRuntime.Actor
         protected void SetRuntimeAnimator(Animator runtimeAnimator)
         {
             this.animator = runtimeAnimator;
+            this.EnsureNetworkAnimator();
             this.ApplyVisualState(this.visualState);
         }
 

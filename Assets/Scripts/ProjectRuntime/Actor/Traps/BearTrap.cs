@@ -74,6 +74,7 @@ namespace ProjectRuntime.Actor
         private Quaternion _shakeOriginLocalRotation;
         private Coroutine _mashShakeCoroutine;
         private bool _triggerVisualPlayed;
+        private NetworkAnimator _networkAnimator;
 
         public bool IsTriggered => isTriggered;
         public uint TrappedPlayerNetId => trappedPlayerNetId;
@@ -81,6 +82,7 @@ namespace ProjectRuntime.Actor
 
         private void Awake()
         {
+            EnsureNetworkAnimator();
             CacheComponents();
             ConfigureComponents();
             CacheVisualOrigin();
@@ -117,6 +119,7 @@ namespace ProjectRuntime.Actor
         public override void OnStartClient()
         {
             base.OnStartClient();
+            EnsureNetworkAnimator();
             CacheComponents();
             CacheVisualOrigin();
             ApplyTriggeredVisual(isTriggered, false);
@@ -249,6 +252,24 @@ namespace ProjectRuntime.Actor
         private void CacheComponents()
         {
             _health ??= GetComponent<Health>();
+        }
+
+        private void EnsureNetworkAnimator()
+        {
+            if (trapAnimator == null)
+            {
+                return;
+            }
+
+            _networkAnimator ??= GetComponent<NetworkAnimator>();
+            if (_networkAnimator == null)
+            {
+                _networkAnimator = gameObject.AddComponent<NetworkAnimator>();
+            }
+
+            _networkAnimator.animator = trapAnimator;
+            _networkAnimator.clientAuthority = false;
+            _networkAnimator.syncDirection = SyncDirection.ServerToClient;
         }
 
         private void ConfigureComponents()

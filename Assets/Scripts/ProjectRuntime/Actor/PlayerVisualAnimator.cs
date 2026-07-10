@@ -1,3 +1,4 @@
+using Mirror;
 using ProjectRuntime.Network;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -47,11 +48,13 @@ namespace ProjectRuntime.Actor
         private double movementRunUntil;
         private double jumpVisualUntil;
         private bool wasRunning;
+        private NetworkAnimator networkAnimator;
 
         public Material AuraMaterial => auraMaterial;
 
         private void Awake()
         {
+            EnsureNetworkAnimator();
             previousPosition = transform.position;
             activeAnimator = animator;
             normalRenderers = normalVisualRoot.GetComponentsInChildren<Renderer>(true);
@@ -64,7 +67,11 @@ namespace ProjectRuntime.Actor
         private void LateUpdate()
         {
             var currentPosition = transform.position;
-            ApplyVisualState(ResolveVisualState(currentPosition));
+            if (ShouldDriveVisualState())
+            {
+                ApplyVisualState(ResolveVisualState(currentPosition));
+            }
+
             ApplyLocalOwnerVisibility();
             RefreshAuraVisibility();
 
@@ -91,9 +98,32 @@ namespace ProjectRuntime.Actor
 
         public void PlayJump()
         {
+            if (!ShouldDriveVisualState())
+            {
+                return;
+            }
+
             var clipDuration = GetVisualStateAnimationDuration(VisualState.Jump, 0f);
             jumpVisualUntil = Time.timeAsDouble + clipDuration;
             ApplyVisualState(VisualState.Jump);
+        }
+
+        private void EnsureNetworkAnimator()
+        {
+            if (animator == null)
+            {
+                return;
+            }
+
+            networkAnimator = GetComponent<NetworkAnimator>();
+            if (networkAnimator == null)
+            {
+                networkAnimator = gameObject.AddComponent<NetworkAnimator>();
+            }
+
+            networkAnimator.animator = animator;
+            networkAnimator.clientAuthority = true;
+            networkAnimator.syncDirection = SyncDirection.ClientToServer;
         }
 
         public void SetGhostVisible(bool isVisible)
@@ -352,6 +382,16 @@ namespace ProjectRuntime.Actor
             wasRunning = inputRunning || movementRunning;
 
             return wasRunning ? VisualState.Run : VisualState.Idle;
+        }
+
+        private bool ShouldDriveVisualState()
+        {
+            if (isGhostVisualActive)
+            {
+                return true;
+            }
+
+            return !NetworkClient.active || player.isLocalPlayer;
         }
 
         private void ApplyVisualState(VisualState state)

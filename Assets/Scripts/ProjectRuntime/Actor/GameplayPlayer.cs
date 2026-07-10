@@ -208,31 +208,6 @@ namespace ProjectRuntime.Actor
         public void PlayAcceptedJumpVisual()
         {
             GetComponent<PlayerVisualAnimator>().PlayJump();
-
-            if (!isLocalPlayer)
-            {
-                return;
-            }
-
-            if (isServer)
-            {
-                RpcPlayJumpVisual();
-                return;
-            }
-
-            CmdPlayJumpVisual();
-        }
-
-        [Command]
-        private void CmdPlayJumpVisual()
-        {
-            RpcPlayJumpVisual();
-        }
-
-        [ClientRpc(includeOwner = false)]
-        private void RpcPlayJumpVisual()
-        {
-            GetComponent<PlayerVisualAnimator>().PlayJump();
         }
 
         [Server]
