@@ -334,8 +334,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 30}
-  m_SizeDelta: {x: 50, y: 50}
+  m_AnchoredPosition: {x: 0, y: 10}
+  m_SizeDelta: {x: 80, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6085463527296122336
 CanvasRenderer:
@@ -480,11 +480,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6617228208545572436}
-  - {fileID: 4381087026338660622}
   - {fileID: 3489080293125461803}
   - {fileID: 4564353769139278942}
   - {fileID: 6871074470358728383}
   - {fileID: 932846073300443069}
+  - {fileID: 4381087026338660622}
   - {fileID: 6684571465029858456}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -505,6 +505,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 721466e89a870ea41b80f23bf8686ea3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AttackType: 0
   AttackImage: {fileID: 8985535663572601211}
   AttackControlImage: {fileID: 7201008378750564352}
   AttackCooldownFillImage: {fileID: 6085993001305483657}
@@ -544,7 +545,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -20}
   m_SizeDelta: {x: 150, y: 50}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &4370722314512877021
