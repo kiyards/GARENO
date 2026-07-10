@@ -1,0 +1,559 @@
+fileFormatVersion: 2
+guid: 6d8e9fe5aa507a54c967b634291ac5f9
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -3942725573621033026
+    second: trap cardtype_0
+  - first:
+      213: 1496929774976995695
+    second: trap cardtype_1
+  - first:
+      213: 4971248970637434794
+    second: trap cardtype_2
+  - first:
+      213: -4964482844790096663
+    second: trap cardtype_3
+  - first:
+      213: -4438005893670619831
+    second: trap cardtype_4
+  - first:
+      213: -2058853893886295121
+    second: trap cardtype_5
+  - first:
+      213: 4929240891815685039
+    second: trap cardtype_6
+  - first:
+      213: -1511541217431009952
+    second: trap cardtype_7
+  - first:
+      213: 4063396303165595079
+    second: trap cardtype_8
+  - first:
+      213: 6704286313299268644
+    second: trap cardtype_9
+  - first:
+      213: 9205427259337972537
+    second: trap cardtype_10
+  - first:
+      213: -1302285763747698301
+    second: trap cardtype_11
+  - first:
+      213: -3834120056330073754
+    second: trap cardtype_12
+  - first:
+      213: -7134313065469531317
+    second: trap cardtype_13
+  - first:
+      213: -2632387916074703486
+    second: trap cardtype_14
+  - first:
+      213: 424133252935375593
+    second: trap cardtype_15
+  - first:
+      213: -8630624353673119187
+    second: trap cardtype_16
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: trap cardtype_0
+      rect:
+        serializedVersion: 2
+        x: 285
+        y: 507
+        width: 6
+        height: 5
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb75871faff9849c0800000000000000
+      internalID: -3942725573621033026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: trap cardtype_1
+      rect:
+        serializedVersion: 2
+        x: 232
+        y: 483
+        width: 17
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f61953303b926c410800000000000000
+      internalID: 1496929774976995695
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: trap cardtype_2
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 293
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aafded8999c6df440800000000000000
+      internalID: 4971248970637434794
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: trap cardtype_3
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 166
+        width: 511
+        height: 316
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ecf3c6d72d9a1bb0800000000000000
+      internalID: -4964482844790096663
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: trap cardtype_4
+      rect:
+        serializedVersion: 2
+        x: 186
+        y: 176
+        width: 143
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9453cac37290962c0800000000000000
+      internalID: -4438005893670619831
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: trap cardtype_5
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 253
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa34a72ba4b7d63e0800000000000000
+      internalID: -2058853893886295121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: trap cardtype_6
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 261
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fabe001997e286440800000000000000
+      internalID: 4929240891815685039
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: trap cardtype_7
+      rect:
+        serializedVersion: 2
+        x: 45
+        y: 23
+        width: 418
+        height: 241
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 065c9af654de50be0800000000000000
+      internalID: -1511541217431009952
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: trap cardtype_8
+      rect:
+        serializedVersion: 2
+        x: 499
+        y: 261
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7cd12dfa865146830800000000000000
+      internalID: 4063396303165595079
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: trap cardtype_9
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 240
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 42457b091e86a0d50800000000000000
+      internalID: 6704286313299268644
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: trap cardtype_10
+      rect:
+        serializedVersion: 2
+        x: 496
+        y: 230
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93b9986e15f30cf70800000000000000
+      internalID: 9205427259337972537
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: trap cardtype_11
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 214
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38925c76ff95dede0800000000000000
+      internalID: -1302285763747698301
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: trap cardtype_12
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 214
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 669ce307f187acac0800000000000000
+      internalID: -3834120056330073754
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: trap cardtype_13
+      rect:
+        serializedVersion: 2
+        x: 291
+        y: 26
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4ba240f014ddfc90800000000000000
+      internalID: -7134313065469531317
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: trap cardtype_14
+      rect:
+        serializedVersion: 2
+        x: 291
+        y: 20
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28526572321e77bd0800000000000000
+      internalID: -2632387916074703486
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: trap cardtype_15
+      rect:
+        serializedVersion: 2
+        x: 291
+        y: 13
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ead4a642f2d2e500800000000000000
+      internalID: 424133252935375593
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: trap cardtype_16
+      rect:
+        serializedVersion: 2
+        x: 291
+        y: 0
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2a7a7990ecd93880800000000000000
+      internalID: -8630624353673119187
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      trap cardtype_0: -3942725573621033026
+      trap cardtype_1: 1496929774976995695
+      trap cardtype_10: 9205427259337972537
+      trap cardtype_11: -1302285763747698301
+      trap cardtype_12: -3834120056330073754
+      trap cardtype_13: -7134313065469531317
+      trap cardtype_14: -2632387916074703486
+      trap cardtype_15: 424133252935375593
+      trap cardtype_16: -8630624353673119187
+      trap cardtype_2: 4971248970637434794
+      trap cardtype_3: -4964482844790096663
+      trap cardtype_4: -4438005893670619831
+      trap cardtype_5: -2058853893886295121
+      trap cardtype_6: 4929240891815685039
+      trap cardtype_7: -1511541217431009952
+      trap cardtype_8: 4063396303165595079
+      trap cardtype_9: 6704286313299268644
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
