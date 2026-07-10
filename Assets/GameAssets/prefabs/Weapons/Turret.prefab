@@ -316,7 +316,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8238065229500443378
 RectTransform:
   m_ObjectHideFlags: 0
@@ -552,7 +552,6 @@ MonoBehaviour:
   impactVfxPrefab: {fileID: 7493678437098756444, guid: ae9b94ef9a9e98740851fcd4ccc6c249, type: 3}
   impactVfxLifetime: 2
   lifetime: 20
-  assemblyDuration: 2
   disassemblyDuration: 1.5
 --- !u!114 &8553186631549262459
 MonoBehaviour:
@@ -616,7 +615,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8482247675030602365}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.825, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.01, y: 0.0017299999, z: 0.01}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -625,7 +624,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0, y: 2.58}
   m_SizeDelta: {x: 902, y: 790.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &720068313608081400
