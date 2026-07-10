@@ -1357,7 +1357,6 @@ namespace ProjectRuntime.Actor
             foreach (var renderer in previewObject.GetComponentsInChildren<Renderer>(true))
             {
                 ApplyPreviewMaterial(renderer, previewMaterial);
-                renderer.enabled = true;
                 renderer.shadowCastingMode = ShadowCastingMode.Off;
                 renderer.receiveShadows = false;
                 renderer.lightProbeUsage = LightProbeUsage.Off;
