@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 9f0e41522454dbf4196611e6cee02bbf
+guid: 2a55fe08420efbf49ad94fde6e5ee880
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -32,10 +32,10 @@ ModelImporter:
     clipAnimations:
     - serializedVersion: 16
       name: enemy_mimic_attack
-      takeName: mixamo.com
-      internalID: -203655887218126122
+      takeName: Take 001
+      internalID: 1827226128182048838
       firstFrame: 0
-      lastFrame: 63
+      lastFrame: 41
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
