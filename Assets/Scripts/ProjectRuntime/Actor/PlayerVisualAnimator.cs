@@ -47,7 +47,6 @@ namespace ProjectRuntime.Actor
         private bool hasVisualState;
         private bool isGhostVisualActive;
         private double movementRunUntil;
-        private double jumpVisualUntil;
         private bool wasRunning;
         private NetworkAnimator networkAnimator;
 
@@ -104,8 +103,6 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            var clipDuration = GetVisualStateAnimationDuration(VisualState.Jump, 0f);
-            jumpVisualUntil = Time.timeAsDouble + clipDuration;
             ApplyVisualState(VisualState.Jump);
         }
 
@@ -344,10 +341,7 @@ namespace ProjectRuntime.Actor
             }
 
             var movementDelta = currentPosition - previousPosition;
-            if (
-                Time.timeAsDouble < jumpVisualUntil
-                || (currentState == VisualState.Jump && !player.groundCheck.IsGrounded)
-            )
+            if (currentState == VisualState.Jump && IsOneShotVisualStateStillPlaying(VisualState.Jump))
             {
                 return VisualState.Jump;
             }
@@ -463,6 +457,31 @@ namespace ProjectRuntime.Actor
             }
 
             return Mathf.Max(0f, fallbackDuration);
+        }
+
+        private bool IsOneShotVisualStateStillPlaying(VisualState state)
+        {
+            if (
+                activeAnimator == null
+                || !activeAnimator.enabled
+                || activeAnimator.layerCount <= 0
+            )
+            {
+                return false;
+            }
+
+            var expectedStateName = GetVisualStateName(state);
+            var currentStateInfo = activeAnimator.GetCurrentAnimatorStateInfo(0);
+            if (
+                activeAnimator.IsInTransition(0)
+                && activeAnimator.GetNextAnimatorStateInfo(0).IsName(expectedStateName)
+            )
+            {
+                return true;
+            }
+
+            return currentStateInfo.IsName(expectedStateName)
+                && (currentStateInfo.loop || currentStateInfo.normalizedTime < 0.98f);
         }
 
         private string GetVisualStateName(VisualState state)
