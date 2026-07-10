@@ -316,7 +316,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 2
-  m_BaseOffset: 1
+  m_BaseOffset: 0
   m_WalkableMask: 5
   m_ObstacleAvoidanceType: 4
 --- !u!114 &845968872308454917
@@ -397,7 +397,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 2.8}
+  m_AnchoredPosition: {x: 0, y: 3.8}
   m_SizeDelta: {x: 2, y: 0.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &4153696930341277465
@@ -492,7 +492,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6039697179158138133, guid: c750188eebc108f4cbd1e9d7fc6d55bf, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.6375
+      value: 0.3625
       objectReference: {fileID: 0}
     - target: {fileID: 6039697179158138133, guid: c750188eebc108f4cbd1e9d7fc6d55bf, type: 3}
       propertyPath: m_LocalPosition.z
