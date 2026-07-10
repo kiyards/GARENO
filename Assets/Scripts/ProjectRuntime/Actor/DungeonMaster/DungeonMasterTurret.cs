@@ -204,6 +204,9 @@ namespace ProjectRuntime.Actor
         [ClientRpc]
         public void RpcPlayHitVfx(Vector3 worldPos, Vector3 fireDirection)
         {
+            if (PlayerManager.Instance == null || PlayerManager.Instance.playerRole != PlayerRole.DungeonMaster)
+                return;
+
             HitVfx.Play(hitVfxPrefab, worldPos, fireDirection, hitVfxLifetime);
         }
 
