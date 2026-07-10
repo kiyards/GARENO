@@ -389,7 +389,24 @@ namespace ProjectRuntime.Actor
         [Server]
         private void ServerApplyLunge(Vector3 origin, Vector3 forward)
         {
-            Vector3 end = origin + forward * lungeDistance;
+            // Stop the damage corridor at the first wall in the lunge's path, so the sweep doesn't
+            // reach through a wall to hit survivors on the other side.
+            float distance = lungeDistance;
+            if (
+                Physics.Raycast(
+                    origin,
+                    forward,
+                    out RaycastHit wallHit,
+                    lungeDistance,
+                    LayerMask.GetMask("Wall"),
+                    QueryTriggerInteraction.Ignore
+                )
+            )
+            {
+                distance = wallHit.distance;
+            }
+
+            Vector3 end = origin + forward * distance;
             var hitPlayers = new HashSet<GameplayPlayer>();
 
             foreach (
