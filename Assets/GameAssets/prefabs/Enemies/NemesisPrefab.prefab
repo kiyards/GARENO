@@ -216,7 +216,7 @@ MonoBehaviour:
   idleStateName: enemy_nemesis_idle
   walkStateName: enemy_nemesis_walk
   punchStateName: enemy_nemesis_punch
-  lungeStateName:
+  lungeStateName: enemy_nemesis_lunge
   groundSlamStateName: enemy_nemesis_groundslam
   deathStateName: enemy_nemesis_death
   walkSpeedThreshold: 0.5

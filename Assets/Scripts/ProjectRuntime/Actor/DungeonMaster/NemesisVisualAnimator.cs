@@ -8,10 +8,9 @@ namespace ProjectRuntime.Actor
     // drives the animator by name (Play / CrossFadeInFixedTime) and the prefab's NetworkAnimator
     // (clientAuthority, ClientToServer) replicates those state changes to every other peer.
     //
-    // Idle/walk are derived from the owner's positional delta; punch/ground-slam swings are fired
-    // from DungeonMasterNemesis.OnAttackStartedEvent (which fires as the action window opens, so the
-    // swing lines up with the server's impact-frame damage); death plays on disassemble. Lunge has no
-    // clip yet, so lungeStateName is left empty and the lunge dash simply shows locomotion.
+    // Idle/walk are derived from the owner's positional delta; punch/ground-slam/lunge swings are
+    // fired from DungeonMasterNemesis.OnAttackStartedEvent (which fires as the action window opens, so
+    // the animation lines up with the server's impact-frame damage); death plays on disassemble.
     [DefaultExecutionOrder(-2)]
     [DisallowMultipleComponent]
     public class NemesisVisualAnimator : MonoBehaviour
@@ -37,9 +36,7 @@ namespace ProjectRuntime.Actor
         [SerializeField] private string idleStateName = "enemy_nemesis_idle";
         [SerializeField] private string walkStateName = "enemy_nemesis_walk";
         [SerializeField] private string punchStateName = "enemy_nemesis_punch";
-
-        // No lunge clip exists yet — left empty so the lunge dash falls back to locomotion.
-        [SerializeField] private string lungeStateName = "";
+        [SerializeField] private string lungeStateName = "enemy_nemesis_lunge";
         [SerializeField] private string groundSlamStateName = "enemy_nemesis_groundslam";
         [SerializeField] private string deathStateName = "enemy_nemesis_death";
 
@@ -61,7 +58,7 @@ namespace ProjectRuntime.Actor
             previousPosition = transform.position;
 
             // Bind the controller on every peer (including non-owners) so the NetworkAnimator's
-            // synced state hashes resolve — non-owners never call ApplyVisualState again after this.
+            // synced state hashes resolve - non-owners never call ApplyVisualState again after this.
             ApplyVisualState(VisualState.Idle);
             EnsureNetworkAnimator();
         }
@@ -92,13 +89,13 @@ namespace ProjectRuntime.Actor
                 }
                 else if (nemesis.IsSpawning)
                 {
-                    // Materializing — hold the spawn animation; movement/attacks are locked out until it
+                    // Materializing - hold the spawn animation; movement/attacks are locked out until it
                     // ends (see DungeonMasterNemesis.IsSpawning), so nothing else competes here.
                     ApplyVisualState(VisualState.Spawn);
                 }
                 else if (Time.timeAsDouble >= attackVisualUntil)
                 {
-                    // Not mid-swing — resolve locomotion. While within the attack window the current
+                    // Not mid-swing - resolve locomotion. While within the attack window the current
                     // attack state is simply held.
                     ApplyVisualState(ResolveLocomotion(currentPosition));
                 }
@@ -120,7 +117,8 @@ namespace ProjectRuntime.Actor
             var stateName = GetVisualStateName(state);
             if (string.IsNullOrEmpty(stateName))
             {
-                // e.g. lunge — no clip yet, so let the dash keep showing locomotion.
+                // Missing clip binding on this prefab/controller; keep locomotion rather than
+                // interrupting the dash with an invalid state name.
                 return;
             }
 
@@ -186,7 +184,7 @@ namespace ProjectRuntime.Actor
             if (isFirstApply || controllerChanged)
             {
                 // Nothing meaningful to blend from on the first pose or right after a controller
-                // (re)bind — snap instantly.
+                // (re)bind - snap instantly.
                 animator.Play(stateName, 0, 0f);
                 animator.Update(0f);
             }
