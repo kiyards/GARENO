@@ -1,0 +1,637 @@
+fileFormatVersion: 2
+guid: f8aca488c43f4e84f911015cf5b697d5
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2211861316871085575
+    second: enemy zombie icon _0
+  - first:
+      213: -4608625482005608878
+    second: enemy zombie icon _1
+  - first:
+      213: -4381124977876160290
+    second: enemy zombie icon _2
+  - first:
+      213: 5575290157786076620
+    second: enemy zombie icon _3
+  - first:
+      213: -7858603766577948031
+    second: enemy zombie icon _4
+  - first:
+      213: 4342476307297941219
+    second: enemy zombie icon _5
+  - first:
+      213: 8557472916715369984
+    second: enemy zombie icon _6
+  - first:
+      213: -252133057755755103
+    second: enemy zombie icon _7
+  - first:
+      213: -3112368915445079638
+    second: enemy zombie icon _8
+  - first:
+      213: 6490740371206029243
+    second: enemy zombie icon _9
+  - first:
+      213: 6907984728003644438
+    second: enemy zombie icon _10
+  - first:
+      213: 4847411208673259290
+    second: enemy zombie icon _11
+  - first:
+      213: 2140318028766957475
+    second: enemy zombie icon _12
+  - first:
+      213: 5979419147181747848
+    second: enemy zombie icon _13
+  - first:
+      213: -8306685569976464739
+    second: enemy zombie icon _14
+  - first:
+      213: 4346154916854134568
+    second: enemy zombie icon _15
+  - first:
+      213: -2489125053852357421
+    second: enemy zombie icon _16
+  - first:
+      213: -5092955485535651090
+    second: enemy zombie icon _17
+  - first:
+      213: 4748784648376981375
+    second: enemy zombie icon _18
+  - first:
+      213: 2884492186625477103
+    second: enemy zombie icon _19
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: enemy zombie icon _0
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 12
+        width: 365
+        height: 500
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f1a87be9d3ed41e0800000000000000
+      internalID: -2211861316871085575
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy zombie icon _1
+      rect:
+        serializedVersion: 2
+        x: 362
+        y: 303
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2560e3aaa8fda00c0800000000000000
+      internalID: -4608625482005608878
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy zombie icon _2
+      rect:
+        serializedVersion: 2
+        x: 387
+        y: 301
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed0b9197b0e1333c0800000000000000
+      internalID: -4381124977876160290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy zombie icon _3
+      rect:
+        serializedVersion: 2
+        x: 410
+        y: 305
+        width: 48
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc5129efbd86f5d40800000000000000
+      internalID: 5575290157786076620
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy zombie icon _4
+      rect:
+        serializedVersion: 2
+        x: 378
+        y: 292
+        width: 12
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18a139ec281a0f290800000000000000
+      internalID: -7858603766577948031
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy zombie icon _5
+      rect:
+        serializedVersion: 2
+        x: 393
+        y: 290
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e63b0ea133934c30800000000000000
+      internalID: 4342476307297941219
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy zombie icon _6
+      rect:
+        serializedVersion: 2
+        x: 399
+        y: 279
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00678df374042c670800000000000000
+      internalID: 8557472916715369984
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy zombie icon _7
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 270
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1adc550e15e308cf0800000000000000
+      internalID: -252133057755755103
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy zombie icon _8
+      rect:
+        serializedVersion: 2
+        x: 412
+        y: 276
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa1ade026f4aec4d0800000000000000
+      internalID: -3112368915445079638
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy zombie icon _9
+      rect:
+        serializedVersion: 2
+        x: 422
+        y: 270
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbfb50b6afdb31a50800000000000000
+      internalID: 6490740371206029243
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy zombie icon _10
+      rect:
+        serializedVersion: 2
+        x: 433
+        y: 265
+        width: 12
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 61c0b7292871edf50800000000000000
+      internalID: 6907984728003644438
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy zombie icon _11
+      rect:
+        serializedVersion: 2
+        x: 317
+        y: 50
+        width: 134
+        height: 223
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1f6735cfc6754340800000000000000
+      internalID: 4847411208673259290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy zombie icon _12
+      rect:
+        serializedVersion: 2
+        x: 446
+        y: 260
+        width: 53
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3afc40348efe3bd10800000000000000
+      internalID: 2140318028766957475
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy zombie icon _13
+      rect:
+        serializedVersion: 2
+        x: 457
+        y: 222
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88eefe6b80a2bf250800000000000000
+      internalID: 5979419147181747848
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy zombie icon _14
+      rect:
+        serializedVersion: 2
+        x: 448
+        y: 205
+        width: 19
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d9a80bc1c79b8bc80800000000000000
+      internalID: -8306685569976464739
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy zombie icon _15
+      rect:
+        serializedVersion: 2
+        x: 442
+        y: 171
+        width: 13
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82778e5bed4a05c30800000000000000
+      internalID: 4346154916854134568
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy zombie icon _16
+      rect:
+        serializedVersion: 2
+        x: 373
+        y: 33
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3dcea9393f9d47dd0800000000000000
+      internalID: -2489125053852357421
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy zombie icon _17
+      rect:
+        serializedVersion: 2
+        x: 375
+        y: 44
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eea35c338ff2259b0800000000000000
+      internalID: -5092955485535651090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy zombie icon _18
+      rect:
+        serializedVersion: 2
+        x: 252
+        y: 8
+        width: 9
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7796514a7217e140800000000000000
+      internalID: 4748784648376981375
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: enemy zombie icon _19
+      rect:
+        serializedVersion: 2
+        x: 252
+        y: 0
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe9833d6c56c70820800000000000000
+      internalID: 2884492186625477103
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      enemy zombie icon _0: -2211861316871085575
+      enemy zombie icon _1: -4608625482005608878
+      enemy zombie icon _10: 6907984728003644438
+      enemy zombie icon _11: 4847411208673259290
+      enemy zombie icon _12: 2140318028766957475
+      enemy zombie icon _13: 5979419147181747848
+      enemy zombie icon _14: -8306685569976464739
+      enemy zombie icon _15: 4346154916854134568
+      enemy zombie icon _16: -2489125053852357421
+      enemy zombie icon _17: -5092955485535651090
+      enemy zombie icon _18: 4748784648376981375
+      enemy zombie icon _19: 2884492186625477103
+      enemy zombie icon _2: -4381124977876160290
+      enemy zombie icon _3: 5575290157786076620
+      enemy zombie icon _4: -7858603766577948031
+      enemy zombie icon _5: 4342476307297941219
+      enemy zombie icon _6: 8557472916715369984
+      enemy zombie icon _7: -252133057755755103
+      enemy zombie icon _8: -3112368915445079638
+      enemy zombie icon _9: 6490740371206029243
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
