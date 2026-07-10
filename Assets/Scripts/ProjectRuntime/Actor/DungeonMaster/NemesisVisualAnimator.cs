@@ -196,9 +196,9 @@ namespace ProjectRuntime.Actor
             }
         }
 
-        // The controller's idle/walk clips are not imported as looping, so — like ZombieEnemy — the
-        // driving peer restarts them when they reach the end; the NetworkAnimator carries the restart
-        // (a reset normalizedTime) to the other peers.
+        // Safety net (matches ZombieEnemy): if a looping locomotion clip is ever imported without
+        // loopTime set, the driving peer restarts it at the end so it doesn't freeze on the last frame.
+        // Idle/walk are imported as looping, so this is normally a no-op (stateInfo.loop short-circuits).
         private void TickLoopingVisualState()
         {
             if (
