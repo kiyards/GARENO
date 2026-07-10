@@ -538,7 +538,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.00009826678}
+  m_AnchoredPosition: {x: 0, y: 0.0005896156}
   m_SizeDelta: {x: 0, y: 600}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &285431315
@@ -2292,6 +2292,8 @@ MonoBehaviour:
   - {fileID: 7487658207218452854, guid: 45bcde8d194cdca48adecc57ee66acb3, type: 3}
   - {fileID: 7487658207218452854, guid: 50462a344c15d8346855aaa878e75bfe, type: 3}
   - {fileID: 4025126144443318060, guid: 099da0aa85ce2524cb2a561233e0141f, type: 3}
+  - {fileID: 6496068344093243206, guid: b74e40ce884493b4a80613ef9cb6d383, type: 3}
+  - {fileID: 6496068344093243206, guid: 294693db8cd93a042b85f38b26df3dd7, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -2314,6 +2316,7 @@ MonoBehaviour:
   dungeonMasterTurretPrefab: {fileID: 7487658207218452854, guid: 50462a344c15d8346855aaa878e75bfe, type: 3}
   dungeonMasterSlowingTurretPrefab: {fileID: 7487658207218452854, guid: 45bcde8d194cdca48adecc57ee66acb3, type: 3}
   dungeonMasterNemesisPrefab: {fileID: 1000000000000000010, guid: 3d9a7c1e5b2f4a069c8d1e2f3a4b5c6d, type: 3}
+  survivorSpawnRadius: 2
   HostedLobbyId:
     m_SteamID: 0
 --- !u!114 &1272274657
@@ -2629,7 +2632,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1426937565}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.99997926
+  m_Size: 0.9997932
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
