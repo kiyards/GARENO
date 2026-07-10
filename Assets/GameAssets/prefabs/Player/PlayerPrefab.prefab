@@ -855,6 +855,7 @@ GameObject:
   - component: {fileID: 2200131109173453123}
   - component: {fileID: 3086273937048574866}
   - component: {fileID: 6988870576730226306}
+  - component: {fileID: 2477319183524012891}
   - component: {fileID: 7236363269636559078}
   - component: {fileID: 7893470114192060199}
   - component: {fileID: 1000000000000000019}
@@ -1111,6 +1112,41 @@ MonoBehaviour:
   nemesisBaseCountdown: 120
   _debugForceCard: 0
   _debugForcedCardId: CARD_C4
+--- !u!114 &2477319183524012891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6497081027001187553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba2a43dc1dc44f4b96961822d4fa669f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 7578397109688941967}
+  input: {fileID: 3611815320372169542}
+  cam: {fileID: 5845632010730616114}
+  healCircleRadius: 4.5
+  healCircleHealPerTick: 12
+  healCircleTickInterval: 1
+  healCircleTickCount: 5
+  healCircleCooldown: 0
+  molotovProjectilePrefab: {fileID: 7602222199317621573, guid: 294693db8cd93a042b85f38b26df3dd7, type: 3}
+  molotovRange: 16
+  molotovThrowSpeed: 30
+  molotovUpwardVelocity: 20
+  molotovSpawnHeightOffset: 1.35
+  molotovSpawnForwardOffset: 2
+  molotovCooldown: 0
+  steroidSpeedMultiplier: 4
+  steroidDuration: 5
+  steroidCooldown: 0
+  empRadius: 8
+  empLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  empCooldown: 0
 --- !u!114 &7236363269636559078
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1421,6 +1457,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: -0.5375
       objectReference: {fileID: 0}
+    - target: {fileID: 7935024000332893671, guid: e32d76a198766014ca0722b6ff4ef6cc, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 791ae2f44c10609468ea3c9cd99d84d3, type: 2}
     - target: {fileID: 9124774028005149419, guid: e32d76a198766014ca0722b6ff4ef6cc, type: 3}
       propertyPath: m_LocalScale.x
       value: 1

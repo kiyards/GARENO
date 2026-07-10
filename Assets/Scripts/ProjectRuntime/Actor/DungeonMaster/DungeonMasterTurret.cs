@@ -116,6 +116,7 @@ namespace ProjectRuntime.Actor
         public bool SlowOnHit => slowOnHit;
         public float SlowAmount => slowAmount;
         public float SlowDuration => slowDuration;
+
         [Server]
         public void ServerInitialize(GameplayPlayer owner)
         {
@@ -195,7 +196,10 @@ namespace ProjectRuntime.Actor
         [ClientRpc]
         public void RpcShowDamageNumber(Vector3 worldPos, float amount)
         {
-            if (PlayerManager.Instance == null || PlayerManager.Instance.playerRole != PlayerRole.DungeonMaster)
+            if (
+                PlayerManager.Instance == null
+                || PlayerManager.Instance.playerRole != PlayerRole.DungeonMaster
+            )
                 return;
 
             DamagePopup.Spawn(damagePopupPrefab, worldPos, amount);
@@ -204,7 +208,10 @@ namespace ProjectRuntime.Actor
         [ClientRpc]
         public void RpcPlayHitVfx(Vector3 worldPos, Vector3 fireDirection)
         {
-            if (PlayerManager.Instance == null || PlayerManager.Instance.playerRole != PlayerRole.DungeonMaster)
+            if (
+                PlayerManager.Instance == null
+                || PlayerManager.Instance.playerRole != PlayerRole.DungeonMaster
+            )
                 return;
 
             HitVfx.Play(hitVfxPrefab, worldPos, fireDirection, hitVfxLifetime);
@@ -268,6 +275,13 @@ namespace ProjectRuntime.Actor
 
         [Server]
         private void OnServerDeath(uint killerNetId)
+        {
+            StopAllCoroutines();
+            NetworkServer.Destroy(gameObject);
+        }
+
+        [Server]
+        public void ServerDestroyByEmp()
         {
             StopAllCoroutines();
             NetworkServer.Destroy(gameObject);
@@ -362,7 +376,8 @@ namespace ProjectRuntime.Actor
             if (turretPitchPivot != null)
             {
                 float horizontalMagnitude = new Vector2(aimDirection.x, aimDirection.z).magnitude;
-                float pitchDegrees = Mathf.Atan2(-aimDirection.y, horizontalMagnitude) * Mathf.Rad2Deg;
+                float pitchDegrees =
+                    Mathf.Atan2(-aimDirection.y, horizontalMagnitude) * Mathf.Rad2Deg;
                 turretPitchPivot.localRotation = Quaternion.Euler(pitchDegrees, 0f, 0f);
             }
         }

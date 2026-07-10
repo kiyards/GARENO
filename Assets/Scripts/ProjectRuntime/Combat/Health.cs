@@ -60,6 +60,17 @@ namespace ProjectRuntime.Combat
         }
 
         [Server]
+        public void ServerHeal(float amount)
+        {
+            if (_isDead || amount <= 0f || currentHealth >= maxHealth)
+            {
+                return;
+            }
+
+            currentHealth = Mathf.Clamp(currentHealth + amount, 0f, maxHealth);
+        }
+
+        [Server]
         public void ServerSetDamageEnabled(bool enabled)
         {
             _damageEnabled = enabled;

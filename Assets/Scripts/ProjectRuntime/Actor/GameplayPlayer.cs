@@ -135,7 +135,10 @@ namespace ProjectRuntime.Actor
 
         private bool _isGhost;
         private float _speedMultiplier = 1f;
+        private float _slowMultiplier = 1f;
+        private float _speedBoostMultiplier = 1f;
         private int _slowStackCount;
+        private Coroutine _speedBoostCoroutine;
 
         private PlayerRole _currentRole = PlayerRole.Unassigned;
         private DungeonMasterCardManager _cardManager;
@@ -152,6 +155,11 @@ namespace ProjectRuntime.Actor
         private DungeonMasterNemesisController _nemesis;
         public DungeonMasterNemesisController Nemesis =>
             this._nemesis != null ? this._nemesis : this._nemesis = this.EnsureNemesisController();
+        private SurvivorAbilityController _survivorAbilities;
+        public SurvivorAbilityController SurvivorAbilities =>
+            this._survivorAbilities != null
+                ? this._survivorAbilities
+                : this._survivorAbilities = GetComponent<SurvivorAbilityController>();
         private Renderer[] _roleRenderers;
         private bool[] _roleRendererInitialEnabled;
         private bool _initialColliderEnabled;
@@ -882,14 +890,36 @@ namespace ProjectRuntime.Actor
             bearTrap.ServerHandleMash(this);
         }
 
+        [Command]
+        public void CmdActivateHealCircle()
+        {
+            SurvivorAbilities?.ServerTryActivateHealCircle();
+        }
+
+        [Command]
+        public void CmdActivateMolotov(Vector3 targetPoint)
+        {
+            SurvivorAbilities?.ServerTryActivateMolotov(targetPoint);
+        }
+
+        [Command]
+        public void CmdActivateSteroid()
+        {
+            SurvivorAbilities?.ServerTryActivateSteroid();
+        }
+
+        [Command]
+        public void CmdActivateEmp()
+        {
+            SurvivorAbilities?.ServerTryActivateEmp();
+        }
+
         [Server]
         public void ServerApplySlow(float slowAmount, float duration)
         {
             _slowStackCount++;
-            float newMultiplier = Mathf.Clamp(1f - _slowStackCount * slowAmount, 0f, 1f);
-            _speedMultiplier = newMultiplier;
-            if (connectionToClient != null)
-                TargetSetSpeedMultiplier(connectionToClient, newMultiplier);
+            _slowMultiplier = Mathf.Clamp(1f - _slowStackCount * slowAmount, 0f, 1f);
+            RefreshSpeedMultiplier();
             StartCoroutine(ExpireSlowStack(slowAmount, duration));
         }
 
@@ -903,10 +933,8 @@ namespace ProjectRuntime.Actor
         {
             yield return new WaitForSeconds(duration);
             _slowStackCount = Mathf.Max(0, _slowStackCount - 1);
-            float newMultiplier = Mathf.Clamp(1f - _slowStackCount * slowAmount, 0f, 1f);
-            _speedMultiplier = newMultiplier;
-            if (connectionToClient != null)
-                TargetSetSpeedMultiplier(connectionToClient, newMultiplier);
+            _slowMultiplier = Mathf.Clamp(1f - _slowStackCount * slowAmount, 0f, 1f);
+            RefreshSpeedMultiplier();
         }
 
         [Server]
@@ -915,6 +943,24 @@ namespace ProjectRuntime.Actor
             if (IsDungeonMaster || IsInactive)
                 return;
             ServerApplySlow(1f, duration);
+        }
+
+        [Server]
+        public void ServerApplySpeedBoost(float multiplier, float duration)
+        {
+            if (IsDungeonMaster || IsInactive)
+            {
+                return;
+            }
+
+            if (_speedBoostCoroutine != null)
+            {
+                StopCoroutine(_speedBoostCoroutine);
+            }
+
+            _speedBoostMultiplier = Mathf.Max(1f, multiplier);
+            RefreshSpeedMultiplier();
+            _speedBoostCoroutine = StartCoroutine(ExpireSpeedBoost(duration));
         }
 
         [Server]
@@ -1150,6 +1196,53 @@ namespace ProjectRuntime.Actor
             }
 
             doorInteractor.Initialize(this);
+        }
+
+        [ClientRpc]
+        public void RpcPlayHealCircleEffect(Vector3 center, float radius, int pulses, float interval)
+        {
+            SurvivorAbilityVfx.SpawnHealCircle(center, radius, pulses, interval);
+        }
+
+        [ClientRpc]
+        public void RpcPlaySteroidEffect(uint playerNetId, float duration)
+        {
+            if (!NetworkClient.spawned.TryGetValue(playerNetId, out NetworkIdentity identity))
+            {
+                return;
+            }
+
+            GameplayPlayer target = identity.GetComponentInChildren<GameplayPlayer>();
+            if (target == null)
+            {
+                return;
+            }
+
+            SurvivorAbilityVfx.SpawnSteroidAura(target.transform, duration);
+        }
+
+        [ClientRpc]
+        public void RpcPlayEmpEffect(Vector3 center, float radius)
+        {
+            SurvivorAbilityVfx.SpawnEmp(center, radius);
+        }
+
+        [Server]
+        private void RefreshSpeedMultiplier()
+        {
+            _speedMultiplier = Mathf.Max(0f, _slowMultiplier * _speedBoostMultiplier);
+            if (connectionToClient != null)
+            {
+                TargetSetSpeedMultiplier(connectionToClient, _speedMultiplier);
+            }
+        }
+
+        private IEnumerator ExpireSpeedBoost(float duration)
+        {
+            yield return new WaitForSeconds(duration);
+            _speedBoostMultiplier = 1f;
+            _speedBoostCoroutine = null;
+            RefreshSpeedMultiplier();
         }
     }
 }

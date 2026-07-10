@@ -201,6 +201,19 @@ namespace ProjectRuntime.Actor
             ServerExplode();
         }
 
+        [Server]
+        public void ServerDestroyByEmp()
+        {
+            if (_exploded)
+            {
+                return;
+            }
+
+            StopAllCoroutines();
+            _exploded = true;
+            NetworkServer.Destroy(gameObject);
+        }
+
         private bool IsValidSurvivor(GameplayPlayer player)
         {
             if (player == null || player.IsDungeonMaster || player.IsInactive)
