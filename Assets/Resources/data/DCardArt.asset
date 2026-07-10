@@ -17,6 +17,8 @@ MonoBehaviour:
     <Sprite>k__BackingField: {fileID: 21300000, guid: af4ebd780b467014bbe263a36941f970, type: 3}
   - <CardId>k__BackingField: CARD_GROUP_OF_DOGS
     <Sprite>k__BackingField: {fileID: 21300000, guid: 93d767eebaa938749b60a0e377d38582, type: 3}
+  - <CardId>k__BackingField: CARD_MIMIC_ZOMBIE
+    <Sprite>k__BackingField: {fileID: 21300000, guid: 5c0d60216b64b9f4d90918717e5977ab, type: 3}
   - <CardId>k__BackingField: CARD_TURRET
     <Sprite>k__BackingField: {fileID: 21300000, guid: 28a641eb3fa51064fa1c3b5cb66eaefa, type: 3}
   - <CardId>k__BackingField: CARD_SLOWING_DART_TURRET

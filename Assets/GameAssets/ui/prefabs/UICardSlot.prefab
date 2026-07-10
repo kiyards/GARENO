@@ -461,8 +461,8 @@ MonoBehaviour:
   cardNameText: {fileID: 7100000000000000013}
   manaCostText: {fileID: 1856932926319647431}
   cardTypeIcon: {fileID: 1369022126347600018}
-  zombieTypeIcon: {fileID: 21300000, guid: 4d5f74c4ec0ae5945b973c83c45d7aa0, type: 3}
-  trapTypeIcon: {fileID: 21300000, guid: deb7976cbf447c8488b24e2a7e7ef172, type: 3}
+  zombieTypeIcon: {fileID: 21300000, guid: 83575ceb57b2eeb44bb5d6f14d3212df, type: 3}
+  trapTypeIcon: {fileID: 21300000, guid: 6d8e9fe5aa507a54c967b634291ac5f9, type: 3}
   hoverLift: 24
   hoverMoveDuration: 0.1
   darkenOverlay: {fileID: 7100000000000000030}
