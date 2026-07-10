@@ -37,19 +37,22 @@ AnimatorStateMachine:
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: 4671626665945402170}
-    m_Position: {x: 360, y: -30, z: 0}
+    m_Position: {x: 360, y: 180, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -672110989895197148}
-    m_Position: {x: 360, y: 60, z: 0}
+    m_Position: {x: 360, y: 110, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -9063877656400152731}
     m_Position: {x: 360, y: -110, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -4221554760044883513}
-    m_Position: {x: 360, y: 180, z: 0}
+    m_Position: {x: 360, y: 260, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -4858328153220752684}
-    m_Position: {x: 370, y: 280, z: 0}
+    m_Position: {x: 360, y: 340, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: -3399337730494323554}
+    m_Position: {x: 360, y: 30, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
@@ -107,6 +110,32 @@ AnimatorState:
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
   m_Motion: {fileID: -203655887218126122, guid: 9c00acdeac108cb4fb29fffc1f585360, type: 3}
+  m_Tag: 
+  m_SpeedParameter: 
+  m_MirrorParameter: 
+  m_CycleOffsetParameter: 
+  m_TimeParameter: 
+--- !u!1102 &-3399337730494323554
+AnimatorState:
+  serializedVersion: 6
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: enemy_nemesis_spawn
+  m_Speed: 1
+  m_CycleOffset: 0
+  m_Transitions: []
+  m_StateMachineBehaviours: []
+  m_Position: {x: 50, y: 50, z: 0}
+  m_IKOnFeet: 0
+  m_WriteDefaultValues: 1
+  m_Mirror: 0
+  m_SpeedParameterActive: 0
+  m_MirrorParameterActive: 0
+  m_CycleOffsetParameterActive: 0
+  m_TimeParameterActive: 0
+  m_Motion: {fileID: 1827226128182048838, guid: 7a6787b85157a3f42b97b1bf1daf478e, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
