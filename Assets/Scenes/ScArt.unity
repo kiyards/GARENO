@@ -14034,10 +14034,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: player_tsuki
       objectReference: {fileID: 0}
-    - target: {fileID: 7935024000332893671, guid: e32d76a198766014ca0722b6ff4ef6cc, type: 3}
-      propertyPath: m_Controller
-      value: 
-      objectReference: {fileID: 9100000, guid: aee2ef2415b43d8488bd3029539d4ee6, type: 2}
     - target: {fileID: 9124774028005149419, guid: e32d76a198766014ca0722b6ff4ef6cc, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2.567793
