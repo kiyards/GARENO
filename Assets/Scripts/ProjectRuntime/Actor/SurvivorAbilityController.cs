@@ -288,22 +288,22 @@ namespace ProjectRuntime.Actor
             return true;
         }
 
-        // 0 = just used (full cooldown remaining) -> 1 = ready. Matches the HUD fill formula
-        // (cooldown - timeLeft) / cooldown. Reads the local client's predicted cooldown clock,
-        // so it's for the owning survivor's own HUD.
+        // 1 = just used (full cooldown remaining) -> 0 = ready, i.e. timeLeft / cooldown. Drives the
+        // HUD fill so it snaps full on use and drains as the cooldown elapses. Reads the local
+        // client's predicted cooldown clock, so it's for the owning survivor's own HUD.
         public float GetCooldownFraction(SurvivorAbilityType abilityType)
         {
             float cooldown = GetCooldown(abilityType);
             if (cooldown <= 0f)
             {
-                return 1f;
+                return 0f;
             }
 
             double timeLeft = _clientNextReadyTimes.TryGetValue(abilityType, out double readyTime)
                 ? readyTime - NetworkTime.time
                 : 0d;
 
-            return Mathf.Clamp01((float)((cooldown - timeLeft) / cooldown));
+            return Mathf.Clamp01((float)(timeLeft / cooldown));
         }
 
         private float GetCooldown(SurvivorAbilityType abilityType)
