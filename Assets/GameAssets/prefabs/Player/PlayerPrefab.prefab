@@ -1129,25 +1129,25 @@ MonoBehaviour:
   input: {fileID: 3611815320372169542}
   cam: {fileID: 5845632010730616114}
   healCircleRadius: 4.5
-  healCircleHealPerTick: 12
+  healCircleHealPerTick: 10
   healCircleTickInterval: 1
   healCircleTickCount: 5
-  healCircleCooldown: 10
+  healCircleCooldown: 60
   molotovProjectilePrefab: {fileID: 7602222199317621573, guid: 294693db8cd93a042b85f38b26df3dd7, type: 3}
   molotovRange: 8
-  molotovThrowSpeed: 30
+  molotovThrowSpeed: 50
   molotovUpwardVelocity: 20
   molotovSpawnHeightOffset: 1.35
   molotovSpawnForwardOffset: 2
-  molotovCooldown: 10
+  molotovCooldown: 60
   steroidSpeedMultiplier: 1.8
   steroidDuration: 5
-  steroidCooldown: 10
+  steroidCooldown: 60
   empRadius: 8
   empLayers:
     serializedVersion: 2
     m_Bits: 64
-  empCooldown: 10
+  empCooldown: 60
 --- !u!114 &7236363269636559078
 MonoBehaviour:
   m_ObjectHideFlags: 0

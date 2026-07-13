@@ -1,8 +1,7 @@
+using Mirror;
+using ProjectRuntime.Network;
 using System.Collections;
 using System.Collections.Generic;
-using Mirror;
-using ProjectRuntime.Combat;
-using ProjectRuntime.Network;
 using UnityEngine;
 
 namespace ProjectRuntime.Actor
@@ -287,6 +286,24 @@ namespace ProjectRuntime.Actor
 
             _serverNextReadyTimes[abilityType] = now + GetCooldown(abilityType);
             return true;
+        }
+
+        // 0 = just used (full cooldown remaining) -> 1 = ready. Matches the HUD fill formula
+        // (cooldown - timeLeft) / cooldown. Reads the local client's predicted cooldown clock,
+        // so it's for the owning survivor's own HUD.
+        public float GetCooldownFraction(SurvivorAbilityType abilityType)
+        {
+            float cooldown = GetCooldown(abilityType);
+            if (cooldown <= 0f)
+            {
+                return 1f;
+            }
+
+            double timeLeft = _clientNextReadyTimes.TryGetValue(abilityType, out double readyTime)
+                ? readyTime - NetworkTime.time
+                : 0d;
+
+            return Mathf.Clamp01((float)((cooldown - timeLeft) / cooldown));
         }
 
         private float GetCooldown(SurvivorAbilityType abilityType)

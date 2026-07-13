@@ -35,6 +35,9 @@ namespace ProjectRuntime.Managers
         [field: SerializeField]
         private TextMeshProUGUI AssignedAbilityTMP { get; set; }
 
+        [field: SerializeField]
+        private Image SurvivorAbilityCooldownFill { get; set; }
+
         [field: SerializeField, Header("Player Health")]
         private FlashFillBar PlayerHealthBar { get; set; }
 
@@ -276,6 +279,7 @@ namespace ProjectRuntime.Managers
             this.RefreshReviveTimer();
             this.RefreshDownedIndicator();
             this.RefreshDeadIndicator();
+            this.RefreshSurvivorAbilityCooldown();
         }
 
         public void SetLocalPlayer(PlayerManager player)
@@ -542,6 +546,20 @@ namespace ProjectRuntime.Managers
             {
                 this.DeadIndicator.SetActive(false);
             }
+        }
+
+        // Fills as the local survivor's assigned-ability cooldown recovers: 0 right after use,
+        // 1 when ready again (fillAmount = (cooldown - timeLeft) / cooldown).
+        private void RefreshSurvivorAbilityCooldown()
+        {
+            if (this.BoundGameplayPlayer == null || this.CurrentRole != PlayerRole.Survivor)
+            {
+                return;
+            }
+
+            var ability = this.BoundGameplayPlayer.localManager.assignedAbility;
+            this.SurvivorAbilityCooldownFill.fillAmount =
+                this.BoundGameplayPlayer.SurvivorAbilities.GetCooldownFraction(ability);
         }
 
         // Drives the lifetime countdown text + bar inside NemesisControlUI (only visible while

@@ -105,12 +105,6 @@ namespace ProjectRuntime.Actor
                 Quaternion.identity
             );
             MolotovFireArea fireArea = fireAreaObject.GetComponent<MolotovFireArea>();
-            if (fireArea == null)
-            {
-                Debug.LogWarning("[MolotovProjectile] Fire area prefab is missing MolotovFireArea.");
-                Object.Destroy(fireAreaObject);
-                return;
-            }
 
             fireArea.ServerInitialize(_owner);
             NetworkServer.Spawn(fireAreaObject);
