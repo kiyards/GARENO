@@ -1,0 +1,819 @@
+fileFormatVersion: 2
+guid: ece41d1271984ac4abc442dbd12c21ed
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 6272391560611328749
+    second: T_Grass_BaseColoralpha_0
+  - first:
+      213: 4883326724749011639
+    second: T_Grass_BaseColoralpha_1
+  - first:
+      213: -5291978304390704718
+    second: T_Grass_BaseColoralpha_2
+  - first:
+      213: -4507170109753169618
+    second: T_Grass_BaseColoralpha_3
+  - first:
+      213: 922900271202295405
+    second: T_Grass_BaseColoralpha_4
+  - first:
+      213: 8864722208573575209
+    second: T_Grass_BaseColoralpha_5
+  - first:
+      213: -7878511423856928752
+    second: T_Grass_BaseColoralpha_6
+  - first:
+      213: 280843588507952223
+    second: T_Grass_BaseColoralpha_7
+  - first:
+      213: -5007860887428173144
+    second: T_Grass_BaseColoralpha_8
+  - first:
+      213: -1692849763531336245
+    second: T_Grass_BaseColoralpha_9
+  - first:
+      213: -2393968867600512185
+    second: T_Grass_BaseColoralpha_10
+  - first:
+      213: -2125332028659625745
+    second: T_Grass_BaseColoralpha_11
+  - first:
+      213: 8465349628493750792
+    second: T_Grass_BaseColoralpha_12
+  - first:
+      213: -9064766215300235143
+    second: T_Grass_BaseColoralpha_13
+  - first:
+      213: 8659023013658839346
+    second: T_Grass_BaseColoralpha_14
+  - first:
+      213: 4672197141790158139
+    second: T_Grass_BaseColoralpha_15
+  - first:
+      213: -6133745931370266541
+    second: T_Grass_BaseColoralpha_16
+  - first:
+      213: -477667746213508803
+    second: T_Grass_BaseColoralpha_17
+  - first:
+      213: -1405359152845271892
+    second: T_Grass_BaseColoralpha_18
+  - first:
+      213: 7783471663990279322
+    second: T_Grass_BaseColoralpha_19
+  - first:
+      213: -2103685821938619024
+    second: T_Grass_BaseColoralpha_20
+  - first:
+      213: 318834501169162666
+    second: T_Grass_BaseColoralpha_21
+  - first:
+      213: 2731763518798241101
+    second: T_Grass_BaseColoralpha_22
+  - first:
+      213: -8178526131384121459
+    second: T_Grass_BaseColoralpha_23
+  - first:
+      213: -4151773862472675963
+    second: T_Grass_BaseColoralpha_24
+  - first:
+      213: 8023608112725517374
+    second: T_Grass_BaseColoralpha_25
+  - first:
+      213: -380733450907116803
+    second: T_Grass_BaseColoralpha_26
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: T_Grass_BaseColoralpha_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1736
+        width: 324
+        height: 290
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de2756e44e20c0750800000000000000
+      internalID: 6272391560611328749
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Grass_BaseColoralpha_1
+      rect:
+        serializedVersion: 2
+        x: 353
+        y: 1768
+        width: 490
+        height: 263
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ba26de78cf05c340800000000000000
+      internalID: 4883326724749011639
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Grass_BaseColoralpha_2
+      rect:
+        serializedVersion: 2
+        x: 1032
+        y: 1914
+        width: 33
+        height: 134
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b1d7bf25cd1f86b0800000000000000
+      internalID: -5291978304390704718
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Grass_BaseColoralpha_3
+      rect:
+        serializedVersion: 2
+        x: 1162
+        y: 1929
+        width: 32
+        height: 119
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2967e94aa05371c0800000000000000
+      internalID: -4507170109753169618
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Grass_BaseColoralpha_4
+      rect:
+        serializedVersion: 2
+        x: 1291
+        y: 1926
+        width: 33
+        height: 122
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6edf1c28eccecc00800000000000000
+      internalID: 922900271202295405
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Grass_BaseColoralpha_5
+      rect:
+        serializedVersion: 2
+        x: 1421
+        y: 1911
+        width: 33
+        height: 137
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9205b82a1e1d50b70800000000000000
+      internalID: 8864722208573575209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Grass_BaseColoralpha_6
+      rect:
+        serializedVersion: 2
+        x: 1538
+        y: 1899
+        width: 9
+        height: 149
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01896262a97e9a290800000000000000
+      internalID: -7878511423856928752
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Grass_BaseColoralpha_7
+      rect:
+        serializedVersion: 2
+        x: 1643
+        y: 1886
+        width: 10
+        height: 162
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f54667a71c1c5e300800000000000000
+      internalID: 280843588507952223
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Grass_BaseColoralpha_8
+      rect:
+        serializedVersion: 2
+        x: 1792
+        y: 1870
+        width: 11
+        height: 178
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a275404e01808ab0800000000000000
+      internalID: -5007860887428173144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Grass_BaseColoralpha_9
+      rect:
+        serializedVersion: 2
+        x: 17
+        y: 739
+        width: 639
+        height: 1018
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bc55c92fb1ac188e0800000000000000
+      internalID: -1692849763531336245
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Grass_BaseColoralpha_10
+      rect:
+        serializedVersion: 2
+        x: 783
+        y: 1685
+        width: 52
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74bc35baff9e6ced0800000000000000
+      internalID: -2393968867600512185
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Grass_BaseColoralpha_11
+      rect:
+        serializedVersion: 2
+        x: 785
+        y: 1627
+        width: 46
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe09bf9c7cd4182e0800000000000000
+      internalID: -2125332028659625745
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Grass_BaseColoralpha_12
+      rect:
+        serializedVersion: 2
+        x: 815
+        y: 1512
+        width: 1233
+        height: 287
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 802ead1c2a6fa7570800000000000000
+      internalID: 8465349628493750792
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Grass_BaseColoralpha_13
+      rect:
+        serializedVersion: 2
+        x: 687
+        y: 713
+        width: 296
+        height: 578
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9704115872b733280800000000000000
+      internalID: -9064766215300235143
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Grass_BaseColoralpha_14
+      rect:
+        serializedVersion: 2
+        x: 715
+        y: 1253
+        width: 25
+        height: 426
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 239411fad870b2870800000000000000
+      internalID: 8659023013658839346
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Grass_BaseColoralpha_15
+      rect:
+        serializedVersion: 2
+        x: 863
+        y: 1231
+        width: 1185
+        height: 343
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3d6ffccb8af6d040800000000000000
+      internalID: 4672197141790158139
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Grass_BaseColoralpha_16
+      rect:
+        serializedVersion: 2
+        x: 1526
+        y: 0
+        width: 78
+        height: 1252
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3508d2ac29e80eaa0800000000000000
+      internalID: -6133745931370266541
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Grass_BaseColoralpha_17
+      rect:
+        serializedVersion: 2
+        x: 2018
+        y: 1218
+        width: 9
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d39484237bbfe59f0800000000000000
+      internalID: -477667746213508803
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Grass_BaseColoralpha_18
+      rect:
+        serializedVersion: 2
+        x: 1014
+        y: 0
+        width: 51
+        height: 1190
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cac40d0eb492f7ce0800000000000000
+      internalID: -1405359152845271892
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Grass_BaseColoralpha_19
+      rect:
+        serializedVersion: 2
+        x: 1149
+        y: 0
+        width: 65
+        height: 1072
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9c85736d32740c60800000000000000
+      internalID: 7783471663990279322
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Grass_BaseColoralpha_20
+      rect:
+        serializedVersion: 2
+        x: 1292
+        y: 0
+        width: 38
+        height: 1180
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07da25804e43ec2e0800000000000000
+      internalID: -2103685821938619024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Grass_BaseColoralpha_21
+      rect:
+        serializedVersion: 2
+        x: 1400
+        y: 0
+        width: 53
+        height: 1038
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa9a3502a4abc6400800000000000000
+      internalID: 318834501169162666
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Grass_BaseColoralpha_22
+      rect:
+        serializedVersion: 2
+        x: 1598
+        y: 0
+        width: 133
+        height: 1205
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4d1754627c29e520800000000000000
+      internalID: 2731763518798241101
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Grass_BaseColoralpha_23
+      rect:
+        serializedVersion: 2
+        x: 1699
+        y: 910
+        width: 36
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d878990b0d9008e80800000000000000
+      internalID: -8178526131384121459
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Grass_BaseColoralpha_24
+      rect:
+        serializedVersion: 2
+        x: 1702
+        y: 0
+        width: 335
+        height: 1207
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 58d809b4bafe166c0800000000000000
+      internalID: -4151773862472675963
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Grass_BaseColoralpha_25
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 48
+        width: 936
+        height: 679
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3462ff4115995f60800000000000000
+      internalID: 8023608112725517374
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Grass_BaseColoralpha_26
+      rect:
+        serializedVersion: 2
+        x: 826
+        y: 54
+        width: 189
+        height: 400
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dfa929091fc57baf0800000000000000
+      internalID: -380733450907116803
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      T_Grass_BaseColoralpha_0: 6272391560611328749
+      T_Grass_BaseColoralpha_1: 4883326724749011639
+      T_Grass_BaseColoralpha_10: -2393968867600512185
+      T_Grass_BaseColoralpha_11: -2125332028659625745
+      T_Grass_BaseColoralpha_12: 8465349628493750792
+      T_Grass_BaseColoralpha_13: -9064766215300235143
+      T_Grass_BaseColoralpha_14: 8659023013658839346
+      T_Grass_BaseColoralpha_15: 4672197141790158139
+      T_Grass_BaseColoralpha_16: -6133745931370266541
+      T_Grass_BaseColoralpha_17: -477667746213508803
+      T_Grass_BaseColoralpha_18: -1405359152845271892
+      T_Grass_BaseColoralpha_19: 7783471663990279322
+      T_Grass_BaseColoralpha_2: -5291978304390704718
+      T_Grass_BaseColoralpha_20: -2103685821938619024
+      T_Grass_BaseColoralpha_21: 318834501169162666
+      T_Grass_BaseColoralpha_22: 2731763518798241101
+      T_Grass_BaseColoralpha_23: -8178526131384121459
+      T_Grass_BaseColoralpha_24: -4151773862472675963
+      T_Grass_BaseColoralpha_25: 8023608112725517374
+      T_Grass_BaseColoralpha_26: -380733450907116803
+      T_Grass_BaseColoralpha_3: -4507170109753169618
+      T_Grass_BaseColoralpha_4: 922900271202295405
+      T_Grass_BaseColoralpha_5: 8864722208573575209
+      T_Grass_BaseColoralpha_6: -7878511423856928752
+      T_Grass_BaseColoralpha_7: 280843588507952223
+      T_Grass_BaseColoralpha_8: -5007860887428173144
+      T_Grass_BaseColoralpha_9: -1692849763531336245
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
