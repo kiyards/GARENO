@@ -1,7 +1,7 @@
-using Mirror;
-using ProjectRuntime.Network;
 using System.Collections;
 using System.Collections.Generic;
+using Mirror;
+using ProjectRuntime.Network;
 using UnityEngine;
 
 namespace ProjectRuntime.Actor
@@ -132,7 +132,7 @@ namespace ProjectRuntime.Actor
             }
 
             Vector3 center = player.transform.position;
-            player.RpcPlayHealCircleEffect(center);
+            player.RpcPlayHealCircleEffect(center, healCircleTickCount * healCircleTickInterval);
             StartCoroutine(ServerHealCircleRoutine(center));
         }
 
@@ -200,7 +200,7 @@ namespace ProjectRuntime.Actor
                 }
             }
 
-            player.RpcPlayEmpEffect(center);
+            player.RpcPlayEmpEffect(center, empRadius);
         }
 
         private void CacheReferences()
@@ -262,10 +262,7 @@ namespace ProjectRuntime.Actor
         [Server]
         private bool TryConsumeServerCooldown(SurvivorAbilityType abilityType)
         {
-            if (
-                !CanUseAbilitiesOnServer()
-                || player.localManager.assignedAbility != abilityType
-            )
+            if (!CanUseAbilitiesOnServer() || player.localManager.assignedAbility != abilityType)
             {
                 return false;
             }
@@ -430,24 +427,29 @@ namespace ProjectRuntime.Actor
                 && target.health.IsAlive;
         }
 
-        public void PlayHealCircleStartVfx(Vector3 center)
+        public void PlayHealCircleStartVfx(Vector3 center, float duration)
         {
             if (healCircleStartVfxPrefab == null)
             {
                 return;
             }
 
-            Instantiate(healCircleStartVfxPrefab, center, Quaternion.identity);
+            GameObject vfx = Instantiate(healCircleStartVfxPrefab, center, Quaternion.identity);
+            if (duration > 0f)
+            {
+                Destroy(vfx, duration);
+            }
         }
 
-        public void PlayEmpStartVfx(Vector3 center)
+        public void PlayEmpStartVfx(Vector3 center, float radius)
         {
             if (empStartVfxPrefab == null)
             {
                 return;
             }
 
-            Instantiate(empStartVfxPrefab, center, Quaternion.identity);
+            GameObject vfx = Instantiate(empStartVfxPrefab, center, Quaternion.identity);
+            Destroy(vfx, 5f);
         }
     }
 

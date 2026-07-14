@@ -1199,9 +1199,9 @@ namespace ProjectRuntime.Actor
         }
 
         [ClientRpc]
-        public void RpcPlayHealCircleEffect(Vector3 center)
+        public void RpcPlayHealCircleEffect(Vector3 center, float duration)
         {
-            SurvivorAbilities?.PlayHealCircleStartVfx(center);
+            SurvivorAbilities?.PlayHealCircleStartVfx(center, duration);
         }
 
         [ClientRpc]
@@ -1222,9 +1222,9 @@ namespace ProjectRuntime.Actor
         }
 
         [ClientRpc]
-        public void RpcPlayEmpEffect(Vector3 center)
+        public void RpcPlayEmpEffect(Vector3 center, float radius)
         {
-            SurvivorAbilities?.PlayEmpStartVfx(center);
+            SurvivorAbilities?.PlayEmpStartVfx(center, radius);
         }
 
         [Server]
