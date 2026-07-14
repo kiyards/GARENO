@@ -30,6 +30,12 @@ namespace ProjectRuntime.Actor
         [SerializeField]
         private GameObject fireAreaVfxPrefab;
 
+        [SerializeField, Min(1)]
+        private int fireAreaVfxCount = 5;
+
+        [SerializeField, Range(0f, 1f)]
+        private float fireAreaVfxScatterFraction = 0.8f;
+
         private GameplayPlayer _owner;
 
         [Server]
@@ -93,9 +99,16 @@ namespace ProjectRuntime.Actor
                 return;
             }
 
-            GameObject vfx = Instantiate(fireAreaVfxPrefab, transform.position, Quaternion.identity);
             float lifetime = Mathf.Max(0.1f, fireTickCount * fireTickInterval);
-            Object.Destroy(vfx, lifetime);
+            float scatterRadius = fireRadius * Mathf.Clamp01(fireAreaVfxScatterFraction);
+
+            for (int i = 0; i < fireAreaVfxCount; i++)
+            {
+                Vector2 offset2D = Random.insideUnitCircle * scatterRadius;
+                Vector3 spawnPosition = transform.position + new Vector3(offset2D.x, 0f, offset2D.y);
+                GameObject vfx = Instantiate(fireAreaVfxPrefab, spawnPosition, Quaternion.identity);
+                Object.Destroy(vfx, lifetime);
+            }
         }
     }
 }

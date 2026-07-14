@@ -194,4 +194,6 @@ MonoBehaviour:
   damageLayers:
     serializedVersion: 2
     m_Bits: 64
-  fireAreaVfxPrefab: {fileID: 8941579149988819608, guid: 1bec3c9215094074bab05a4724dff734, type: 3}
+  fireAreaVfxPrefab: {fileID: 2101836621396476334, guid: ed8e83f4d1c76cf47aab234f7ff92f95, type: 3}
+  fireAreaVfxCount: 20
+  fireAreaVfxScatterFraction: 0.8
