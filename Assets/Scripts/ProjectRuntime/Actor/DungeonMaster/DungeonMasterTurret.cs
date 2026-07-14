@@ -4,7 +4,6 @@ using ProjectRuntime.Actor.PlayerStates;
 using ProjectRuntime.Combat;
 using ProjectRuntime.Managers;
 using ProjectRuntime.Network;
-using ProjectRuntime.UI;
 using UnityEngine;
 
 namespace ProjectRuntime.Actor
@@ -58,10 +57,6 @@ namespace ProjectRuntime.Actor
         private float slowDuration = 3f;
 
         [Header("FX")]
-        [SerializeField]
-        private DamagePopup damagePopupPrefab;
-
-        [SerializeField]
         private GameObject hitVfxPrefab;
 
         [SerializeField]
@@ -191,18 +186,6 @@ namespace ProjectRuntime.Actor
         {
             yield return new WaitForSeconds(disassemblyDuration);
             NetworkServer.Destroy(gameObject);
-        }
-
-        [ClientRpc]
-        public void RpcShowDamageNumber(Vector3 worldPos, float amount)
-        {
-            if (
-                PlayerManager.Instance == null
-                || PlayerManager.Instance.playerRole != PlayerRole.DungeonMaster
-            )
-                return;
-
-            DamagePopup.Spawn(damagePopupPrefab, worldPos, amount);
         }
 
         [ClientRpc]

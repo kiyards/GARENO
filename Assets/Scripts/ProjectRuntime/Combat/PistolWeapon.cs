@@ -4,7 +4,6 @@ using Mirror;
 using ProjectRuntime.Actor;
 using ProjectRuntime.Managers;
 using ProjectRuntime.Network;
-using ProjectRuntime.UI;
 using UnityEngine;
 
 namespace ProjectRuntime.Combat
@@ -49,10 +48,6 @@ namespace ProjectRuntime.Combat
         private float shakeDuration = 0.3f;
 
         [Header("FX")]
-        [SerializeField]
-        private DamagePopup damagePopupPrefab;
-
-        [SerializeField]
         private GameObject hitVfxPrefab;
 
         [SerializeField]
@@ -222,7 +217,6 @@ namespace ProjectRuntime.Combat
                 )
                 {
                     damageable.ServerTakeDamage(damage, netId, hitPoint);
-                    RpcShowDamageNumber(hitPoint, damage);
                     if (IsOrganicTarget(targetIdentity))
                         RpcPlayHitVfx(hitPoint, fireDirection);
                     else
@@ -278,18 +272,6 @@ namespace ProjectRuntime.Combat
             currentAmmo = magazineSize;
             isReloading = false;
             _reloadRoutine = null;
-        }
-
-        [ClientRpc]
-        private void RpcShowDamageNumber(Vector3 worldPos, float amount)
-        {
-            if (
-                PlayerManager.Instance == null
-                || PlayerManager.Instance.playerRole != PlayerRole.Survivor
-            )
-                return;
-
-            DamagePopup.Spawn(damagePopupPrefab, worldPos, amount);
         }
 
         [ClientRpc]

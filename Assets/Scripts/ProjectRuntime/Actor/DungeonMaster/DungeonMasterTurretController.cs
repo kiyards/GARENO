@@ -253,7 +253,6 @@ namespace ProjectRuntime.Actor
             }
 
             damageable.ServerTakeDamage(_activeTurret.Damage, player.netId, hitPoint);
-            _activeTurret.RpcShowDamageNumber(hitPoint, _activeTurret.Damage);
             _activeTurret.RpcPlayHitVfx(hitPoint, fireDirection);
 
             if (_activeTurret.SlowOnHit)

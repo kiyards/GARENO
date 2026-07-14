@@ -546,7 +546,6 @@ MonoBehaviour:
   slowOnHit: 0
   slowAmount: 0.2
   slowDuration: 3
-  damagePopupPrefab: {fileID: 8824996141537536103, guid: 8f299d7398d8b7c48917932052b6b2f6, type: 3}
   hitVfxPrefab: {fileID: 7015456706586739014, guid: d10879b2dbd9fad4d93438d652ee3afb, type: 3}
   hitVfxLifetime: 2
   impactVfxPrefab: {fileID: 7493678437098756444, guid: ae9b94ef9a9e98740851fcd4ccc6c249, type: 3}
@@ -569,6 +568,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   maxHealth: 1500
+  damagePopupPrefab: {fileID: 8824996141537536103, guid: 8f299d7398d8b7c48917932052b6b2f6, type: 3}
 --- !u!114 &117223877849296473
 MonoBehaviour:
   m_ObjectHideFlags: 0

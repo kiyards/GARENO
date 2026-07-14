@@ -1,5 +1,9 @@
 using Mirror;
 using System;
+using ProjectRuntime.Actor;
+using ProjectRuntime.Actor.PlayerStates;
+using ProjectRuntime.Network;
+using ProjectRuntime.UI;
 using UnityEngine;
 
 namespace ProjectRuntime.Combat
@@ -12,6 +16,7 @@ namespace ProjectRuntime.Combat
     public class Health : NetworkBehaviour, IDamageable
     {
         [SerializeField] private float maxHealth = 100f;
+        [SerializeField] private DamagePopup damagePopupPrefab;
 
         [SyncVar(hook = nameof(OnHealthSynced))]
         private float currentHealth;
@@ -51,6 +56,7 @@ namespace ProjectRuntime.Combat
 
             currentHealth = Mathf.Clamp(currentHealth - amount, 0f, maxHealth);
             OnDamagedEvent?.Invoke(amount, sourceNetId, hitPoint);
+            RpcShowDamageNumber(hitPoint, amount, netId);
 
             if (currentHealth <= 0f)
             {
@@ -88,6 +94,56 @@ namespace ProjectRuntime.Combat
         private void OnHealthSynced(float oldValue, float newValue)
         {
             OnHealthChangedEvent?.Invoke(newValue, maxHealth);
+        }
+
+        [ClientRpc]
+        private void RpcShowDamageNumber(Vector3 worldPos, float amount, uint damagedNetId)
+        {
+            if (!ShouldShowDamageNumber(damagedNetId))
+            {
+                return;
+            }
+
+            DamagePopup.Spawn(damagePopupPrefab, worldPos, amount);
+        }
+
+        private bool ShouldShowDamageNumber(uint damagedNetId)
+        {
+            var localManager = PlayerManager.Instance;
+            var localPlayer = localManager != null ? localManager.player : null;
+            if (localManager == null || localPlayer == null)
+            {
+                return false;
+            }
+
+            if (localPlayer.netId == damagedNetId)
+            {
+                return false;
+            }
+
+            if (localManager.playerRole == PlayerRole.Survivor)
+            {
+                return true;
+            }
+
+            if (localManager.playerRole != PlayerRole.DungeonMaster)
+            {
+                return false;
+            }
+
+            if (!IsLocalDungeonMasterInTurretMode(localPlayer))
+            {
+                return false;
+            }
+
+            var damagedTurret = GetComponent<DungeonMasterTurret>();
+            return damagedTurret == null || damagedTurret.OwnerNetId != localPlayer.netId;
+        }
+
+        private static bool IsLocalDungeonMasterInTurretMode(GameplayPlayer localPlayer)
+        {
+            return localPlayer.currentState is DungeonMasterTurretState
+                || localPlayer.nextState is DungeonMasterTurretState;
         }
     }
 }

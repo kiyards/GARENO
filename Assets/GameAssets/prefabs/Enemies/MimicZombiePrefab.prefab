@@ -315,6 +315,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   maxHealth: 1000
+  damagePopupPrefab: {fileID: 8824996141537536103, guid: 8f299d7398d8b7c48917932052b6b2f6, type: 3}
 --- !u!195 &5278251644888205944
 NavMeshAgent:
   m_ObjectHideFlags: 0
