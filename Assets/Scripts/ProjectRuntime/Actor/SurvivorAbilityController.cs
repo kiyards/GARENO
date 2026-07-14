@@ -40,13 +40,10 @@ namespace ProjectRuntime.Actor
         private MolotovProjectile molotovProjectilePrefab;
 
         [SerializeField]
-        private float molotovRange = 16f;
+        private float molotovThrowStrength = 14f;
 
         [SerializeField]
-        private float molotovThrowSpeed = 14f;
-
-        [SerializeField]
-        private float molotovUpwardVelocity = 4f;
+        private float molotovUpwardVelocityBonus = 2f;
 
         [SerializeField]
         private float molotovSpawnHeightOffset = 1.35f;
@@ -109,7 +106,7 @@ namespace ProjectRuntime.Actor
                     player.CmdActivateHealCircle();
                     break;
                 case SurvivorAbilityType.Molotov:
-                    player.CmdActivateMolotov(GetLocalMolotovTargetPoint());
+                    player.CmdActivateMolotov(GetLocalMolotovAimDirection());
                     break;
                 case SurvivorAbilityType.Steroid:
                     player.CmdActivateSteroid();
@@ -139,7 +136,7 @@ namespace ProjectRuntime.Actor
         }
 
         [Server]
-        public void ServerTryActivateMolotov(Vector3 requestedTargetPoint)
+        public void ServerTryActivateMolotov(Vector3 requestedAimDirection)
         {
             if (!TryConsumeServerCooldown(SurvivorAbilityType.Molotov))
             {
@@ -147,10 +144,7 @@ namespace ProjectRuntime.Actor
             }
 
             Vector3 startPoint = GetMolotovSpawnPoint();
-            Vector3 initialVelocity = ResolveMolotovInitialVelocity(
-                startPoint,
-                requestedTargetPoint
-            );
+            Vector3 initialVelocity = ResolveMolotovInitialVelocity(requestedAimDirection);
 
             if (!SpawnMolotovProjectile(startPoint, initialVelocity))
             {
@@ -318,32 +312,14 @@ namespace ProjectRuntime.Actor
             };
         }
 
-        private Vector3 GetLocalMolotovTargetPoint()
+        private Vector3 GetLocalMolotovAimDirection()
         {
             if (cam == null)
             {
-                return transform.position + transform.forward * molotovRange;
+                return transform.forward;
             }
 
-            bool occluded = cam.GetAimData(
-                molotovRange,
-                out Vector3 origin,
-                out Vector3 direction,
-                out RaycastHit occlusionHit
-            );
-
-            List<RaycastData> hits = cam.GetRaycastData(molotovRange);
-            if (hits.Count > 0)
-            {
-                return hits[0].hitPoint;
-            }
-
-            if (occluded)
-            {
-                return occlusionHit.point;
-            }
-
-            return origin + direction * molotovRange;
+            return cam.GetAimDirection();
         }
 
         [Server]
@@ -385,26 +361,15 @@ namespace ProjectRuntime.Actor
         }
 
         [Server]
-        private Vector3 ResolveMolotovInitialVelocity(
-            Vector3 startPoint,
-            Vector3 requestedTargetPoint
-        )
+        private Vector3 ResolveMolotovInitialVelocity(Vector3 requestedAimDirection)
         {
-            Vector3 requestDirection = requestedTargetPoint - startPoint;
-            if (requestDirection.sqrMagnitude <= 0.001f)
+            if (requestedAimDirection.sqrMagnitude <= 0.001f)
             {
-                requestDirection = player.transform.forward;
+                requestedAimDirection = player.transform.forward;
             }
 
-            Vector3 clampedOffset = Vector3.ClampMagnitude(requestDirection, molotovRange);
-            Vector3 horizontalVelocity =
-                Vector3.ProjectOnPlane(clampedOffset.normalized, Vector3.up) * molotovThrowSpeed;
-            if (horizontalVelocity.sqrMagnitude <= 0.001f)
-            {
-                horizontalVelocity = player.transform.forward * molotovThrowSpeed;
-            }
-
-            return horizontalVelocity + Vector3.up * molotovUpwardVelocity;
+            return requestedAimDirection.normalized * molotovThrowStrength
+                + Vector3.up * molotovUpwardVelocityBonus;
         }
 
         private Vector3 GetMolotovSpawnPoint()

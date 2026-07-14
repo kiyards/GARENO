@@ -1079,7 +1079,6 @@ MonoBehaviour:
   fireCooldown: 0.25
   shakeAmplitude: 0.8
   shakeDuration: 0.3
-  hitVfxPrefab: {fileID: 7015456706586739014, guid: d10879b2dbd9fad4d93438d652ee3afb, type: 3}
   hitVfxLifetime: 2
   impactVfxPrefab: {fileID: 7493678437098756444, guid: ae9b94ef9a9e98740851fcd4ccc6c249, type: 3}
   impactVfxLifetime: 2
@@ -1134,12 +1133,11 @@ MonoBehaviour:
   healCircleTickCount: 5
   healCircleCooldown: 60
   molotovProjectilePrefab: {fileID: 7602222199317621573, guid: 294693db8cd93a042b85f38b26df3dd7, type: 3}
-  molotovRange: 8
-  molotovThrowSpeed: 50
-  molotovUpwardVelocity: 20
+  molotovThrowStrength: 30
+  molotovUpwardVelocityBonus: 12
   molotovSpawnHeightOffset: 1.35
   molotovSpawnForwardOffset: 2
-  molotovCooldown: 60
+  molotovCooldown: 1
   steroidSpeedMultiplier: 1.8
   steroidDuration: 5
   steroidCooldown: 60

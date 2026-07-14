@@ -54,6 +54,14 @@ namespace ProjectRuntime.Actor
 
         public Vector3 GetAimOrigin() => firstPersonCam.transform.position + firstPersonCam.transform.forward * aimFirepointOffset;
 
+        public Vector3 GetAimDirection()
+        {
+            Vector3 origin = firstPersonCam != null ? firstPersonCam.transform.position : transform.position;
+            return characterMode == CharacterMode.AIM || characterMode == CharacterMode.TOP_DOWN || thirdPersonAim == null
+                ? (firstPersonCam != null ? firstPersonCam.transform.forward : transform.forward)
+                : (thirdPersonAim.AimTarget - origin).normalized;
+        }
+
         // Visual-only origin for muzzle VFX (tracers, muzzle flashes). Deliberately offset from the
         // camera so a shot fired dead-center doesn't produce a tracer collinear with the viewer's own
         // optical axis — a LineRenderer segment aligned with the camera's view direction renders with
@@ -254,9 +262,7 @@ namespace ProjectRuntime.Actor
         public bool GetAimData(float maxRange, out Vector3 origin, out Vector3 dir, out RaycastHit occlusionHit) // returns whether occluded
         {
             origin = firstPersonCam != null ? firstPersonCam.transform.position : transform.position;
-            dir = characterMode == CharacterMode.AIM || characterMode == CharacterMode.TOP_DOWN || thirdPersonAim == null
-                ? (firstPersonCam != null ? firstPersonCam.transform.forward : transform.forward)
-                : (thirdPersonAim.AimTarget - origin).normalized;
+            dir = GetAimDirection();
 
             // Nearest occluder, skipping ghosts so they can't cap line-of-sight. Identical to a single
             // nearest-hit raycast when no ghost is in the way.

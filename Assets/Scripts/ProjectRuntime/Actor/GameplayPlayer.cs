@@ -897,9 +897,9 @@ namespace ProjectRuntime.Actor
         }
 
         [Command]
-        public void CmdActivateMolotov(Vector3 targetPoint)
+        public void CmdActivateMolotov(Vector3 aimDirection)
         {
-            SurvivorAbilities?.ServerTryActivateMolotov(targetPoint);
+            SurvivorAbilities?.ServerTryActivateMolotov(aimDirection);
         }
 
         [Command]
