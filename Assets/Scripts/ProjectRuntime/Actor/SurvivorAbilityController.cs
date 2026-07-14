@@ -35,6 +35,9 @@ namespace ProjectRuntime.Actor
         [SerializeField]
         private float healCircleCooldown = 0f;
 
+        [SerializeField]
+        private GameObject healCircleStartVfxPrefab;
+
         [Header("Molotov")]
         [SerializeField]
         private MolotovProjectile molotovProjectilePrefab;
@@ -73,6 +76,9 @@ namespace ProjectRuntime.Actor
 
         [SerializeField]
         private float empCooldown = 0f;
+
+        [SerializeField]
+        private GameObject empStartVfxPrefab;
 
         private readonly Dictionary<SurvivorAbilityType, double> _clientNextReadyTimes = new();
         private readonly Dictionary<SurvivorAbilityType, double> _serverNextReadyTimes = new();
@@ -126,12 +132,7 @@ namespace ProjectRuntime.Actor
             }
 
             Vector3 center = player.transform.position;
-            player.RpcPlayHealCircleEffect(
-                center,
-                healCircleRadius,
-                healCircleTickCount,
-                healCircleTickInterval
-            );
+            player.RpcPlayHealCircleEffect(center);
             StartCoroutine(ServerHealCircleRoutine(center));
         }
 
@@ -199,7 +200,7 @@ namespace ProjectRuntime.Actor
                 }
             }
 
-            player.RpcPlayEmpEffect(center, empRadius);
+            player.RpcPlayEmpEffect(center);
         }
 
         private void CacheReferences()
@@ -428,26 +429,30 @@ namespace ProjectRuntime.Actor
                 && target.health != null
                 && target.health.IsAlive;
         }
+
+        public void PlayHealCircleStartVfx(Vector3 center)
+        {
+            if (healCircleStartVfxPrefab == null)
+            {
+                return;
+            }
+
+            Instantiate(healCircleStartVfxPrefab, center, Quaternion.identity);
+        }
+
+        public void PlayEmpStartVfx(Vector3 center)
+        {
+            if (empStartVfxPrefab == null)
+            {
+                return;
+            }
+
+            Instantiate(empStartVfxPrefab, center, Quaternion.identity);
+        }
     }
 
     public static class SurvivorAbilityVfx
     {
-        public static void SpawnHealCircle(Vector3 center, float radius, int pulses, float interval)
-        {
-            SpawnPulseSeries(
-                center,
-                radius,
-                pulses,
-                interval,
-                new Color(0.35f, 0.95f, 0.55f, 0.35f)
-            );
-        }
-
-        public static void SpawnEmp(Vector3 center, float radius)
-        {
-            SpawnSinglePulse(center, radius, new Color(0.35f, 0.85f, 1f, 0.3f), 0.4f, 0.15f);
-        }
-
         public static void SpawnSteroidAura(Transform target, float duration)
         {
             if (target == null)
@@ -470,42 +475,6 @@ namespace ProjectRuntime.Actor
             Object.Destroy(aura, duration);
         }
 
-        private static void SpawnPulseSeries(
-            Vector3 center,
-            float radius,
-            int pulses,
-            float interval,
-            Color color
-        )
-        {
-            SimpleAbilityVfxRunner runner = new GameObject(
-                "AbilityPulseRunner"
-            ).AddComponent<SimpleAbilityVfxRunner>();
-            runner.RunPulses(center, radius, pulses, interval, color);
-        }
-
-        private static void SpawnSinglePulse(
-            Vector3 center,
-            float radius,
-            Color color,
-            float lifetime,
-            float yScale
-        )
-        {
-            GameObject pulse = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            pulse.name = "AbilityPulseVfx";
-            pulse.transform.position = center;
-            pulse.transform.localScale = new Vector3(radius * 2f, yScale, radius * 2f);
-
-            if (pulse.TryGetComponent(out Collider collider))
-            {
-                Object.Destroy(collider);
-            }
-
-            ApplyRendererColor(pulse, color);
-            Object.Destroy(pulse, lifetime);
-        }
-
         private static void ApplyRendererColor(GameObject target, Color color)
         {
             if (!target.TryGetComponent(out Renderer renderer))
@@ -516,53 +485,6 @@ namespace ProjectRuntime.Actor
             renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             renderer.receiveShadows = false;
             renderer.material.color = color;
-        }
-    }
-
-    public class SimpleAbilityVfxRunner : MonoBehaviour
-    {
-        public void RunPulses(Vector3 center, float radius, int pulses, float interval, Color color)
-        {
-            StartCoroutine(PulseRoutine(center, radius, pulses, interval, color));
-        }
-
-        private IEnumerator PulseRoutine(
-            Vector3 center,
-            float radius,
-            int pulses,
-            float interval,
-            Color color
-        )
-        {
-            for (int pulseIndex = 0; pulseIndex < pulses; pulseIndex++)
-            {
-                SpawnPulse(center, radius, color);
-                yield return new WaitForSeconds(interval);
-            }
-
-            Object.Destroy(gameObject);
-        }
-
-        private static void SpawnPulse(Vector3 center, float radius, Color color)
-        {
-            GameObject pulse = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            pulse.name = "AbilityFieldVfx";
-            pulse.transform.position = center;
-            pulse.transform.localScale = new Vector3(radius * 2f, 0.02f, radius * 2f);
-
-            if (pulse.TryGetComponent(out Collider collider))
-            {
-                Object.Destroy(collider);
-            }
-
-            if (pulse.TryGetComponent(out Renderer renderer))
-            {
-                renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-                renderer.receiveShadows = false;
-                renderer.material.color = color;
-            }
-
-            Object.Destroy(pulse, 0.55f);
         }
     }
 }

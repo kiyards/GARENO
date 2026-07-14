@@ -1132,6 +1132,7 @@ MonoBehaviour:
   healCircleTickInterval: 1
   healCircleTickCount: 5
   healCircleCooldown: 60
+  healCircleStartVfxPrefab: {fileID: 4651203203714611091, guid: 75ad3a0c482b54c4f8d7bcdb7517c682, type: 3}
   molotovProjectilePrefab: {fileID: 7602222199317621573, guid: 294693db8cd93a042b85f38b26df3dd7, type: 3}
   molotovThrowStrength: 30
   molotovUpwardVelocityBonus: 12
@@ -1146,6 +1147,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   empCooldown: 60
+  empStartVfxPrefab: {fileID: 8165487398144523684, guid: 8e6fe3e6767fe9d429e7e9fe112a3bcc, type: 3}
 --- !u!114 &7236363269636559078
 MonoBehaviour:
   m_ObjectHideFlags: 0
