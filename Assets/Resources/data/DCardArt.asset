@@ -23,3 +23,5 @@ MonoBehaviour:
     <Sprite>k__BackingField: {fileID: 21300000, guid: 28a641eb3fa51064fa1c3b5cb66eaefa, type: 3}
   - <CardId>k__BackingField: CARD_SLOWING_DART_TURRET
     <Sprite>k__BackingField: {fileID: 21300000, guid: 2c27bb5254880494a8a7e8c439eaad0e, type: 3}
+  - <CardId>k__BackingField: CARD_CREEPER_ZOMBIE
+    <Sprite>k__BackingField: {fileID: -3716787584606571850, guid: 32679aeae69c83d47b7a3ea73299bd13, type: 3}
