@@ -2651,7 +2651,7 @@ Light:
   serializedVersion: 11
   m_Type: 1
   m_Color: {r: 0.7529412, g: 0.7415305, b: 0.57254905, a: 1}
-  m_Intensity: 1
+  m_Intensity: 1.2
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -2660,7 +2660,7 @@ Light:
     m_Type: 2
     m_Resolution: -1
     m_CustomResolution: -1
-    m_Strength: 0.46
+    m_Strength: 0.395
     m_Bias: 0.05
     m_NormalBias: 0.4
     m_NearPlane: 0.1
@@ -5170,6 +5170,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 1203843709}
+    - target: {fileID: 6718594766042738649, guid: 681ac0d8aa394a24ab473f45ee608863, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.82002187
+      objectReference: {fileID: 0}
     - target: {fileID: 6781636876950517594, guid: 681ac0d8aa394a24ab473f45ee608863, type: 3}
       propertyPath: m_Mesh
       value: 
