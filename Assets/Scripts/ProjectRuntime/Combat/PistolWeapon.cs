@@ -48,6 +48,7 @@ namespace ProjectRuntime.Combat
         private float shakeDuration = 0.3f;
 
         [Header("FX")]
+        [SerializeField]
         private GameObject hitVfxPrefab;
 
         [SerializeField]
