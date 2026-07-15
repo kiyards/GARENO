@@ -715,7 +715,7 @@ MonoBehaviour:
   muzzle: {fileID: 5991568368577387106}
   aimOcclusionMask:
     serializedVersion: 2
-    m_Bits: 1544
+    m_Bits: 3592
   aimTargetMask:
     serializedVersion: 2
     m_Bits: 64
