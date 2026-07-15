@@ -188,7 +188,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   fireRadius: 8
-  fireDamagePerTick: 10
+  fireDamagePerTick: 50
   fireTickInterval: 1
   fireTickCount: 5
   damageLayers:
