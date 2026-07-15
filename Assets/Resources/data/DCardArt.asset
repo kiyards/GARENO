@@ -29,3 +29,13 @@ MonoBehaviour:
     <Sprite>k__BackingField: {fileID: -6782219159501201630, guid: 2407a3818de223243b8035f68b4e66a9, type: 3}
   - <CardId>k__BackingField: CARD_FLASHBANG
     <Sprite>k__BackingField: {fileID: 1246179035822186997, guid: c8304b120d0a4e24f9b1e3fa3073ec18, type: 3}
+  - <CardId>k__BackingField: CARD_BASIC_ZOMBIE
+    <Sprite>k__BackingField: {fileID: -3716787584606571850, guid: 18771f66a9004df4ea650ec90fb931a6, type: 3}
+  - <CardId>k__BackingField: ABILITY_HEALING_FIELD
+    <Sprite>k__BackingField: {fileID: -3193515262235622646, guid: e4b20df90e074fc479d4476b0a2aedf2, type: 3}
+  - <CardId>k__BackingField: ABILITY_STEROID
+    <Sprite>k__BackingField: {fileID: 21300000, guid: e78edfe8ea8bebd409322c22074a8db2, type: 3}
+  - <CardId>k__BackingField: ABILITY_EMP
+    <Sprite>k__BackingField: {fileID: 21300000, guid: e78edfe8ea8bebd409322c22074a8db2, type: 3}
+  - <CardId>k__BackingField: ABILITY_MOLOTOV
+    <Sprite>k__BackingField: {fileID: 308145959380911688, guid: e4b20df90e074fc479d4476b0a2aedf2, type: 3}

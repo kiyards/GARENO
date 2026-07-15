@@ -1014,6 +1014,7 @@ MonoBehaviour:
   <DungeonMasterOnlyUIParent>k__BackingField: {fileID: 1000000000001300000}
   <RoleMessageTMP>k__BackingField: {fileID: 8943953680959380536}
   <AssignedAbilityTMP>k__BackingField: {fileID: 7051062337561814604}
+  <SurvivorAbilityIcon>k__BackingField: {fileID: 6752263144348242466}
   <SurvivorAbilityCooldownFill>k__BackingField: {fileID: 214260959850068324}
   <PlayerHealthBar>k__BackingField: {fileID: 6076816444200117431}
   <PlayerHealthTMP>k__BackingField: {fileID: 3377673444523678255}
@@ -4493,7 +4494,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 125}
+  m_AnchoredPosition: {x: 0, y: 112.8}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7941991913193207726

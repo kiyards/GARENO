@@ -36,6 +36,9 @@ namespace ProjectRuntime.Managers
         private TextMeshProUGUI AssignedAbilityTMP { get; set; }
 
         [field: SerializeField]
+        private Image SurvivorAbilityIcon { get; set; }
+
+        [field: SerializeField]
         private Image SurvivorAbilityCooldownFill { get; set; }
 
         [field: SerializeField, Header("Player Health")]
@@ -218,6 +221,7 @@ namespace ProjectRuntime.Managers
         private float _lastKnownHealth = -1f;
         private Coroutine _crystalNotificationRoutine;
         private Coroutine _editTimerRoutine;
+        private Sprite _defaultSurvivorAbilityIcon;
 
         /// <summary>
         /// Returns the scene-authored HUD instance. The HUD must exist in the active scene
@@ -251,6 +255,9 @@ namespace ProjectRuntime.Managers
             }
 
             Instance = this;
+            this._defaultSurvivorAbilityIcon = this.SurvivorAbilityIcon != null
+                ? this.SurvivorAbilityIcon.sprite
+                : null;
             this.EnsureMinimap();
             this.EnsureDirectionIndicators();
             this.SetRole(PlayerRole.Unassigned);
@@ -650,6 +657,39 @@ namespace ProjectRuntime.Managers
             {
                 this.AssignedAbilityTMP.text = ability.ToString();
             }
+
+            this.RefreshSurvivorAbilityIcon(ability);
+        }
+
+        private void RefreshSurvivorAbilityIcon(SurvivorAbilityType ability)
+        {
+            if (this.SurvivorAbilityIcon == null)
+            {
+                return;
+            }
+
+            string artId = this.GetAbilityArtId(ability);
+            Sprite sprite = DCardArt.GetSpriteByCardId(artId);
+
+            if (sprite == null)
+            {
+                sprite = this._defaultSurvivorAbilityIcon;
+            }
+
+            this.SurvivorAbilityIcon.sprite = sprite;
+            this.SurvivorAbilityIcon.enabled = sprite != null;
+        }
+
+        private string GetAbilityArtId(SurvivorAbilityType ability)
+        {
+            return ability switch
+            {
+                SurvivorAbilityType.HealCircle => "ABILITY_HEALING_FIELD",
+                SurvivorAbilityType.Emp => "ABILITY_EMP",
+                SurvivorAbilityType.Molotov => "ABILITY_MOLOTOV",
+                SurvivorAbilityType.Steroid => "ABILITY_STEROID",
+                _ => null,
+            };
         }
 
         public void SetTurretModeActive(bool active)
