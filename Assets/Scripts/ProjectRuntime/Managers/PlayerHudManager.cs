@@ -655,7 +655,7 @@ namespace ProjectRuntime.Managers
         {
             if (this.AssignedAbilityTMP != null)
             {
-                this.AssignedAbilityTMP.text = ability.ToString();
+                this.AssignedAbilityTMP.text = $"[F] {ability}";
             }
 
             this.RefreshSurvivorAbilityIcon(ability);
