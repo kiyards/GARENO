@@ -1,0 +1,533 @@
+fileFormatVersion: 2
+guid: c8304b120d0a4e24f9b1e3fa3073ec18
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 1246179035822186997
+    second: flashbang_0
+  - first:
+      213: -8300956316453056432
+    second: flashbang_1
+  - first:
+      213: -8638288625321320779
+    second: flashbang_2
+  - first:
+      213: 2332043267772936776
+    second: flashbang_3
+  - first:
+      213: 3175529837909932802
+    second: flashbang_4
+  - first:
+      213: 8536643490315035237
+    second: flashbang_5
+  - first:
+      213: 3297635744966149728
+    second: flashbang_6
+  - first:
+      213: 6029594563777094977
+    second: flashbang_7
+  - first:
+      213: -6199624830910885837
+    second: flashbang_8
+  - first:
+      213: -3731979612808127540
+    second: flashbang_9
+  - first:
+      213: 1954557209946015456
+    second: flashbang_10
+  - first:
+      213: 3629833150298809322
+    second: flashbang_11
+  - first:
+      213: -4888866090917111382
+    second: flashbang_12
+  - first:
+      213: -491177491648491856
+    second: flashbang_13
+  - first:
+      213: -5510388486214057946
+    second: flashbang_14
+  - first:
+      213: -1184437162181220907
+    second: flashbang_15
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: flashbang_0
+      rect:
+        serializedVersion: 2
+        x: 198
+        y: 321
+        width: 186
+        height: 187
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f168b40b315b4110800000000000000
+      internalID: 1246179035822186997
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: flashbang_1
+      rect:
+        serializedVersion: 2
+        x: 373
+        y: 480
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 050d7c5e5341dcc80800000000000000
+      internalID: -8300956316453056432
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: flashbang_2
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 142
+        width: 183
+        height: 281
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5bedc6c4342ae1880800000000000000
+      internalID: -8638288625321320779
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: flashbang_3
+      rect:
+        serializedVersion: 2
+        x: 172
+        y: 409
+        width: 10
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84272701ff41d5020800000000000000
+      internalID: 2332043267772936776
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: flashbang_4
+      rect:
+        serializedVersion: 2
+        x: 307
+        y: 316
+        width: 116
+        height: 118
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20b764a109fb11c20800000000000000
+      internalID: 3175529837909932802
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: flashbang_5
+      rect:
+        serializedVersion: 2
+        x: 122
+        y: 90
+        width: 163
+        height: 253
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 562e06e7600487670800000000000000
+      internalID: 8536643490315035237
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: flashbang_6
+      rect:
+        serializedVersion: 2
+        x: 265
+        y: 43
+        width: 247
+        height: 274
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06686590d3e83cd20800000000000000
+      internalID: 3297635744966149728
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: flashbang_7
+      rect:
+        serializedVersion: 2
+        x: 276
+        y: 310
+        width: 43
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1456f814f4c6da350800000000000000
+      internalID: 6029594563777094977
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: flashbang_8
+      rect:
+        serializedVersion: 2
+        x: 316
+        y: 298
+        width: 26
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3309dd4301286f9a0800000000000000
+      internalID: -6199624830910885837
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: flashbang_9
+      rect:
+        serializedVersion: 2
+        x: 429
+        y: 298
+        width: 36
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ccb5295a058553cc0800000000000000
+      internalID: -3731979612808127540
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: flashbang_10
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 231
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e6c2004d6bff1b10800000000000000
+      internalID: 1954557209946015456
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: flashbang_11
+      rect:
+        serializedVersion: 2
+        x: 261
+        y: 160
+        width: 49
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae36f7db402cf5230800000000000000
+      internalID: 3629833150298809322
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: flashbang_12
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 14
+        width: 99
+        height: 116
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa9de605132472cb0800000000000000
+      internalID: -4888866090917111382
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: flashbang_13
+      rect:
+        serializedVersion: 2
+        x: 206
+        y: 84
+        width: 58
+        height: 77
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0becf987cacfe29f0800000000000000
+      internalID: -491177491648491856
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: flashbang_14
+      rect:
+        serializedVersion: 2
+        x: 155
+        y: 4
+        width: 88
+        height: 73
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6200fc8fdda2783b0800000000000000
+      internalID: -5510388486214057946
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: flashbang_15
+      rect:
+        serializedVersion: 2
+        x: 285
+        y: 33
+        width: 10
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d5aa692da8009fe0800000000000000
+      internalID: -1184437162181220907
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      flashbang_0: 1246179035822186997
+      flashbang_1: -8300956316453056432
+      flashbang_10: 1954557209946015456
+      flashbang_11: 3629833150298809322
+      flashbang_12: -4888866090917111382
+      flashbang_13: -491177491648491856
+      flashbang_14: -5510388486214057946
+      flashbang_15: -1184437162181220907
+      flashbang_2: -8638288625321320779
+      flashbang_3: 2332043267772936776
+      flashbang_4: 3175529837909932802
+      flashbang_5: 8536643490315035237
+      flashbang_6: 3297635744966149728
+      flashbang_7: 6029594563777094977
+      flashbang_8: -6199624830910885837
+      flashbang_9: -3731979612808127540
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
