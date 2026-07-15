@@ -87,9 +87,28 @@ namespace ProjectRuntime.Actor
                 damageable.ServerTakeDamage(
                     fireDamagePerTick,
                     _owner != null ? _owner.netId : 0,
-                    center
+                    ResolveDamagePopupPosition(hit, damageable, center)
                 );
             }
+        }
+
+        private static Vector3 ResolveDamagePopupPosition(
+            Collider hit,
+            IDamageable damageable,
+            Vector3 fallbackPosition
+        )
+        {
+            if (hit != null)
+            {
+                return hit.bounds.center;
+            }
+
+            if (damageable is Component component)
+            {
+                return component.transform.position;
+            }
+
+            return fallbackPosition;
         }
 
         private void SpawnFireAreaVfx()
