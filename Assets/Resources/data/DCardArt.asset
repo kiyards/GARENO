@@ -32,10 +32,10 @@ MonoBehaviour:
   - <CardId>k__BackingField: CARD_BASIC_ZOMBIE
     <Sprite>k__BackingField: {fileID: -3716787584606571850, guid: 18771f66a9004df4ea650ec90fb931a6, type: 3}
   - <CardId>k__BackingField: ABILITY_HEALING_FIELD
-    <Sprite>k__BackingField: {fileID: -3193515262235622646, guid: e4b20df90e074fc479d4476b0a2aedf2, type: 3}
+    <Sprite>k__BackingField: {fileID: -841832905042964673, guid: dae98630f6556174e8693a140620af37, type: 3}
   - <CardId>k__BackingField: ABILITY_STEROID
     <Sprite>k__BackingField: {fileID: 21300000, guid: e78edfe8ea8bebd409322c22074a8db2, type: 3}
   - <CardId>k__BackingField: ABILITY_EMP
-    <Sprite>k__BackingField: {fileID: -1633653903776589644, guid: dae98630f6556174e8693a140620af37, type: 3}
+    <Sprite>k__BackingField: {fileID: -841832905042964673, guid: dae98630f6556174e8693a140620af37, type: 3}
   - <CardId>k__BackingField: ABILITY_MOLOTOV
-    <Sprite>k__BackingField: {fileID: 308145959380911688, guid: e4b20df90e074fc479d4476b0a2aedf2, type: 3}
+    <Sprite>k__BackingField: {fileID: -3193515262235622646, guid: e4b20df90e074fc479d4476b0a2aedf2, type: 3}
