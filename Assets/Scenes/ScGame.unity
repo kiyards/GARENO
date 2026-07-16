@@ -175,7 +175,7 @@ MonoBehaviour:
   basicZombieSpawnSampleRadius: 2
   dogPackCount: 3
   dogPackSpawnSpread: 2
-  spawnVfxPrefab: {fileID: 0}
+  spawnVfxPrefab: {fileID: 1799743893917345280, guid: 78f4712cc1cf87d4383cd0519a3fadaf, type: 3}
   spawnVfxLifetime: 2
   startingRoundSeconds: 600
   zombieKillTimeBonusSeconds: 10
