@@ -148,13 +148,33 @@ namespace ProjectRuntime.Actor
             if (player.isServer)
             {
                 player.CardManager.ServerOnNemesisEnded();
+                this.ServerReturnOwnerToMovementState(player);
             }
 
             if (player.isLocalPlayer
+                && !player.isServer
                 && player.currentState is DungeonMasterNemesisState)
             {
                 player.QueueState(new DungeonMasterMovementState(player));
             }
+        }
+
+        [Server]
+        private void ServerReturnOwnerToMovementState(GameplayPlayer player)
+        {
+            if (
+                player == null
+                || !player.IsDungeonMaster
+                || (
+                    !(player.currentState is DungeonMasterNemesisState)
+                    && !(player.nextState is DungeonMasterNemesisState)
+                )
+            )
+            {
+                return;
+            }
+
+            player.ServerForceState(new DungeonMasterMovementState(player));
         }
 
         private GameplayPlayer ResolvePlayer()
