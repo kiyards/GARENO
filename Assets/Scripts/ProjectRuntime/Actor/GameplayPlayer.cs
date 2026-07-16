@@ -108,6 +108,10 @@ namespace ProjectRuntime.Actor
         // reviver left range or stopped holding Interact) and the next contact starts a fresh hold.
         private const float ReviveContactGrace = 0.25f;
 
+        // Gap kept between the body and walls so we never command the rigidbody into geometry
+        // (which causes depenetration oscillation and camera jitter).
+        private const float MoveSkinWidth = 0.5f;
+
         public float ReviveHoldTime => reviveHoldTime;
 
         // Client-facing countdown for the local downed survivor's own HUD, backed by DownedState's
@@ -185,6 +189,47 @@ namespace ProjectRuntime.Actor
         public override NetworkBaseState DefaultState =>
             IsDungeonMaster ? new DungeonMasterMovementState(this) : new BaseMovementState(this);
 
+        // Sweeps the survivor body along the intended move, stopping just short of walls and
+        // projecting any leftover motion along the hit plane so movement slides cleanly.
+        public Vector3 ResolveMovementWithCollisions(Vector3 moveDelta)
+        {
+            if (this.rb == null || moveDelta.sqrMagnitude <= 1e-8f)
+            {
+                return moveDelta;
+            }
+
+            Vector3 resolved = Vector3.zero;
+            Vector3 remaining = moveDelta;
+
+            for (int i = 0; i < 3 && remaining.sqrMagnitude > 1e-8f; i++)
+            {
+                float distance = remaining.magnitude;
+                Vector3 direction = remaining / distance;
+
+                if (
+                    !this.rb.SweepTest(
+                        direction,
+                        out RaycastHit hit,
+                        distance + MoveSkinWidth,
+                        QueryTriggerInteraction.Ignore
+                    )
+                )
+                {
+                    resolved += remaining;
+                    break;
+                }
+
+                float allowedDistance = Mathf.Max(0f, hit.distance - MoveSkinWidth);
+                resolved += direction * allowedDistance;
+
+                // Slide the unused portion of the move along the blocking surface.
+                Vector3 leftover = direction * (distance - allowedDistance);
+                remaining = Vector3.ProjectOnPlane(leftover, hit.normal);
+            }
+
+            return resolved;
+        }
+
         protected override void Awake()
         {
             base.Awake();
@@ -237,12 +282,7 @@ namespace ProjectRuntime.Actor
 
         private void TickSurvivorFootstepAudio()
         {
-            if (
-                !NetworkClient.active
-                || IsDungeonMaster
-                || IsInactive
-                || Time.deltaTime <= 0f
-            )
+            if (!NetworkClient.active || IsDungeonMaster || IsInactive || Time.deltaTime <= 0f)
             {
                 this.ResetFootstepAudioTracking();
                 return;
@@ -639,24 +679,34 @@ namespace ProjectRuntime.Actor
 
             if (resolution == DownedResolution.Revived)
             {
-                BattleManager.Instance?.ServerReportSurvivorRevived(localManager, _downedSourceNetId);
+                BattleManager.Instance?.ServerReportSurvivorRevived(
+                    localManager,
+                    _downedSourceNetId
+                );
                 if (health != null)
                 {
                     health.ServerResetHealth();
                 }
 
-                Vector3 respawnPos = GameNetworkManager.Instance.GetGameplaySpawnPosition(localManager);
+                Vector3 respawnPos = GameNetworkManager.Instance.GetGameplaySpawnPosition(
+                    localManager
+                );
                 RpcEnterRespawnState(respawnPos);
             }
             else
             {
-                BattleManager.Instance?.ServerReportSurvivorTimedOut(localManager, _downedSourceNetId);
+                BattleManager.Instance?.ServerReportSurvivorTimedOut(
+                    localManager,
+                    _downedSourceNetId
+                );
                 if (health != null)
                 {
                     health.ServerResetHealth();
                 }
 
-                Vector3 respawnPos = GameNetworkManager.Instance.GetGameplaySpawnPosition(localManager);
+                Vector3 respawnPos = GameNetworkManager.Instance.GetGameplaySpawnPosition(
+                    localManager
+                );
                 RpcEnterRespawnState(respawnPos);
             }
 

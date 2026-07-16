@@ -70,6 +70,7 @@ namespace ProjectRuntime.Actor.PlayerStates
             Vector3 moveDir = GetMoveDir(player.input.moveVec);
             Vector3 moveDelta =
                 player.moveSpeed * player.SpeedMultiplier * Time.fixedDeltaTime * moveDir;
+            moveDelta = player.ResolveMovementWithCollisions(moveDelta);
             player.rb.MovePosition(player.rb.position + moveDelta);
         }
 
