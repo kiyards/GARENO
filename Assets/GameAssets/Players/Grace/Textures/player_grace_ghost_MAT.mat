@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: player_ghost_MAT
+  m_Name: player_grace_ghost_MAT
   m_Shader: {fileID: 4800000, guid: a4a69a9b08f7cf74c8c74f2f1638203c, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -39,7 +39,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: 317662c1767e00d4980af84e4c68cb03, type: 3}
+        m_Texture: {fileID: 2800000, guid: 161c6315fbeef8e42ad95fe20d7847cd, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
