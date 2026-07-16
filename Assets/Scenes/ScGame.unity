@@ -182,6 +182,8 @@ MonoBehaviour:
   survivorDownedTimePenaltySeconds: 15
   survivorRevivedTimePenaltySeconds: 10
   survivorTimeoutTimePenaltySeconds: 30
+  survivorDamagePenaltyStep: 5
+  survivorDamagePenaltySecondsPerStep: 1
   nemesisCrystalShortenSeconds: 60
   nemesisDownedShortenSeconds: 15
   nemesisTimeoutShortenSeconds: 30
