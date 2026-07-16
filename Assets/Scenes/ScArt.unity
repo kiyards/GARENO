@@ -842,6 +842,8 @@ MonoBehaviour:
   survivorDownedTimePenaltySeconds: 15
   survivorRevivedTimePenaltySeconds: 10
   survivorTimeoutTimePenaltySeconds: 30
+  survivorDamagePenaltyStep: 5
+  survivorDamagePenaltySecondsPerStep: 1
   nemesisCrystalShortenSeconds: 60
   nemesisDownedShortenSeconds: 15
   nemesisTimeoutShortenSeconds: 30
@@ -15904,8 +15906,38 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3171108040986060110, guid: 6373dd3644ac5e24a9727eb1fba32442, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8209241450800512424}
   m_SourcePrefab: {fileID: 100100000, guid: 6373dd3644ac5e24a9727eb1fba32442, type: 3}
+--- !u!1 &8209241450800512423 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3171108040986060110, guid: 6373dd3644ac5e24a9727eb1fba32442, type: 3}
+  m_PrefabInstance: {fileID: 8209241450800512422}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &8209241450800512424
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8209241450800512423}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &8223263068630726067
 PrefabInstance:
   m_ObjectHideFlags: 0
