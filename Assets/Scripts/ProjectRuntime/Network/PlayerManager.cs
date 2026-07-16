@@ -178,6 +178,13 @@ namespace ProjectRuntime.Network
         {
             assignedAbility = ability;
 
+            // Every client picks the model from the replicated ability, so remote and late-joining
+            // clients render the same body. Re-applied in OnStartClient, which covers late joiners.
+            if (player != null)
+            {
+                player.ApplyCharacterModel(ability);
+            }
+
             if (isLocalPlayer)
             {
                 PlayerHudManager.EnsureInstance()?.SetAssignedAbility(ability);

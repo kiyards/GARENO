@@ -715,8 +715,12 @@ namespace ProjectRuntime.Actor
         {
             this.animator = runtimeAnimator;
             this.EnsureNetworkAnimator();
-            this.ReinitializeNetworkAnimator();
+            // Assign the controller (via ApplyVisualState) BEFORE reinitializing the NetworkAnimator, so
+            // its per-layer sync arrays are sized to the real layerCount. Reinitializing first would size
+            // them for a controllerless animator (0 layers) and then IndexOutOfRange once the controller
+            // adds a layer.
             this.ApplyVisualState(this.visualState);
+            this.ReinitializeNetworkAnimator();
         }
 
         // Re-scans for hit colliders and re-applies the current targetable gating. Needed when a

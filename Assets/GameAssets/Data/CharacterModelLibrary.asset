@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6534df37efc1f446b6712d46da12868, type: 3}
+  m_Name: CharacterModelLibrary
+  m_EditorClassIdentifier:
+  <Definitions>k__BackingField:
+  - <Ability>k__BackingField: 2
+    <ModelPrefab>k__BackingField: {fileID: 679326767263229926, guid: f5e49fd14b7f1244c88b2f3372428138, type: 3}
+    <GhostPrefab>k__BackingField: {fileID: 679326767263229926, guid: 70139cd3ac304c179ac4965105efcec8, type: 3}
+    <CorpsePrefab>k__BackingField: {fileID: 0}
+    <AnimatorController>k__BackingField: {fileID: 9100000, guid: c45c01f56c20f57479e50d43247d474a, type: 2}
+    <IdleStateName>k__BackingField: player_stoner_idle
+    <RunStateName>k__BackingField: player_stoner_run
+    <JumpStateName>k__BackingField: player_stoner_jump
+    <DeathStateName>k__BackingField: player_stoner_dying
+  - <Ability>k__BackingField: 4
+    <ModelPrefab>k__BackingField: {fileID: 1703709221251461680, guid: 01edde5ff45ab0244bc2c776c9a263ea, type: 3}
+    <GhostPrefab>k__BackingField: {fileID: 1703709221251461680, guid: 99072a35ebe2426da4cec05e3542081d, type: 3}
+    <CorpsePrefab>k__BackingField: {fileID: 0}
+    <AnimatorController>k__BackingField: {fileID: 9100000, guid: e3fb7357b7f777e45ad8120ffe83ed87, type: 2}
+    <IdleStateName>k__BackingField: player_juice_idle
+    <RunStateName>k__BackingField: player_juice_run
+    <JumpStateName>k__BackingField: player_juice_jump
+    <DeathStateName>k__BackingField: player_juice_dying
+  - <Ability>k__BackingField: 3
+    <ModelPrefab>k__BackingField: {fileID: 513805921082256991, guid: e32d76a198766014ca0722b6ff4ef6cc, type: 3}
+    <GhostPrefab>k__BackingField: {fileID: 2399812958223130915, guid: 2666449971128b0419ff31d39dd81838, type: 3}
+    <CorpsePrefab>k__BackingField: {fileID: 0}
+    <AnimatorController>k__BackingField: {fileID: 9100000, guid: 791ae2f44c10609468ea3c9cd99d84d3, type: 2}
+    <IdleStateName>k__BackingField: player_tsuki_idle
+    <RunStateName>k__BackingField: player_tsuki_run
+    <JumpStateName>k__BackingField: player_tsuki_jump
+    <DeathStateName>k__BackingField: player_tsuki_death
+  - <Ability>k__BackingField: 1
+    <ModelPrefab>k__BackingField: {fileID: 1320029752121213497, guid: 6373dd3644ac5e24a9727eb1fba32442, type: 3}
+    <GhostPrefab>k__BackingField: {fileID: 1320029752121213497, guid: 1a16ce286586408e8aff8919faed8c00, type: 3}
+    <CorpsePrefab>k__BackingField: {fileID: 0}
+    <AnimatorController>k__BackingField: {fileID: 9100000, guid: e28b2a23be5bad646a2dccc01aacf39d, type: 2}
+    <IdleStateName>k__BackingField: player_grace_idle
+    <RunStateName>k__BackingField: player_grace_run
+    <JumpStateName>k__BackingField: player_grace_jump
+    <DeathStateName>k__BackingField: player_grace_dying

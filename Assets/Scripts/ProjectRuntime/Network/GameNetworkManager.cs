@@ -402,6 +402,37 @@ namespace ProjectRuntime.Network
             }
         }
 
+        [Server]
+        private void AssignAbilityToLateSurvivor(PlayerManager survivor)
+        {
+            if (survivor == null || survivor.playerRole != PlayerRole.Survivor)
+            {
+                return;
+            }
+
+            var abilities = new List<SurvivorAbilityType>
+            {
+                SurvivorAbilityType.HealCircle,
+                SurvivorAbilityType.Molotov,
+                SurvivorAbilityType.Steroid,
+                SurvivorAbilityType.Emp,
+            };
+
+            var used = new HashSet<SurvivorAbilityType>(
+                this.ConnectedPlayersCurrent.Values
+                    .Where(pm => pm != null && pm != survivor && pm.playerRole == PlayerRole.Survivor)
+                    .Select(pm => pm.assignedAbility));
+
+            var available = abilities.Where(ability => !used.Contains(ability)).ToList();
+            var chosen = available.Count > 0
+                ? available[UnityEngine.Random.Range(0, available.Count)]
+                : abilities[UnityEngine.Random.Range(0, abilities.Count)];
+
+            survivor.ServerSetAbility(chosen);
+            Debug.Log(
+                $"Assigned {chosen} to late-joining survivor {survivor.playerName} (netId {survivor.netId}).");
+        }
+
         void SpawnGamePlayer(NetworkConnectionToClient conn)
         {
             Transform spawnCenter = this.GetSpawnCenterTransform();
@@ -450,8 +481,16 @@ namespace ProjectRuntime.Network
             if (BattleManager.Instance != null)
                 BattleManager.Instance.ServerAddPlayer(pm);
 
-            this.TryAssignRolesForCurrentGame();
-
+            if (this._rolesAssignedForCurrentGame)
+            {
+                // Roles were already assigned for this game, so the batch assignment won't run for
+                // this player. A survivor must always have an ability, so assign one now.
+                this.AssignAbilityToLateSurvivor(pm);
+            }
+            else
+            {
+                this.TryAssignRolesForCurrentGame();
+            }
         }
 
         private void SpawnLobbyPlayer(NetworkConnectionToClient conn)

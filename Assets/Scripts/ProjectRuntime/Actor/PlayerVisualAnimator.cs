@@ -20,6 +20,7 @@ namespace ProjectRuntime.Actor
         [SerializeField] private Animator animator;
         [SerializeField] private Transform normalVisualRoot;
         [SerializeField] private GameObject ghostVisualPrefab;
+        [SerializeField] private GameObject defaultModelPrefab;
         [SerializeField] private RuntimeAnimatorController visualController;
         [SerializeField] private string idleStateName = "player_tsuki_idle";
         [SerializeField] private string runStateName = "player_tsuki_run";
@@ -49,19 +50,118 @@ namespace ProjectRuntime.Actor
         private double movementRunUntil;
         private bool wasRunning;
         private NetworkAnimator networkAnimator;
+        private GameObject activeModelPrefab;
 
         public Material AuraMaterial => auraMaterial;
 
         private void Awake()
         {
             previousPosition = transform.position;
+            activeModelPrefab = defaultModelPrefab;
+            InitializeVisualCaches();
+            ApplyVisualState(VisualState.Idle);
+        }
+
+        // Caches everything derived from the current visual model (renderers, aura overlays, the
+        // network-animator binding). Runs at Awake and again after ApplyCharacterModel swaps the model.
+        private void InitializeVisualCaches()
+        {
             activeAnimator = animator;
             normalRenderers = normalVisualRoot.GetComponentsInChildren<Renderer>(true);
             normalRendererInitialEnabled = CacheInitialRendererState(normalRenderers);
             CreateAuraOverlays();
             localOwnerHiddenRenderers = normalRenderers;
-            ApplyVisualState(VisualState.Idle);
             EnsureNetworkAnimator();
+        }
+
+        // True when <paramref name="definition"/> would actually change the rendered model. The
+        // baked baseline (Tsuki, i.e. the Steroid mapping) resolves to activeModelPrefab and is a no-op.
+        public bool WillSwapTo(CharacterModelDefinition definition)
+        {
+            return definition != null
+                && definition.ModelPrefab != null
+                && definition.ModelPrefab != activeModelPrefab;
+        }
+
+        // Replaces the character model at runtime and rebinds every model-derived cache so the new
+        // model animates through the exact same path as the baseline, and is structured identically
+        // in the hierarchy (only the assets differ). No-op when the model is unchanged; returns the
+        // collider re-created on the new visual root (or null if the baseline visual had none) so the
+        // owner can repoint its collider reference.
+        public Collider ApplyCharacterModel(CharacterModelDefinition definition)
+        {
+            if (!WillSwapTo(definition))
+            {
+                return null;
+            }
+
+            var oldVisualRoot = normalVisualRoot;
+            var visualParent = oldVisualRoot.parent;
+
+            var newVisual = Instantiate(definition.ModelPrefab, visualParent);
+            var newVisualTransform = newVisual.transform;
+            newVisualTransform.localPosition = oldVisualRoot.localPosition;
+            newVisualTransform.localRotation = oldVisualRoot.localRotation;
+            newVisualTransform.localScale = oldVisualRoot.localScale;
+            // Match only the root layer (as the baked visual does); the mesh children keep their
+            // imported layer so camera culling behaves exactly like the baseline model.
+            newVisual.layer = oldVisualRoot.gameObject.layer;
+
+            // Re-create the collider at the same hierarchy level as the baseline — on the visual root
+            // itself, not the parent body — so the running instance matches the baseline structure.
+            var swappedCollider = ReplicateVisualRootCollider(oldVisualRoot.gameObject, newVisual);
+
+            // The aura overlays and ghost clone are bound to the outgoing model — release them before
+            // we drop our references so nothing points at a destroyed object.
+            DestroyAuraOverlays();
+            DestroyGhostVisual();
+
+            normalVisualRoot = newVisualTransform;
+            animator = newVisual.GetComponentInChildren<Animator>(true);
+            if (animator == null)
+            {
+                animator = newVisual.AddComponent<Animator>();
+            }
+
+            visualController = definition.AnimatorController;
+            idleStateName = definition.IdleStateName;
+            runStateName = definition.RunStateName;
+            jumpStateName = definition.JumpStateName;
+            deathStateName = definition.DeathStateName;
+            ghostVisualPrefab = definition.GhostPrefab;
+
+            isGhostVisualActive = false;
+            hasVisualState = false;
+            InitializeVisualCaches();
+            ApplyVisualState(VisualState.Idle);
+            ReinitializeNetworkAnimator();
+
+            activeModelPrefab = definition.ModelPrefab;
+            Destroy(oldVisualRoot.gameObject);
+            return swappedCollider;
+        }
+
+        // Clones the baseline visual root's CapsuleCollider onto the new visual root so every model is
+        // set up with its collider at the same level, with identical parameters. Returns null when the
+        // baseline visual has no capsule collider.
+        private static Collider ReplicateVisualRootCollider(GameObject oldRoot, GameObject newRoot)
+        {
+            var source = oldRoot.GetComponent<CapsuleCollider>();
+            if (source == null)
+            {
+                return null;
+            }
+
+            var clone = newRoot.AddComponent<CapsuleCollider>();
+            clone.center = source.center;
+            clone.radius = source.radius;
+            clone.height = source.height;
+            clone.direction = source.direction;
+            clone.isTrigger = source.isTrigger;
+            clone.sharedMaterial = source.sharedMaterial;
+            clone.contactOffset = source.contactOffset;
+            clone.enabled = source.enabled;
+            return clone;
         }
 
         private void LateUpdate()
@@ -112,6 +212,52 @@ namespace ProjectRuntime.Actor
             networkAnimator.animator = animator;
             networkAnimator.clientAuthority = true;
             networkAnimator.syncDirection = SyncDirection.ClientToServer;
+        }
+
+        private void ReinitializeNetworkAnimator()
+        {
+            if (networkAnimator == null)
+            {
+                return;
+            }
+
+            // NetworkAnimator caches its parameter/layer arrays against the animator in OnEnable and
+            // never re-reads them when the field is reassigned, so bounce enabled to rebind cleanly.
+            networkAnimator.animator = animator;
+            if (networkAnimator.isActiveAndEnabled)
+            {
+                networkAnimator.enabled = false;
+                networkAnimator.enabled = true;
+            }
+        }
+
+        private void DestroyAuraOverlays()
+        {
+            if (auraObjects != null)
+            {
+                for (var i = 0; i < auraObjects.Length; i++)
+                {
+                    if (auraObjects[i] != null)
+                    {
+                        Destroy(auraObjects[i]);
+                    }
+                }
+            }
+
+            auraObjects = null;
+            auraRenderers = null;
+        }
+
+        private void DestroyGhostVisual()
+        {
+            if (ghostVisualRoot != null)
+            {
+                Destroy(ghostVisualRoot);
+                ghostVisualRoot = null;
+            }
+
+            ghostRenderers = null;
+            ghostRendererInitialEnabled = null;
         }
 
         public void SetGhostVisible(bool isVisible)

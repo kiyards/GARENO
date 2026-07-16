@@ -380,6 +380,8 @@ MonoBehaviour:
   deathDespawnDelay: 3.5
   logVisualStateChanges: 0
   nameText: {fileID: 3264892787347041308}
+  modelLibrary: {fileID: 11400000, guid: 89ccbd2ae12e40b5b4b6901e0d49af48, type: 2}
+  disguiseModelRoot: {fileID: 3542138082344793730}
 --- !u!1 &6094927155687563163
 GameObject:
   m_ObjectHideFlags: 0

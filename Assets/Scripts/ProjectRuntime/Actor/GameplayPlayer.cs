@@ -55,6 +55,9 @@ namespace ProjectRuntime.Actor
 
         [Header("Visuals")]
         [SerializeField]
+        private CharacterModelLibrary modelLibrary;
+
+        [SerializeField]
         private GameObject corpseVisualPrefab;
 
         [SerializeField]
@@ -336,6 +339,54 @@ namespace ProjectRuntime.Actor
             if (isLocalPlayer)
             {
                 ClientTickRevive();
+            }
+        }
+
+        // Swaps this survivor's visual model to the one mapped to their assigned ability, then
+        // rebinds the caches that depend on the model (role renderers, collider, corpse prefab).
+        // Runs on every client via PlayerManager.ApplyAssignedAbility, so remote and late-joining
+        // clients converge on the same model. Abilities that map to the baked baseline (Steroid ->
+        // Tsuki) and the Dungeon Master (no ability -> no mapping) resolve to no swap.
+        public void ApplyCharacterModel(SurvivorAbilityType ability)
+        {
+            if (modelLibrary == null || !modelLibrary.TryGet(ability, out var definition))
+            {
+                return;
+            }
+
+            var visualAnimator = GetComponent<PlayerVisualAnimator>();
+            if (visualAnimator == null || !visualAnimator.WillSwapTo(definition))
+            {
+                return;
+            }
+
+            // The collider lives on the visual model (which the swap destroys) and the other models
+            // ship none, so the swap re-creates it at the same hierarchy level on the new visual.
+            // Repoint col to it so the running instance is structured identically to the baseline.
+            var swappedCollider = visualAnimator.ApplyCharacterModel(definition);
+            if (swappedCollider != null)
+            {
+                col = swappedCollider;
+            }
+
+            corpseVisualPrefab = definition.ResolvedCorpsePrefab;
+
+            // The renderer set changed, so re-snapshot the role defaults and re-apply the current
+            // role's body visibility without re-queuing a role state.
+            _cachedRoleDefaults = false;
+            CacheRoleDefaults();
+            ReapplyBodyForCurrentRole();
+        }
+
+        private void ReapplyBodyForCurrentRole()
+        {
+            if (_currentRole == PlayerRole.DungeonMaster)
+            {
+                ApplyDungeonMasterBody();
+            }
+            else
+            {
+                ApplySurvivorBody();
             }
         }
 

@@ -912,6 +912,7 @@ MonoBehaviour:
   <col>k__BackingField: {fileID: 3630702372580914528}
   <health>k__BackingField: {fileID: 2200131109173453123}
   <aimRig>k__BackingField: {fileID: 2490783541060357679}
+  modelLibrary: {fileID: 11400000, guid: 89ccbd2ae12e40b5b4b6901e0d49af48, type: 2}
   corpseVisualPrefab: {fileID: 513805921082256991, guid: e32d76a198766014ca0722b6ff4ef6cc, type: 3}
   corpseVisualYawOffset: 180
   jumpForce: 18
@@ -1218,6 +1219,7 @@ MonoBehaviour:
   animator: {fileID: 2494069372982321728}
   normalVisualRoot: {fileID: 3612974361758491980}
   ghostVisualPrefab: {fileID: 2399812958223130915, guid: 2666449971128b0419ff31d39dd81838, type: 3}
+  defaultModelPrefab: {fileID: 513805921082256991, guid: e32d76a198766014ca0722b6ff4ef6cc, type: 3}
   visualController: {fileID: 9100000, guid: 791ae2f44c10609468ea3c9cd99d84d3, type: 2}
   idleStateName: player_tsuki_idle
   runStateName: player_tsuki_run
