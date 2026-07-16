@@ -162,7 +162,6 @@ namespace ProjectRuntime.Actor
             }
 
             player.ServerApplySpeedBoost(steroidSpeedMultiplier, steroidDuration);
-            player.RpcPlaySteroidEffect(player.netId, steroidDuration);
         }
 
         [Server]
@@ -450,43 +449,6 @@ namespace ProjectRuntime.Actor
 
             GameObject vfx = Instantiate(empStartVfxPrefab, center, Quaternion.identity);
             Destroy(vfx, 5f);
-        }
-    }
-
-    public static class SurvivorAbilityVfx
-    {
-        public static void SpawnSteroidAura(Transform target, float duration)
-        {
-            if (target == null)
-            {
-                return;
-            }
-
-            GameObject aura = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            aura.name = "SteroidAuraVfx";
-            aura.transform.SetParent(target, false);
-            aura.transform.localPosition = Vector3.zero;
-            aura.transform.localScale = new Vector3(0.85f, 0.02f, 0.85f);
-
-            if (aura.TryGetComponent(out Collider collider))
-            {
-                Object.Destroy(collider);
-            }
-
-            ApplyRendererColor(aura, new Color(1f, 0.92f, 0.2f, 0.42f));
-            Object.Destroy(aura, duration);
-        }
-
-        private static void ApplyRendererColor(GameObject target, Color color)
-        {
-            if (!target.TryGetComponent(out Renderer renderer))
-            {
-                return;
-            }
-
-            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-            renderer.receiveShadows = false;
-            renderer.material.color = color;
         }
     }
 }

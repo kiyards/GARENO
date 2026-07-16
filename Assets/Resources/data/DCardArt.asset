@@ -30,7 +30,7 @@ MonoBehaviour:
   - <CardId>k__BackingField: CARD_FLASHBANG
     <Sprite>k__BackingField: {fileID: 1246179035822186997, guid: c8304b120d0a4e24f9b1e3fa3073ec18, type: 3}
   - <CardId>k__BackingField: CARD_BASIC_ZOMBIE
-    <Sprite>k__BackingField: {fileID: -3716787584606571850, guid: 18771f66a9004df4ea650ec90fb931a6, type: 3}
+    <Sprite>k__BackingField: {fileID: -2211861316871085575, guid: f8aca488c43f4e84f911015cf5b697d5, type: 3}
   - <CardId>k__BackingField: ABILITY_HEALING_FIELD
     <Sprite>k__BackingField: {fileID: 5854690309546303941, guid: 894f1c4cbc2010e4e81818ffc27cb32d, type: 3}
   - <CardId>k__BackingField: ABILITY_STEROID

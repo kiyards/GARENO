@@ -1205,23 +1205,6 @@ namespace ProjectRuntime.Actor
         }
 
         [ClientRpc]
-        public void RpcPlaySteroidEffect(uint playerNetId, float duration)
-        {
-            if (!NetworkClient.spawned.TryGetValue(playerNetId, out NetworkIdentity identity))
-            {
-                return;
-            }
-
-            GameplayPlayer target = identity.GetComponentInChildren<GameplayPlayer>();
-            if (target == null)
-            {
-                return;
-            }
-
-            SurvivorAbilityVfx.SpawnSteroidAura(target.transform, duration);
-        }
-
-        [ClientRpc]
         public void RpcPlayEmpEffect(Vector3 center, float radius)
         {
             SurvivorAbilities?.PlayEmpStartVfx(center, radius);

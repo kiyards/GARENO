@@ -2,6 +2,7 @@ using Mirror;
 using System;
 using ProjectRuntime.Actor;
 using ProjectRuntime.Actor.PlayerStates;
+using ProjectRuntime.Managers;
 using ProjectRuntime.Network;
 using ProjectRuntime.UI;
 using UnityEngine;
@@ -54,9 +55,11 @@ namespace ProjectRuntime.Combat
         {
             if (_isDead || !_damageEnabled || amount <= 0f) return;
 
+            float appliedDamage = Mathf.Min(amount, currentHealth);
             currentHealth = Mathf.Clamp(currentHealth - amount, 0f, maxHealth);
-            OnDamagedEvent?.Invoke(amount, sourceNetId, hitPoint);
-            RpcShowDamageNumber(hitPoint, amount, netId);
+            OnDamagedEvent?.Invoke(appliedDamage, sourceNetId, hitPoint);
+            RpcShowDamageNumber(hitPoint, appliedDamage, netId);
+            this.ReportSurvivorDamageToBattleManager(appliedDamage, sourceNetId);
 
             if (currentHealth <= 0f)
             {
@@ -144,6 +147,28 @@ namespace ProjectRuntime.Combat
         {
             return localPlayer.currentState is DungeonMasterTurretState
                 || localPlayer.nextState is DungeonMasterTurretState;
+        }
+
+        [Server]
+        private void ReportSurvivorDamageToBattleManager(float damageAmount, uint sourceNetId)
+        {
+            if (damageAmount <= 0f)
+            {
+                return;
+            }
+
+            var gameplayPlayer = GetComponentInParent<GameplayPlayer>();
+            var playerManager = gameplayPlayer != null ? gameplayPlayer.localManager : null;
+            if (playerManager == null || playerManager.playerRole != PlayerRole.Survivor)
+            {
+                return;
+            }
+
+            BattleManager.Instance?.ServerReportSurvivorDamaged(
+                playerManager,
+                damageAmount,
+                sourceNetId
+            );
         }
     }
 }

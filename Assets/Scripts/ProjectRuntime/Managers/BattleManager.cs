@@ -83,6 +83,12 @@ namespace ProjectRuntime.Managers
         [SerializeField, FormerlySerializedAs("survivorDeathTimePenaltySeconds")]
         private int survivorTimeoutTimePenaltySeconds = 30;
 
+        [SerializeField]
+        private float survivorDamagePenaltyStep = 5f;
+
+        [SerializeField]
+        private int survivorDamagePenaltySecondsPerStep = 1;
+
         [Header("Nemesis Availability")]
         // How much the Dungeon Master's Nemesis countdown is shortened by each event.
         [SerializeField]
@@ -641,6 +647,25 @@ namespace ProjectRuntime.Managers
 
             this.ServerAddRoundTime(-this.survivorTimeoutTimePenaltySeconds);
             this.ServerShortenNemesisCountdown(this.nemesisTimeoutShortenSeconds);
+        }
+
+        [Server]
+        public void ServerReportSurvivorDamaged(PlayerManager survivor, float damageAmount, uint sourceNetId)
+        {
+            if (!this.IsTimerPenaltyTarget(survivor) || damageAmount <= 0f)
+            {
+                return;
+            }
+
+            float damageStep = Mathf.Max(0.01f, this.survivorDamagePenaltyStep);
+            int penaltySteps = Mathf.FloorToInt(damageAmount / damageStep);
+            int penaltySeconds = penaltySteps * Mathf.Max(0, this.survivorDamagePenaltySecondsPerStep);
+            if (penaltySeconds <= 0)
+            {
+                return;
+            }
+
+            this.ServerAddRoundTime(-penaltySeconds);
         }
 
         // Forwards a Nemesis-countdown reduction to the Dungeon Master's card manager. The
