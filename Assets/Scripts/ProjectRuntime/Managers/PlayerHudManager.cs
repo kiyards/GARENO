@@ -207,6 +207,12 @@ namespace ProjectRuntime.Managers
         [field: SerializeField]
         private DamageVignette DamageVignette { get; set; }
 
+        [field: SerializeField, Header("Match Result")]
+        private GameObject MatchResultParent { get; set; }
+
+        [field: SerializeField]
+        private TextMeshProUGUI MatchResultTMP { get; set; }
+
         private Health BoundHealth { get; set; }
         private PistolWeapon BoundWeapon { get; set; }
         private DungeonMasterCardManager BoundCardManager { get; set; }
@@ -258,6 +264,7 @@ namespace ProjectRuntime.Managers
             this._defaultSurvivorAbilityIcon = this.SurvivorAbilityIcon != null
                 ? this.SurvivorAbilityIcon.sprite
                 : null;
+            this.SetMatchResultVisible(false);
             this.EnsureMinimap();
             this.EnsureDirectionIndicators();
             this.SetRole(PlayerRole.Unassigned);
@@ -852,6 +859,7 @@ namespace ProjectRuntime.Managers
                 this._lastDestroyedCrystals = 0;
                 this.EnsureMinimap()?.SetBattleManager(null);
                 this.EnsureDirectionIndicators()?.SetBattleManager(null);
+                this.SetMatchResultVisible(false);
                 this.RefreshTimerText();
                 this.RefreshObjectiveText();
                 return;
@@ -883,6 +891,7 @@ namespace ProjectRuntime.Managers
         {
             this.CheckCrystalDestroyedNotification();
             this.RefreshRoleMessage();
+            this.RefreshMatchResult();
             this.RefreshTimerText();
             this.RefreshObjectiveText();
         }
@@ -1123,8 +1132,8 @@ namespace ProjectRuntime.Managers
             {
                 this.RoleMessageTMP.text = battleManager.Winner switch
                 {
-                    RoundWinner.Survivors => "Survivors Win",
-                    RoundWinner.DungeonMaster => "Dungeon Master Wins",
+                    RoundWinner.Survivors => "Survivors Won!",
+                    RoundWinner.DungeonMaster => "Dungeon Master Won!",
                     _ => "Round Complete",
                 };
                 return;
@@ -1141,6 +1150,46 @@ namespace ProjectRuntime.Managers
             }
 
             this.RoleMessageTMP.text = roleText;
+        }
+
+        private void RefreshMatchResult()
+        {
+            var battleManager =
+                this.BoundBattleManager != null ? this.BoundBattleManager : BattleManager.Instance;
+
+            if (
+                battleManager == null
+                || battleManager.CurrentRoundPhase != RoundPhase.RoundComplete
+            )
+            {
+                this.SetMatchResultVisible(false);
+                return;
+            }
+
+            if (this.MatchResultTMP != null)
+            {
+                this.MatchResultTMP.text = battleManager.Winner switch
+                {
+                    RoundWinner.Survivors => "Survivors Won!",
+                    RoundWinner.DungeonMaster => "Dungeon Master Won!",
+                    _ => "Round Complete",
+                };
+            }
+
+            this.SetMatchResultVisible(true);
+        }
+
+        private void SetMatchResultVisible(bool isVisible)
+        {
+            if (this.MatchResultTMP != null)
+            {
+                this.MatchResultTMP.gameObject.SetActive(isVisible);
+            }
+
+            if (this.MatchResultParent != null)
+            {
+                this.MatchResultParent.SetActive(isVisible);
+            }
         }
 
         private bool ShouldComposeTimerWithRoleMessage()

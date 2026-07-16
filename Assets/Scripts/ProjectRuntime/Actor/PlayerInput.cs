@@ -1,5 +1,6 @@
 using Mirror;
 using ProjectRuntime.Actor.PlayerStates;
+using ProjectRuntime.Managers;
 using ProjectRuntime.Network;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -73,15 +74,20 @@ namespace ProjectRuntime.Actor
         public bool InteractHold => interactHold;
         public bool InteractRelease => interactRelease;
         public bool ReloadPress => reloadPress;
-        public bool TurretExitPress => Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame;
-        public bool TeammateIndicatorsTogglePress => Keyboard.current != null && Keyboard.current.tabKey.wasPressedThisFrame;
-        public bool AbilityPress => Keyboard.current != null && Keyboard.current.fKey.wasPressedThisFrame;
+        public bool TurretExitPress =>
+            !AreControlsLocked() && Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame;
+        public bool TeammateIndicatorsTogglePress =>
+            !AreControlsLocked()
+            && Keyboard.current != null
+            && Keyboard.current.tabKey.wasPressedThisFrame;
+        public bool AbilityPress =>
+            !AreControlsLocked() && Keyboard.current != null && Keyboard.current.fKey.wasPressedThisFrame;
 
         public bool TryGetDungeonMasterJumpSlot(out int slotIndex)
         {
             slotIndex = -1;
             Keyboard keyboard = Keyboard.current;
-            if (keyboard == null)
+            if (keyboard == null || AreControlsLocked())
             {
                 return false;
             }
@@ -145,6 +151,13 @@ namespace ProjectRuntime.Actor
 
             RefreshCursorLock();
 
+            if (AreControlsLocked())
+            {
+                ClearRuntimeInputState();
+                ReleaseCursorLock();
+                return;
+            }
+
             Vector2 inputVec = moveInput != null ? moveInput.ReadValue<Vector2>() : Vector2.zero;
             moveVec = new Vector3(inputVec.x, 0f, inputVec.y);
             aimVec = aimInput != null ? aimInput.ReadValue<Vector2>() * sensitivity : Vector2.zero;
@@ -170,6 +183,29 @@ namespace ProjectRuntime.Actor
             reloadPress = reloadInput != null && reloadInput.WasPressedThisFrame();
         }
 
+        private bool AreControlsLocked()
+        {
+            return BattleManager.Instance != null
+                && BattleManager.Instance.CurrentRoundPhase == RoundPhase.RoundComplete;
+        }
+
+        private void ClearRuntimeInputState()
+        {
+            moveVec = Vector3.zero;
+            aimVec = Vector2.zero;
+            jump = false;
+            jumpHold = false;
+            flyDownHold = false;
+            clickPress = false;
+            clickHold = false;
+            clickRelease = false;
+            rightClickPress = false;
+            interactPress = false;
+            interactHold = false;
+            interactRelease = false;
+            reloadPress = false;
+        }
+
         private void SetInputEnabled(bool isEnabled)
         {
             if (isEnabled)
@@ -190,19 +226,7 @@ namespace ProjectRuntime.Actor
             interactInput?.Disable();
             reloadInput?.Disable();
 
-            moveVec = Vector3.zero;
-            aimVec = Vector2.zero;
-            jump = false;
-            jumpHold = false;
-            flyDownHold = false;
-            clickPress = false;
-            clickHold = false;
-            clickRelease = false;
-            rightClickPress = false;
-            interactPress = false;
-            interactHold = false;
-            interactRelease = false;
-            reloadPress = false;
+            ClearRuntimeInputState();
         }
 
         private void CacheComponents()
